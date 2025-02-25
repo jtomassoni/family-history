@@ -1,0 +1,19 @@
+.photo-section {
+  flex: 0 0 400px;
+  text-align: center;
+  background: #fffaf0;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease-in-out;
+}
+
+.photo-section:hover {
+  transform: translateY(-5px);
+}
+
+.photo-section img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}

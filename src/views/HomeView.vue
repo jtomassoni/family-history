@@ -7,9 +7,3 @@
     <p>Welcome to the family history site!</p>
   </div>
 </template>
-
-<style scoped>
-h1 {
-  color: darkblue;
-}
-</style>
