@@ -1,21 +1,30 @@
 <script setup>
+import { ref, onMounted, computed, nextTick } from "vue";
 import "./styles/main.css";
-import { ref, onMounted, computed } from "vue";
 import { photoData } from "./data/photoData.js";
 import CustomButton from "./components/CustomButton.vue";
 import PhotoTile from "./components/PhotoTile.vue";
 
 // --------------------------
-// 1. Sort Photos & Ensure Proper Date Handling
+// 1. Sort Photos By Event Date, then Upload Time, then Internal Name
 // --------------------------
 const sortedPhotos = computed(() => {
   return photoData
     .slice()
     .map(photo => ({
       ...photo,
-      eventDate: new Date(photo.eventDate) // Convert eventDate to Date object
+      eventDate: new Date(photo.eventDate + "T00:00:00Z"), // Force UTC parsing
+      uploadedAt: new Date(photo.uploadedAt) // Ensure uploadedAt is parsed
     }))
-    .sort((a, b) => a.eventDate - b.eventDate);
+    .sort((a, b) => {
+      if (a.eventDate.getTime() !== b.eventDate.getTime()) {
+        return b.eventDate - a.eventDate; // Sort by eventDate (newest first)
+      }
+      if (a.uploadedAt.getTime() !== b.uploadedAt.getTime()) {
+        return b.uploadedAt - a.uploadedAt; // Sort by uploadedAt (newest first)
+      }
+      return b.internalName.localeCompare(a.internalName); // Sort by internalName (desc order)
+    });
 });
 
 // --------------------------
@@ -23,23 +32,11 @@ const sortedPhotos = computed(() => {
 // --------------------------
 const currentIndex = ref(0);
 
-const findClosestPhotoIndex = () => {
-  const today = new Date();
-  let bestDiff = Infinity;
-  let bestIndex = 0;
-  sortedPhotos.value.forEach((photo, index) => {
-    const diff = Math.abs(today - photo.eventDate);
-    if (diff < bestDiff) {
-      bestDiff = diff;
-      bestIndex = index;
-    }
-  });
-  return bestIndex;
-};
+const findNewestPhotoIndex = () => 0; // The first item in sorted array (newest photo)
 
 onMounted(() => {
-  currentIndex.value = findClosestPhotoIndex();
-  console.log("Starting at closest event:", sortedPhotos.value[currentIndex.value]);
+  currentIndex.value = findNewestPhotoIndex();
+  console.log("✅ Loaded most recent event:", sortedPhotos.value[currentIndex.value]);
 });
 
 // --------------------------
@@ -56,27 +53,51 @@ const formattedDay = computed(() => currentPhoto.value ? currentPhoto.value.even
 // --------------------------
 const isPreviousDisabled = computed(() => currentIndex.value <= 0);
 const isNextDisabled = computed(() => currentIndex.value >= sortedPhotos.value.length - 1);
-const isTodayDisabled = computed(() => currentIndex.value === findClosestPhotoIndex());
+const isTodayDisabled = computed(() => currentIndex.value === findNewestPhotoIndex());
 
-const previousPhoto = () => {
-  const idx = sortedPhotos.value.findIndex(photo => photo.eventDate.getTime() === currentPhoto.value.eventDate.getTime());
-  if (idx > 0) {
-    currentIndex.value = idx - 1;
-    console.log("Navigated to previous:", sortedPhotos.value[currentIndex.value]);
-  }
+// --------------------------
+// 5. Navigation Button Functions (Ensuring UI Updates Correctly)
+// --------------------------
+let navigationLock = false; // Prevent double execution
+
+const nextPhoto = async () => {
+  if (isPreviousDisabled.value || navigationLock) return;
+  navigationLock = true;
+
+  console.log("⬅️ Attempting to navigate to previous...");
+  console.log("Current Index BEFORE:", currentIndex.value);
+
+  currentIndex.value = Math.max(currentIndex.value - 1, 0);
+  
+  await nextTick(); // Ensure Vue updates the UI before continuing
+  navigationLock = false; // Unlock navigation
+
+  console.log("⬅️ Navigated to previous:", sortedPhotos.value[currentIndex.value]);
+  console.log("Current Index AFTER:", currentIndex.value);
 };
 
-const nextPhoto = () => {
-  const idx = sortedPhotos.value.findIndex(photo => photo.eventDate.getTime() === currentPhoto.value.eventDate.getTime());
-  if (idx >= 0 && idx < sortedPhotos.value.length - 1) {
-    currentIndex.value = idx + 1;
-    console.log("Navigated to next:", sortedPhotos.value[currentIndex.value]);
-  }
+const previousPhoto = async () => {
+  if (isNextDisabled.value || navigationLock) return;
+  navigationLock = true;
+
+  console.log("➡️ Attempting to navigate to next...");
+  console.log("Current Index BEFORE:", currentIndex.value);
+
+  currentIndex.value = Math.min(currentIndex.value + 1, sortedPhotos.value.length - 1);
+  
+  await nextTick(); // Ensure Vue updates the UI before continuing
+  navigationLock = false; // Unlock navigation
+
+  console.log("➡️ Navigated to next:", sortedPhotos.value[currentIndex.value]);
+  console.log("Current Index AFTER:", currentIndex.value);
 };
 
-const goToToday = () => {
-  currentIndex.value = findClosestPhotoIndex();
-  console.log("Navigated to today:", sortedPhotos.value[currentIndex.value]);
+const goToToday = async () => {
+  currentIndex.value = findNewestPhotoIndex();
+  
+  await nextTick(); // Ensure Vue updates the UI before continuing
+
+  console.log("🎯 Navigated to today:", sortedPhotos.value[currentIndex.value]);
 };
 </script>
 
@@ -97,29 +118,26 @@ const goToToday = () => {
       </CustomButton>
     </nav>
 
-    <!-- Day Navigation Controls (fixed at bottom) -->
+    <!-- Day Navigation Controls -->
     <div class="day-nav-controls">
-      <CustomButton :class="{ disabled: isPreviousDisabled }" @click="previousPhoto">
-        Previous Day
+      <CustomButton :class="{ disabled: isNextDisabled }" @click="previousPhoto">
+        Previous (Backwards in Time)
       </CustomButton>
       <CustomButton :class="{ disabled: isTodayDisabled }" @click="goToToday">
-        Today (or nearest)
+        Today (Most Recent)
       </CustomButton>
-      <CustomButton :class="{ disabled: isNextDisabled }" @click="nextPhoto">
-        Next Day
+      <CustomButton :class="{ disabled: isPreviousDisabled }" @click="nextPhoto">
+        Next (Forwards in Time)
       </CustomButton>
+
+
     </div>
 
-    <!-- Timeline Display (Photo Tile) -->
+    <!-- Photo Display -->
     <div class="timeline-container">
       <transition name="fade">
         <div v-if="currentPhoto" class="photo-wrapper">
-          <PhotoTile :photo="{
-            ...currentPhoto,
-            year: formattedYear,
-            month: formattedMonth,
-            day: formattedDay
-          }" />
+          <PhotoTile :photo="currentPhoto" />
         </div>
       </transition>
     </div>

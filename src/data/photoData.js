@@ -1,50 +1,58 @@
 export const photoData = [
   {
-    internalName: "family_bbq",
-    externalName: "Family BBQ",
-    description: "A great summer barbecue with the whole family.",
-    eventDate: "2025-07-02T00:00:00.000Z",
-    uploadedAt: "2025-07-02T00:00:00.000Z",
-    url: "https://loremflickr.com/400/250/bbq,family"
+    internalName: "family_bbq_1",
+    externalName: "Family BBQ - Group Shot",
+    description: "A great summer barbecue with everyone.",
+    eventDate: "2025-07-02",
+    uploadedAt: "2025-07-02T12:00:00.000Z",
+    url: "https://source.unsplash.com/400x250/?bbq,food"
   },
   {
-    internalName: "kids_playing",
-    externalName: "Kids Playing",
-    description: "Cousins playing in the backyard.",
-    eventDate: "2024-07-01T00:00:00.000Z",
-    uploadedAt: "2024-07-01T00:00:00.000Z",
-    url: "https://loremflickr.com/400/250/kids,play"
+    internalName: "family_bbq_2",
+    externalName: "Family BBQ - Grill",
+    description: "Someone's grilling burgers!",
+    eventDate: "2025-07-02",
+    uploadedAt: "2025-07-02T12:00:00.000Z",
+    url: "https://source.unsplash.com/400x250/?bbq,grill"
+  },
+  {
+    internalName: "kids_playing_1",
+    externalName: "Kids Playing in the Park",
+    description: "Running around having fun!",
+    eventDate: "2024-07-01",
+    uploadedAt: "2024-07-01T10:00:00.000Z",
+    url: "https://source.unsplash.com/400x250/?kids,playground"
+  },
+  {
+    internalName: "kids_playing_2",
+    externalName: "Kids Playing - Swing Set",
+    description: "Swinging high!",
+    eventDate: "2024-07-01",
+    uploadedAt: "2024-07-01T10:02:00.000Z",
+    url: "https://source.unsplash.com/400x250/?kids,swings"
+  },
+  {
+    internalName: "dad_birthday",
+    externalName: "Mark' Birthday",
+    description: "This is gonna go poorly and old",
+    eventDate: "1952-02-09",
+    uploadedAt: "1990-11-16T00:00:00.000Z",
+    url: "https://source.unsplash.com/400x250/?thanksgiving,dinner"
   },
   {
     internalName: "thanksgiving_dinner",
     externalName: "Thanksgiving Dinner",
     description: "A wonderful meal with friends and family.",
-    eventDate: "2023-11-16T00:00:00.000Z",
+    eventDate: "2023-11-16",
     uploadedAt: "2023-11-16T00:00:00.000Z",
-    url: "https://loremflickr.com/400/250/thanksgiving,table"
+    url: "https://source.unsplash.com/400x250/?thanksgiving,dinner"
   },
   {
-    internalName: "christmas_1985",
-    externalName: "Christmas Morning",
-    description: "Opening presents under the tree.",
-    eventDate: "1985-12-25T00:00:00.000Z",
-    uploadedAt: "1985-12-25T00:00:00.000Z",
-    url: "https://loremflickr.com/400/250/christmas,presents"
-  },
-  {
-    internalName: "beach_trip",
-    externalName: "Beach Trip",
-    description: "Family vacation at the beach.",
-    eventDate: "1963-07-20T00:00:00.000Z",
-    uploadedAt: "1963-07-20T00:00:00.000Z",
-    url: "https://loremflickr.com/400/250/beach,summer"
-  },
-  {
-    internalName: "wedding_day",
-    externalName: "Wedding Day",
-    description: "Grandparents' wedding day.",
-    eventDate: "1955-09-10T00:00:00.000Z",
-    uploadedAt: "1955-09-10T00:00:00.000Z",
-    url: "https://loremflickr.com/400/250/wedding,bride,groom"
+    internalName: "jt_birthday",
+    externalName: "James' Birthday",
+    description: "This is gonna go poorly",
+    eventDate: "1990-11-16",
+    uploadedAt: "1990-11-16T00:00:00.000Z",
+    url: "https://source.unsplash.com/400x250/?thanksgiving,dinner"
   }
 ];
