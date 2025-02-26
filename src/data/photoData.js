@@ -24,6 +24,14 @@ export const photoData = [
     url: "https://source.unsplash.com/400x250/?kids,playground"
   },
   {
+    internalName: "mom_birthday",
+    externalName: "Frances' Birthday",
+    description: "This is gonna go poorly and old",
+    eventDate: "1950-02-09",
+    uploadedAt: "2023-11-16T00:00:00.000Z",
+    url: "https://source.unsplash.com/400x250/?thanksgiving,dinner"
+  },
+  {
     internalName: "kids_playing_2",
     externalName: "Kids Playing - Swing Set",
     description: "Swinging high!",
@@ -33,10 +41,10 @@ export const photoData = [
   },
   {
     internalName: "dad_birthday",
-    externalName: "Mark' Birthday",
+    externalName: "Mark's Birthday",
     description: "This is gonna go poorly and old",
     eventDate: "1952-02-09",
-    uploadedAt: "1990-11-16T00:00:00.000Z",
+    uploadedAt: "2001-11-16T00:00:00.000Z",
     url: "https://source.unsplash.com/400x250/?thanksgiving,dinner"
   },
   {
