@@ -5,6 +5,9 @@
   align-items: center;
   height: 100vh; /* Full viewport height */
   position: relative;
+  max-width: 75%;      /* Limit the width so it doesn't cover the left arrow */
+  margin: 0 auto;      /* Center it horizontally */
+  pointer-events: none; /* Allow clicks to pass through to elements underneath */
 }
 
 /* Adds a distinct tile background and border */

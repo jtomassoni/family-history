@@ -15,11 +15,14 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
+  pointer-events: auto;  /* Ensure the arrow can be clicked */
+  z-index: 10;
 }
 
 /* Left Arrow Position */
 .big-nav-arrow.left {
   left: 5%;
+  z-index: 100;  /* Raise left arrow above the photo-display */
 }
 
 /* Right Arrow Position */

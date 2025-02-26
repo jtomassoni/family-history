@@ -18,9 +18,13 @@ const props = defineProps({
 
 // Extract year, month, and day dynamically from `eventDate`
 const formattedYear = computed(() => props.photo.eventDate.getUTCFullYear().toString());
-const formattedMonth = computed(() => props.photo.eventDate.toLocaleString("default", { month: "long", timeZone: "UTC" }));
+const formattedMonth = computed(() =>
+  props.photo.eventDate.toLocaleString("default", { month: "long", timeZone: "UTC" })
+);
 const formattedDay = computed(() => props.photo.eventDate.getUTCDate().toString());
-const formattedUploadedAt = computed(() => new Date(props.photo.uploadedAt).toLocaleString("default", { timeZone: "UTC" }));
+const formattedUploadedAt = computed(() =>
+  new Date(props.photo.uploadedAt).toLocaleString("default", { timeZone: "UTC" })
+);
 
 const onImageError = (event) => {
   event.target.src = "https://placehold.co/400x250?text=Image+Not+Available";
