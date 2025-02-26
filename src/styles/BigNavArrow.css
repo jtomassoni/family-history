@@ -1,4 +1,4 @@
-.nav-arrow {
+.big-nav-arrow {
   background: rgba(0, 0, 0, 0.5);
   color: white;
   font-size: 32px;
@@ -15,20 +15,28 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
+}
+
+/* Left Arrow Position */
+.big-nav-arrow.left {
+  left: 5%;
+}
+
+/* Right Arrow Position */
+.big-nav-arrow.right {
   right: 5%;
 }
 
 /* Enabled Button Hover */
-.nav-arrow:hover {
+.big-nav-arrow:not(.disabled):hover {
   background: rgba(255, 255, 255, 0.3);
   color: #ddd;
 }
 
-/* Disabled Button State */
-.nav-arrow:disabled {
-  opacity: 0.2;
+/* Disabled Button State - Bright Orange */
+.big-nav-arrow.disabled {
+  background: rgb(255, 102, 0); /* Bright orange */
+  color: white;
   cursor: not-allowed;
-  background: rgba(50, 50, 50, 0.3);
-  color: rgba(100, 100, 100, 0.4);
-  transition: none;
+  opacity: 1; /* Ensure it remains fully visible */
 }

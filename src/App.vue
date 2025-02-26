@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Persistent Breadcrumb Navigation -->
     <NavBar
       :openYear="formattedYear"
       :openMonth="formattedMonth"
@@ -11,9 +10,13 @@
       @dayClick="goToToday"
     />
 
-    <!-- Photo Display with Large Left/Right Navigation -->
     <div class="photo-navigation-container">
-      <LeftArrow @click="previousPhoto" :disabled="isPreviousDisabled" />
+      <BigNavArrow 
+        direction="left" 
+        label="Previous Photo" 
+        @click="previousPhoto" 
+        :disabled="isPreviousDisabled"
+      />
 
       <div class="photo-display">
         <transition name="fade">
@@ -23,22 +26,19 @@
         </transition>
       </div>
 
-      <RightArrow @click="nextPhoto" :disabled="isNextDisabled" />
+      <BigNavArrow 
+        direction="right" 
+        label="Next Photo" 
+        @click="nextPhoto" 
+        :disabled="isNextDisabled"
+      />
     </div>
 
-    <!-- Boundary Messages Section (Separate from Arrows) -->
     <div class="boundary-message-container">
-      <div v-if="isPreviousDisabled" class="boundary-message earliest-message">
-        📜 You’ve reached the beginning of recorded history! <br />
-        Maybe there’s more to discover?
-      </div>
-      <div v-if="isNextDisabled" class="boundary-message latest-message">
-        🚀 Go make some new memories and add them here! <br />
-        (Login & Upload Coming Soon)
-      </div>
+      <BoundaryMessage v-if="isPreviousDisabled" class="earliest-message" message="📜 You’ve reached the beginning of recorded history!" />
+      <BoundaryMessage v-if="isNextDisabled" class="latest-message" message="🚀 Go make some new memories and add them here! (Login & Upload Coming Soon)" />
     </div>
 
-    <!-- Restore Today Button -->
     <div class="day-nav-controls">
       <CustomButton :class="{ disabled: isTodayDisabled }" @click="goToToday">
         Today (most recent)
@@ -53,10 +53,9 @@ import "./styles/main.css";
 import { photoData } from "./data/photoData.js";
 import CustomButton from "./components/CustomButton.vue";
 import PhotoTile from "./components/PhotoTile.vue";
-import LeftArrow from "./components/LeftArrow.vue";
-import RightArrow from "./components/RightArrow.vue";
+import BigNavArrow from "./components/BigNavArrow.vue";
 import NavBar from "./components/NavBar.vue";
-import BoundaryMessage from "./components/BoundaryMessage.vue"; // ✅ Use new BoundaryMessage component
+import BoundaryMessage from "./components/BoundaryMessage.vue";
 
 // --------------------------
 // 1. Sort Photos By Event Date, then Upload Time, then Internal Name
@@ -66,17 +65,17 @@ const sortedPhotos = computed(() => {
     .slice()
     .map(photo => ({
       ...photo,
-      eventDate: new Date(photo.eventDate + "T00:00:00Z"), // Force UTC parsing
-      uploadedAt: new Date(photo.uploadedAt) // Ensure uploadedAt is parsed
+      eventDate: new Date(photo.eventDate + "T00:00:00Z"),
+      uploadedAt: new Date(photo.uploadedAt)
     }))
     .sort((a, b) => {
       if (a.eventDate.getTime() !== b.eventDate.getTime()) {
-        return b.eventDate - a.eventDate; // Sort by eventDate (newest first)
+        return b.eventDate - a.eventDate;
       }
       if (a.uploadedAt.getTime() !== b.uploadedAt.getTime()) {
-        return b.uploadedAt - a.uploadedAt; // Sort by uploadedAt (newest first)
+        return b.uploadedAt - a.uploadedAt;
       }
-      return b.internalName.localeCompare(a.internalName); // Sort by internalName (desc order)
+      return b.internalName.localeCompare(a.internalName);
     });
 });
 
@@ -97,9 +96,9 @@ onMounted(() => {
 // --------------------------
 const currentPhoto = computed(() => sortedPhotos.value[currentIndex.value] || null);
 
-const formattedYear = computed(() => currentPhoto.value ? currentPhoto.value.eventDate.getUTCFullYear().toString() : "");
-const formattedMonth = computed(() => currentPhoto.value ? currentPhoto.value.eventDate.toLocaleString("default", { month: "long", timeZone: "UTC" }) : "");
-const formattedDay = computed(() => currentPhoto.value ? currentPhoto.value.eventDate.getUTCDate().toString() : "");
+const formattedYear = computed(() => currentPhoto.value?.eventDate.getUTCFullYear().toString() || "");
+const formattedMonth = computed(() => currentPhoto.value?.eventDate.toLocaleString("default", { month: "long", timeZone: "UTC" }) || "");
+const formattedDay = computed(() => currentPhoto.value?.eventDate.getUTCDate().toString() || "");
 
 const validYears = computed(() => {
   const years = [...new Set(sortedPhotos.value.map(photo => photo.eventDate.getUTCFullYear()))];
@@ -107,42 +106,44 @@ const validYears = computed(() => {
 });
 
 // --------------------------
-// 4. Navigation Button Logic
+// 4. Navigation Button Logic (Fixing Left Arrow Clickability)
 // --------------------------
 const isPreviousDisabled = computed(() => currentIndex.value >= sortedPhotos.value.length - 1);
 const isNextDisabled = computed(() => currentIndex.value <= 0);
 const isTodayDisabled = computed(() => currentIndex.value === findNewestPhotoIndex());
 
 // --------------------------
-// 5. Navigation Button Functions
+// 5. Navigation Button Functions (Fixing Left Arrow Clicks)
 // --------------------------
-let navigationLock = false;
-
-const previousPhoto = async () => { // Moves BACKWARD in time
-  if (isPreviousDisabled.value || navigationLock) return;
-  navigationLock = true;
-
-  console.log("⬅️ Navigating to previous...");
-  currentIndex.value = Math.min(currentIndex.value + 1, sortedPhotos.value.length - 1);
+const previousPhoto = async () => {
+  if (isPreviousDisabled.value) return;
   
+  console.log("⬅️ Attempting to navigate to previous...");
+  console.log("Before Click - Current Index:", currentIndex.value);
+
+  currentIndex.value = Math.min(currentIndex.value + 1, sortedPhotos.value.length - 1); // Moves back in time
+
   await nextTick();
-  navigationLock = false;
+  console.log("⬅️ After Click - Current Index:", currentIndex.value);
 };
 
-const nextPhoto = async () => { // Moves FORWARD in time
-  if (isNextDisabled.value || navigationLock) return;
-  navigationLock = true;
-
-  console.log("➡️ Navigating to next...");
-  currentIndex.value = Math.max(currentIndex.value - 1, 0);
+const nextPhoto = async () => {
+  if (isNextDisabled.value) return;
   
+  console.log("➡️ Attempting to navigate to next...");
+  console.log("Before Click - Current Index:", currentIndex.value);
+
+  currentIndex.value = Math.max(currentIndex.value - 1, 0); // Moves forward in time
+
   await nextTick();
-  navigationLock = false;
+  console.log("➡️ After Click - Current Index:", currentIndex.value);
 };
 
 const goToToday = async () => {
+  console.log("🎯 Navigating to today...");
   currentIndex.value = findNewestPhotoIndex();
-  
   await nextTick();
+  console.log("Current Index After Today:", currentIndex.value);
 };
 </script>
+
