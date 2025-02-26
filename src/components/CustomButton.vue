@@ -1,11 +1,12 @@
 <template>
-  <button class="custom-button" @click="$emit('click')">
+  <button class="custom-button" @click="$emit('click')" :disabled="disabled">
     <slot></slot>
   </button>
 </template>
 
 <script setup>
-  // No internal styling; styles are imported from CustomButton.css.
-  import "../styles/CustomButton.css";
-  
+import "../styles/CustomButton.css";
+defineProps({
+  disabled: Boolean
+});
 </script>
