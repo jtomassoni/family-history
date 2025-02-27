@@ -1,5 +1,3 @@
- Family History Timeline body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.6; } pre { background-color: #f4f4f4; padding: 1rem; overflow-x: auto; } code { font-family: Consolas, monospace; } h1, h2, h3 { color: #333; } ul { margin-left: 2rem; }
-
 Family History Timeline
 =======================
 
@@ -9,6 +7,8 @@ Overview
 --------
 
 This application allows you to explore your family history through an interactive timeline view. Built with Vue.js for the frontend and Django for the backend, the app is designed to be responsive and user-friendly.
+
+View the app at [www.thetomassonis.com](www.thetomassonis.com)
 
 TODO
 ----
