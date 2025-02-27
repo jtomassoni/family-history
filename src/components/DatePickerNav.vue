@@ -2,9 +2,9 @@
   <div class="datepicker-nav">
     <!-- Default View: Oldest, Most Recent, Select a Date -->
     <div v-if="currentLevel === 'start'" class="default-buttons">
-      <button @click="selectOldest">Oldest</button>
+      <button @click="selectOldest" :disabled="isOldestDisabled">Oldest</button>
       <button @click="startSelection">Select a Date</button>
-      <button @click="selectMostRecent">Most Recent</button>
+      <button @click="selectMostRecent" :disabled="isMostRecentDisabled">Newest</button>
     </div>
 
     <!-- Selected Path (Hide Year and Month if on Confirm Screen) -->
@@ -82,6 +82,10 @@ const props = defineProps({
   events: {
     type: Array,
     default: () => []
+  },
+  currentIndex: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -103,15 +107,21 @@ const availableDays = computed(() => {
   ).map(e => e.eventDate.getUTCDate()))].sort((a, b) => a - b);
 });
 
+/** Computes whether the "Oldest" button should be disabled */
+const isOldestDisabled = computed(() => props.currentIndex === props.events.length - 1);
+
+/** Computes whether the "Most Recent" button should be disabled */
+const isMostRecentDisabled = computed(() => props.currentIndex === 0);
+
 /** Selects the oldest event */
 const selectOldest = () => {
-  if (!props.events.length) return;
+  if (isOldestDisabled.value || !props.events.length) return;
   emit('select', props.events[props.events.length - 1]);
 };
 
 /** Selects the most recent event */
 const selectMostRecent = () => {
-  if (!props.events.length) return;
+  if (isMostRecentDisabled.value || !props.events.length) return;
   emit('select', props.events[0]);
 };
 

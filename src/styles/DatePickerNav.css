@@ -20,10 +20,11 @@
 .default-buttons {
   display: flex;
   flex-direction: row; /* Ensure buttons are in a row */
-  justify-content: center;
-  align-items: center; /* Center buttons vertically */
-  gap: 1rem;
+  justify-content: space-between; /* Adds space between buttons */
+  align-items: center; /* Center vertically */
+  gap: 2rem; /* Adjusts spacing between buttons */
   width: 100%;
+  max-width: 600px; /* Prevents buttons from spreading too far apart */
 }
 
 /* Style for Default Buttons */
@@ -37,7 +38,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.1s ease;
-  width: 200px; /* Ensures all buttons are equal width */
+  width: 180px; /* Ensures all buttons have the same width */
   text-align: center;
 }
 
@@ -160,6 +161,7 @@ button:disabled {
   .default-buttons {
     flex-direction: column; /* Stack buttons on smaller screens */
     gap: 0.5rem;
+    max-width: 100%;
   }
 
   .default-buttons button {
@@ -185,7 +187,7 @@ button:disabled {
   }
 
   .default-buttons {
-    gap: 1rem;
+    gap: 2rem; /* Keeps buttons spaced on large screens */
   }
 
   .year-options,
