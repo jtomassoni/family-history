@@ -12,6 +12,11 @@
     --header-height: 38px; /* Smaller header on mobile */
   }
 }
+/* For Swiping */
+.timeline-container {
+  /* Ensure the container is large enough for swipe detection */
+  min-height: 300px;
+}
 
 /* Global Reset and Basic Styles */
 html, body {

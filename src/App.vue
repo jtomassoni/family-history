@@ -28,8 +28,8 @@
 
     <!-- Photo Navigation Area with Swipe Gestures -->
     <div class="photo-navigation-container"
-         v-touch:swipe.left="previousPhoto"
-         v-touch:swipe.right="nextPhoto">
+         v-touch:swipe.left="nextPhoto"
+         v-touch:swipe.right="previousPhoto">
       <BigNavArrow 
         direction="left" 
         label="Previous Photo" 
@@ -116,11 +116,3 @@ onMounted(() => {
   currentIndex.value = 0;
 });
 </script>
-
-<style scoped>
-/* Add any component-specific styles here */
-.timeline-container {
-  /* Ensure the container is large enough for swipe detection */
-  min-height: 300px;
-}
-</style>
