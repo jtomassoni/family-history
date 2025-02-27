@@ -28,29 +28,61 @@ body::before {
   z-index: -1;
 }
 
-/* Remove any padding-top from #app (we use absolute positioning for header & datepicker) */
+/* Ensure content starts below the fixed header */
 #app {
-  padding-top: 0;
+  padding-top: var(--header-height, 76px);
 }
 
-/* Breadcrumb-Today Container: Absolutely positioned directly below the header */
+/* Breadcrumb-Today Container:
+   Removed fixed min-height and reduced vertical padding so that content is centered without extra whitespace.
+*/
 .breadcrumb-today-container {
-  position: absolute;
-  top: var(--header-height, 76px);
-  left: 0;
   width: 100%;
   background: rgba(255, 255, 255, 0.95);
   border-bottom: 1px solid #bfa18a;
-  padding: 0.5rem 0;
+  padding: 0.1rem 0;  /* reduced padding */
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 90;
+  justify-content: center;
 }
 
-/* Boundary Message Container: Now positioned with a margin-top that pushes it below the datepicker nav */
+/* DatePickerNav container:
+   Using inline-flex so its content is centered, with dynamic width.
+*/
+.datepicker-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.5rem 0.5rem;
+  background: #f7f3ee;
+  border: 1px solid #bfa18a;
+  border-radius: 8px;
+  width: auto;
+  max-width: 90%;
+  margin: 0 auto 0.5rem auto;
+}
+
+/* Top Controls within DatePickerNav: Ensure vertical centering */
+.top-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.3rem;
+}
+.top-controls .label {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+/* Boundary Message Container: Positioned in normal flow below the breadcrumb */
 .boundary-message-container {
-  margin-top: calc(var(--header-height, 76px) + var(--datepicker-height, 80px) + 10px);
+  margin-top: 20px;
   width: 100%;
   text-align: center;
   margin-bottom: 0.5rem;
@@ -58,9 +90,9 @@ body::before {
   z-index: 50;
 }
 
-/* Photo Navigation Container: Its top margin is now based on the header and datepicker heights */
+/* Photo Navigation Container: Minimal top margin */
 .photo-navigation-container {
-  margin-top: calc(var(--header-height, 76px) + var(--datepicker-height, 80px) + 10px);
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,17 +114,27 @@ body::before {
 
 /* Media Queries for Responsiveness */
 @media (max-width: 600px) {
+  #app {
+    padding-top: var(--header-height, 60px);
+  }
+  
   .breadcrumb-today-container {
-    top: var(--header-height, 60px);
-    padding: 0.3rem 0;
+    padding: 0.1rem 0;
+  }
+  
+  .datepicker-nav {
+    width: auto;
+    max-width: 90%;
+    padding: 0.4rem 0.4rem;
   }
   
   .boundary-message-container {
-    margin-top: calc(var(--header-height, 60px) + var(--datepicker-height, 60px) + 5px);
+    margin-top: 20px;
   }
   
   .photo-navigation-container {
-    margin-top: calc(var(--header-height, 60px) + var(--datepicker-height, 60px) + 5px);
+    margin-top: 20px;
+    padding: 1rem 0;
   }
   
   .photo-display-container {
@@ -103,17 +145,27 @@ body::before {
 }
 
 @media (min-width: 1024px) {
+  #app {
+    padding-top: var(--header-height, 80px);
+  }
+  
   .breadcrumb-today-container {
-    top: var(--header-height, 80px);
-    padding: 0.5rem 0;
+    padding: 0.1rem 0;
+  }
+  
+  .datepicker-nav {
+    width: auto;
+    max-width: 90%;
+    padding: 0.5rem 0.5rem;
   }
   
   .boundary-message-container {
-    margin-top: calc(var(--header-height, 80px) + var(--datepicker-height, 80px) + 10px);
+    margin-top: 20px;
   }
   
   .photo-navigation-container {
-    margin-top: calc(var(--header-height, 80px) + var(--datepicker-height, 80px) + 10px);
+    margin-top: 20px;
+    padding: 1rem 0;
   }
   
   .photo-display-container {

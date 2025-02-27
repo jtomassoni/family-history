@@ -3,12 +3,19 @@
     <!-- Global Fixed Header -->
     <Header title="My Awesome Site" />
 
-    <!-- Group DatePicker Navigation (Now with Most Recent Button) -->
+    <!-- DatePicker Navigation Container (positioned just below the header) -->
     <div class="breadcrumb-today-container" ref="dpContainer">
-      <DatePickerNav :events="sortedPhotos" @select="handleSelectEvent" />
+      <!-- The DatePickerNav component provides the interactive date selection.
+           It receives the sorted events array and the currentIndex so that it can disable
+           "Most Recent" or "Oldest" buttons as appropriate. -->
+      <DatePickerNav 
+        :events="sortedPhotos" 
+        :currentIndex="currentIndex" 
+        @select="handleSelectEvent" 
+      />
     </div>
 
-    <!-- Boundary Messages (if any) -->
+    <!-- Optional Boundary Messages -->
     <div class="boundary-message-container">
       <BoundaryMessage 
         v-if="isAtBeginning" 
@@ -18,7 +25,7 @@
       <BoundaryMessage 
         v-if="isAtEnd" 
         class="latest-message" 
-        message="🚀 Go make some new memories and add them here! (Login & Upload Coming Soon)" 
+        message="🚀 You’re viewing the most recent event!" 
       />
     </div>
 
@@ -28,7 +35,7 @@
         direction="left" 
         label="Previous Photo" 
         @click="previousPhoto" 
-        :disabled="isLeftArrowDisabled"
+        :disabled="isLeftArrowDisabled" 
       />
       <div class="photo-display-container">
         <transition name="fade">
@@ -41,7 +48,7 @@
         direction="right" 
         label="Next Photo" 
         @click="nextPhoto" 
-        :disabled="isRightArrowDisabled"
+        :disabled="isRightArrowDisabled" 
       />
     </div>
 
@@ -51,20 +58,63 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from "vue";
+import { ref, computed, onMounted, nextTick } from 'vue';
 import "./styles/main.css";
 import { photoData } from "./data/photoData.js";
 
 import Header from "./components/Header.vue";
 import DatePickerNav from "./components/DatePickerNav.vue";
-import PhotoTile from "./components/PhotoTile.vue";
-import BigNavArrow from "./components/BigNavArrow.vue";
 import BoundaryMessage from "./components/BoundaryMessage.vue";
+import BigNavArrow from "./components/BigNavArrow.vue";
+import PhotoTile from "./components/PhotoTile.vue";
 import Footer from "./components/Footer.vue";
 
+// Assume that photoData is sorted in descending order (most recent at index 0).
+// If not, sort it here.
+const sortedPhotos = computed(() => {
+  return photoData
+    .slice()
+    .map(photo => ({
+      ...photo,
+      // Convert the eventDate string to a Date object.
+      eventDate: new Date(photo.eventDate + "T00:00:00Z"),
+      uploadedAt: new Date(photo.uploadedAt)
+    }))
+    .sort((a, b) => b.eventDate - a.eventDate);
+});
+
+// Parent-managed current index; ensure this is updated when DatePickerNav emits 'select'
+const currentIndex = ref(0);
+
+// Computed property to get the current event (if any)
+const currentPhoto = computed(() => sortedPhotos.value[currentIndex.value] || null);
+
+// Boundary messages computed based on currentIndex.
+const isAtBeginning = computed(() => currentIndex.value === sortedPhotos.value.length - 1);
+const isAtEnd = computed(() => currentIndex.value === 0);
+
+// Arrow disable conditions.
+const isLeftArrowDisabled = computed(() => isAtBeginning.value);
+const isRightArrowDisabled = computed(() => isAtEnd.value);
+
+// Navigation methods.
+const previousPhoto = async () => {
+  if (isLeftArrowDisabled.value) return;
+  // Moving from most recent (index 0) toward older events increases the index.
+  currentIndex.value = Math.min(currentIndex.value + 1, sortedPhotos.value.length - 1);
+  await nextTick();
+};
+
+const nextPhoto = async () => {
+  if (isRightArrowDisabled.value) return;
+  // Moving toward newer events decreases the index.
+  currentIndex.value = Math.max(currentIndex.value - 1, 0);
+  await nextTick();
+};
+
+// When DatePickerNav emits a select event, update currentIndex accordingly.
 const handleSelectEvent = (selectedEvent) => {
-  console.log("Selected event:", selectedEvent);
-  // Find the index of the selected event in sortedPhotos
+  console.log("Selected event from datepicker:", selectedEvent);
   const index = sortedPhotos.value.findIndex(
     (photo) => photo.eventDate.getTime() === selectedEvent.eventDate.getTime()
   );
@@ -73,48 +123,8 @@ const handleSelectEvent = (selectedEvent) => {
   }
 };
 
-// 1. Sort photos by event date (newest first)
-const sortedPhotos = computed(() => {
-  return photoData.slice().map(photo => ({
-    ...photo,
-    eventDate: new Date(photo.eventDate + "T00:00:00Z"),
-    uploadedAt: new Date(photo.uploadedAt)
-  })).sort((a, b) => {
-    if (a.eventDate.getTime() !== b.eventDate.getTime()) {
-      return b.eventDate - a.eventDate;
-    }
-    if (a.uploadedAt.getTime() !== b.uploadedAt.getTime()) {
-      return b.uploadedAt - a.uploadedAt;
-    }
-    return b.internalName.localeCompare(a.internalName);
-  });
-});
-
-// 2. Current photo state & default selection.
-const currentIndex = ref(0);
-const findNewestPhotoIndex = () => 0;
+// On mount, set currentIndex to 0 (most recent event).
 onMounted(() => {
-  currentIndex.value = findNewestPhotoIndex();
-  console.log("Loaded most recent event:", sortedPhotos.value[currentIndex.value]);
+  currentIndex.value = 0;
 });
-
-// 3. Computed properties for navigation & labels.
-const currentPhoto = computed(() => sortedPhotos.value[currentIndex.value] || null);
-const isAtBeginning = computed(() => currentIndex.value === sortedPhotos.value.length - 1);
-const isAtEnd = computed(() => currentIndex.value === 0);
-const isLeftArrowDisabled = computed(() => isAtBeginning.value);
-const isRightArrowDisabled = computed(() => isAtEnd.value);
-
-// 4. Navigation button functions.
-const previousPhoto = async () => {
-  if (isLeftArrowDisabled.value) return;
-  currentIndex.value = Math.min(currentIndex.value + 1, sortedPhotos.value.length - 1);
-  await nextTick();
-};
-
-const nextPhoto = async () => {
-  if (isRightArrowDisabled.value) return;
-  currentIndex.value = Math.max(currentIndex.value - 1, 0);
-  await nextTick();
-};
 </script>

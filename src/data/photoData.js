@@ -8,6 +8,14 @@ export const photoData = [
     url: "https://source.unsplash.com/400x250/?bbq,food"
   },
   {
+    internalName: "family_bbq_3",
+    externalName: "Family BBQ - Group Shot2",
+    description: "A great summer barbecue with everyone2.",
+    eventDate: "2025-07-02",
+    uploadedAt: "2025-07-02T13:00:00.000Z",
+    url: "https://source.unsplash.com/400x250/?bbq,food"
+  },
+  {
     internalName: "family_bbq_2",
     externalName: "Family BBQ - Grill",
     description: "Someone's grilling burgers!",

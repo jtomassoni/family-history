@@ -1,10 +1,140 @@
-/* DatePickerNav.css */
+/* main.css */
+
+/* Global Reset and Basic Styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  background: url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
+    no-repeat center center fixed;
+  background-size: cover;
+  color: black;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  z-index: -1;
+}
+
+/* Ensure content starts below the fixed header.
+   The header’s height is set via a CSS variable (e.g., --header-height) */
+#app {
+  padding-top: var(--header-height, 76px);
+}
+
+/* DatePickerNav container: Removed the white container.
+   The datepicker-nav will now be placed directly in the document flow.
+   Use inline-flex with dynamic width and centered alignment.
+*/
 .datepicker-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 1rem;
+  padding: 0.5rem 0.5rem;  /* Adjust padding as needed */
   background: #f7f3ee;
   border: 1px solid #bfa18a;
   border-radius: 8px;
-  max-width: 100%;
-  margin: 0 auto 1rem auto;
+  width: auto;
+  max-width: 90%;
+  margin: 0.5rem auto;  /* Center horizontally, with a small vertical margin */
+}
+
+/* Boundary Message Container: Positioned in normal flow below the datepicker-nav */
+.boundary-message-container {
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 50;
+}
+
+/* Photo Navigation Container: Minimal top margin */
+.photo-navigation-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  padding: 1rem 0;
+}
+
+/* Container for the photo tile */
+.photo-display-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(100vw - 300px);
+  max-height: calc(100vh - 200px);
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 600px) {
+  #app {
+    padding-top: var(--header-height, 60px);
+  }
+  
+  .datepicker-nav {
+    width: auto;
+    max-width: 90%;
+    padding: 0.4rem;
+  }
+  
+  .boundary-message-container {
+    margin-top: 20px;
+  }
+  
+  .photo-navigation-container {
+    margin-top: 20px;
+    padding: 1rem 0;
+  }
+  
+  .photo-display-container {
+    max-width: calc(100vw - 50px);
+    max-height: calc(100vh - 150px);
+    padding: 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  #app {
+    padding-top: var(--header-height, 80px);
+  }
+  
+  .datepicker-nav {
+    width: auto;
+    max-width: 90%;
+    padding: 0.5rem;
+  }
+  
+  .boundary-message-container {
+    margin-top: 20px;
+  }
+  
+  .photo-navigation-container {
+    margin-top: 20px;
+    padding: 1rem 0;
+  }
+  
+  .photo-display-container {
+    max-width: calc(100vw - 300px);
+    max-height: calc(100vh - 200px);
+    padding: 20px;
+  }
 }
