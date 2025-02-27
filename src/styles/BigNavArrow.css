@@ -1,3 +1,4 @@
+/* BigNavArrows.css */
 .big-nav-arrow {
   background: rgba(0, 0, 0, 0.5);
   color: white;
@@ -27,9 +28,17 @@
   right: 5%;
 }
 
-.big-nav-arrow:not(.disabled):hover {
+/* Replace hover with touch-friendly active states */
+.big-nav-arrow:not(.disabled):active {
   background: rgba(255, 255, 255, 0.3);
   color: #ddd;
+}
+
+/* Hide arrows on mobile and rely on swipe actions instead */
+@media (max-width: 768px) {
+  .big-nav-arrow {
+    display: none; /* Hide on smaller screens */
+  }
 }
 
 .big-nav-arrow.disabled {

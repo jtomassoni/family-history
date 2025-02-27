@@ -1,4 +1,17 @@
-/* main.css */
+/* Main.css */
+
+/* 
+  1. Define default (desktop) header height and override for mobile 
+*/
+:root {
+  --header-height: 76px; /* Desktop default */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 38px; /* Smaller header on mobile */
+  }
+}
 
 /* Global Reset and Basic Styles */
 html, body {
@@ -28,50 +41,44 @@ body::before {
   z-index: -1;
 }
 
-/* Ensure content starts below the fixed header */
-#app {
-  padding-top: var(--header-height, 76px);
-}
-
-/* Breadcrumb-Today Container:
-   Removed fixed min-height and reduced vertical padding so that content is centered without extra whitespace.
+/* 
+  2. Breadcrumb-Today Container 
+     - We add margin-top: var(--header-height) to push it below the fixed header.
 */
 .breadcrumb-today-container {
+  margin-top: var(--header-height); /* NEW: offsets from header's fixed height */
   width: 100%;
   background: rgba(255, 255, 255, 0.95);
   border-bottom: 1px solid #bfa18a;
-  padding: 0.1rem 0;  /* reduced padding */
+  padding: 0.1rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-/* DatePickerNav container:
-   Using inline-flex so its content is centered, with dynamic width.
-*/
+/* DatePickerNav */
 .datepicker-nav {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0.5rem 0.5rem;
+  padding: 0.5rem;
   background: #f7f3ee;
   border: 1px solid #bfa18a;
   border-radius: 8px;
   width: auto;
   max-width: 90%;
-  margin: 0 auto 0.5rem auto;
+  margin: 0 auto 0.2rem auto; /* Tighten bottom spacing */
 }
 
-/* Top Controls within DatePickerNav: Ensure vertical centering */
+/* Top Controls */
 .top-controls {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  margin-top: 0.3rem;
+  margin: 0.3rem 0 0.2rem; /* Reduced bottom margin */
 }
 .top-controls .label {
   display: flex;
@@ -80,17 +87,16 @@ body::before {
   line-height: 1.2;
 }
 
-/* Boundary Message Container: Positioned in normal flow below the breadcrumb */
+/* Boundary Message */
 .boundary-message-container {
-  margin-top: 20px;
+  margin: 20px auto 0.5rem;
   width: 100%;
   text-align: center;
-  margin-bottom: 0.5rem;
   position: relative;
   z-index: 50;
 }
 
-/* Photo Navigation Container: Minimal top margin */
+/* Photo Navigation */
 .photo-navigation-container {
   margin-top: 20px;
   display: flex;
@@ -100,7 +106,7 @@ body::before {
   padding: 1rem 0;
 }
 
-/* Container for the photo tile */
+/* Photo Display */
 .photo-display-container {
   display: flex;
   justify-content: center;
@@ -112,62 +118,64 @@ body::before {
   max-height: calc(100vh - 200px);
 }
 
-/* Media Queries for Responsiveness */
-@media (max-width: 600px) {
-  #app {
-    padding-top: var(--header-height, 60px);
-  }
-  
-  .breadcrumb-today-container {
-    padding: 0.1rem 0;
-  }
+/* 
+  NEW: Swipe Hint 
+  This hint overlay will appear on mobile to inform users they can swipe.
+*/
+.swipe-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 9999;
+  font-size: 1rem;
+}
+
+.show-swipe-hint {
+  opacity: 1;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  /* 
+    var(--header-height) is automatically 38px on mobile, 
+    pushing breadcrumb-today-container down by 38px
+  */
   
   .datepicker-nav {
-    width: auto;
-    max-width: 90%;
-    padding: 0.4rem 0.4rem;
+    max-width: 95%;
+    padding: 0.4rem;
   }
-  
-  .boundary-message-container {
-    margin-top: 20px;
+
+  .breadcrumb-today-container {
+    padding: 0.2rem 0;
   }
-  
+
   .photo-navigation-container {
-    margin-top: 20px;
-    padding: 1rem 0;
+    margin-top: 15px;
+    padding: 0.8rem 0;
   }
-  
+
   .photo-display-container {
     max-width: calc(100vw - 50px);
     max-height: calc(100vh - 150px);
     padding: 10px;
   }
+
+  .boundary-message-container {
+    margin: 10px auto 0;
+  }
 }
 
 @media (min-width: 1024px) {
-  #app {
-    padding-top: var(--header-height, 80px);
-  }
-  
-  .breadcrumb-today-container {
-    padding: 0.1rem 0;
-  }
-  
-  .datepicker-nav {
-    width: auto;
-    max-width: 90%;
-    padding: 0.5rem 0.5rem;
-  }
-  
-  .boundary-message-container {
-    margin-top: 20px;
-  }
-  
-  .photo-navigation-container {
-    margin-top: 20px;
-    padding: 1rem 0;
-  }
-  
   .photo-display-container {
     max-width: calc(100vw - 300px);
     max-height: calc(100vh - 200px);

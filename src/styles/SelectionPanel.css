@@ -1,9 +1,10 @@
+/* SelectionPanel.css */
 .selection-panel {
   position: fixed;
   top: 60px;
   left: 0;
   width: 100%;
-  background: rgba(50,50,50,0.95);
+  background: rgba(50, 50, 50, 0.95);
   padding: 12px 20px;
   box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
 }

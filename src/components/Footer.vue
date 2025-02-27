@@ -1,6 +1,6 @@
 <template>
   <footer class="site-footer">
-    <p>&copy; {{ currentYear }} My Awesome Site. All rights reserved.</p>
+    <p>&copy; {{ currentYear }} All rights reserved. Built with love by James and ChatGPT.</p>
   </footer>
 </template>
 

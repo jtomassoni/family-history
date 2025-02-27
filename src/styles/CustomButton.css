@@ -1,3 +1,4 @@
+/* CustomButton.css */
 .custom-button {
   background: #b32d00;
   cursor: pointer;
@@ -9,8 +10,13 @@
   transition: background 0.3s ease;
 }
 
+/* Replace hover with :active for mobile as well, but keep hover for desktop */
 .custom-button:hover {
   background: #d14014;
+}
+.custom-button:active {
+  background: #d14014;
+  transform: scale(0.98);
 }
 
 .custom-button:disabled {

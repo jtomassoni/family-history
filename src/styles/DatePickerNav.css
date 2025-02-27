@@ -1,6 +1,9 @@
 /* DatePickerNav.css */
 
-/* DatePickerNav container */
+/* -------------------------------------- */
+/* 1) Main DatePicker Navigation (Always Visible) */
+/* -------------------------------------- */
+
 .datepicker-nav {
   display: flex;
   flex-direction: column;
@@ -16,85 +19,114 @@
   margin: 0.5rem auto;
 }
 
-/* Default View Buttons: Oldest, Most Recent, Select a Date */
+/* The row with Oldest, Select a Date, Newest */
 .default-buttons {
   display: flex;
-  flex-direction: row; /* Ensure buttons are in a row */
-  justify-content: space-between; /* Adds space between buttons */
-  align-items: center; /* Center vertically */
-  gap: 2rem; /* Adjusts spacing between buttons */
+  flex-direction: row;
+  align-items: center; 
+  justify-content: space-between;
+  gap: 1rem;
   width: 100%;
-  max-width: 600px; /* Prevents buttons from spreading too far apart */
+  max-width: 600px;
+  margin: 0.5rem 0;
 }
 
-/* Style for Default Buttons */
+/* Base styles for the 3 main nav buttons */
 .default-buttons button {
-  background: #bfa18a;
-  border: 1px solid #8c6750;
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.1s ease;
-  width: 180px; /* Ensures all buttons have the same width */
-  text-align: center;
-}
-
-.default-buttons button:hover {
-  background: #a57e65;
-  transform: scale(1.05);
-}
-
-.default-buttons button:active {
-  background: #8c6750;
-  transform: scale(0.98);
-}
-
-/* Selected Path Display */
-.selected-path {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #5d3a1a;
-  text-align: center;
-  margin-bottom: 0.8rem;
-}
-
-/* Year, Month, and Day Selection Buttons */
-.year-options,
-.month-options,
-.day-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: flex; 
+  align-items: center;
   justify-content: center;
-  margin-top: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.year-options button,
-.month-options button,
-.day-options button,
-.confirm-button,
-.back-button button {
-  background: #f7f3ee;
-  border: 1px solid #bfa18a;
-  color: #5d3a1a;
+  line-height: 1;
+  background: #c77b4e;
+  border: 1px solid #a8642d;
+  color: #fff;
   font-weight: 600;
   font-size: 1rem;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.1s ease;
+  white-space: nowrap;
 }
 
+/* Hover & Active States for the Main Nav Buttons */
+.default-buttons button:hover {
+  background: #d98b60;
+  transform: scale(1.05);
+}
+.default-buttons button:active {
+  background: #b25f2e;
+  transform: scale(0.98);
+}
+
+/* Disabled State */
+.default-buttons button:disabled {
+  background: #ebccb9; 
+  color: #8c6750;  
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Two-span approach for Oldest, Select, Newest */
+.desktop-label {
+  display: inline;
+}
+.mobile-label {
+  display: none;
+}
+
+/* -------------------------------------- */
+/* 2) Advanced Date Selection UI (Year, Month, Day) */
+/* -------------------------------------- */
+
+.year-selection,
+.month-selection,
+.day-selection {
+  background: #fff;
+  border: 1px solid #bfa18a;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 1rem auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings for Year, Month, Day selection */
+.year-selection h3,
+.month-selection h3,
+.day-selection h3 {
+  color: #5d3a1a;
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+/* Year, Month, and Day Buttons */
+.year-options button,
+.month-options button,
+.day-options button,
+.confirm-button,
+.back-button button {
+  background: #c77b4e;
+  border: 1px solid #a8642d;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease;
+  margin: 0.3rem;
+}
+
+/* Hover & Active States */
 .year-options button:hover,
 .month-options button:hover,
 .day-options button:hover,
 .confirm-button:hover,
 .back-button button:hover {
-  background: #e0c8a3;
+  background: #d98b60;
   transform: scale(1.05);
 }
 
@@ -103,100 +135,85 @@
 .day-options button:active,
 .confirm-button:active,
 .back-button button:active {
-  background: #c2a178;
+  background: #b25f2e;
   transform: scale(0.98);
 }
 
-/* Active (Selected) Day Button */
+/* Disabled State */
+.year-options button:disabled,
+.month-options button:disabled,
+.day-options button:disabled,
+.confirm-button:disabled,
+.back-button button:disabled {
+  background: #ebccb9;
+  color: #8c6750;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Active Day Button Highlight */
 .day-options button.active {
-  background: #bfa18a;
-  color: white;
+  background: #b25f2e;
+  color: #fff;
   font-weight: bold;
-  border: 2px solid #8c6750;
+  border: 2px solid #a8642d;
 }
 
-/* Confirm Selection Button (Matches Other Buttons) */
+/* Confirm Day Button */
 .day-options button.confirm {
-  background: #bfa18a;
-  color: white;
-  font-weight: bold;
-  border: 2px solid #8c6750;
-  transition: all 0.3s ease-in-out;
+  background: #c77b4e;
+  border: 2px solid #a8642d;
 }
-
 .day-options button.confirm:hover {
-  background: #a57e65;
-  transform: scale(1.05);
+  background: #d98b60;
 }
-
 .day-options button.confirm:active {
-  background: #8c6750;
-  transform: scale(0.98);
+  background: #b25f2e;
 }
 
-/* Back and Confirm Buttons */
-.back-button,
-.confirm-selection {
+/* Back Button */
+.back-button {
   margin-top: 1.5rem;
   display: flex;
   justify-content: center;
 }
 
-/* Disabled Buttons */
-button:disabled {
-  background: #ddd;
-  color: #999;
-  cursor: not-allowed;
-  transform: none;
-}
+/* -------------------------------------- */
+/* 3) Mobile Media Query (max-width: 767px) */
+/* -------------------------------------- */
 
-/* Responsive Adjustments */
-@media (max-width: 600px) {
-  .datepicker-nav {
-    width: auto;
-    max-width: 90%;
-    padding: 0.4rem 0.4rem;
-  }
-
+@media (max-width: 767px) {
+  /* For the main nav row: smaller gaps & fonts so everything fits well */
   .default-buttons {
-    flex-direction: column; /* Stack buttons on smaller screens */
-    gap: 0.5rem;
-    max-width: 100%;
+    gap: 0.6rem;
+    margin: 0.4rem 0;
   }
-
   .default-buttons button {
-    width: 100%; /* Ensure full width for small screens */
+    font-size: 0.9rem;
+    padding: 0.4rem 0.7rem;
   }
 
-  .year-options,
-  .month-options,
-  .day-options {
-    margin-bottom: 1rem;
+  /* Swap desktop/mobile labels */
+  .desktop-label {
+    display: none;
+  }
+  .mobile-label {
+    display: inline;
   }
 
-  .back-button {
-    margin-top: 1rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .datepicker-nav {
-    width: auto;
+  /* Adjust selection panels for mobile */
+  .year-selection,
+  .month-selection,
+  .day-selection {
     max-width: 90%;
-    padding: 0.5rem 0.5rem;
+    padding: 0.8rem;
   }
 
-  .default-buttons {
-    gap: 2rem; /* Keeps buttons spaced on large screens */
-  }
-
-  .year-options,
-  .month-options,
-  .day-options {
-    margin-bottom: 1.5rem;
-  }
-
-  .back-button {
-    margin-top: 1rem;
+  /* Make year, month, day buttons smaller */
+  .year-options button,
+  .month-options button,
+  .day-options button {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.7rem;
   }
 }

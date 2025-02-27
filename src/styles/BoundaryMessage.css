@@ -40,3 +40,8 @@
 .latest-message {
   animation: fadeIn 0.5s ease-in-out;
 }
+
+/* 
+  You can move or reposition the boundary message on mobile by adjusting the margin 
+  or using a media query in Main.css to provide better flow.
+*/
