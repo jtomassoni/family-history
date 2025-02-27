@@ -13,7 +13,15 @@ export const photoData = [
     description: "Someone's grilling burgers!",
     eventDate: "2025-07-02",
     uploadedAt: "2025-07-02T12:00:00.000Z",
-    url: "https://images.squarespace-cdn.com/content/v1/5b2f1ddc50a54f8f4f3a89b0/1620753751944-N7FENSZ7TOO2OT0MQL9Q/spring+family+photos_0009.jpg"
+    url: "https://source.unsplash.com/400x250/?bbq,grill"
+  },
+  {
+    internalName: "family_bbq_3",
+    externalName: "Family BBQ - Games",
+    description: "Someone's gaming!",
+    eventDate: "2025-05-02",
+    uploadedAt: "2025-05-02T12:00:00.000Z",
+    url: "https://bbqgrillrecipes.com/wp-content/uploads/2024/08/bbq-party-games-2-1200x900.jpg"
   },
   {
     internalName: "kids_playing_1",

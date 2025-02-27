@@ -1,41 +1,52 @@
 /* PhotoTile.css */
-.photo-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.photo-wrapper {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+.photo-tile-container {
+  background: #f7f3ee;  /* Creamy, warm background */
+  border: 1px solid #bfa18a;  /* Subtle olive/brown border */
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);  /* Gentle, warm shadow */
   text-align: center;
-  width: 100%;
   max-width: 100%;
-  max-height: 100%;
-  overflow: auto;  /* Allows scroll if content is too tall */
+  overflow: hidden;
 }
 
 .photo-title {
-  text-align: center;
   font-size: 24px;
   font-weight: bold;
-  color: white;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 10px 20px;
+  color: #5d3a1a;  /* Rich, earthy brown */
+  margin: 0 0 10px 0;
+}
+
+.photo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between the image container and the info box */
+}
+
+.photo-image-container {
+  background: #fff;  /* Crisp white for the image container */
   border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
 }
 
 .photo-image {
-  max-width: 100%;  /* Image scales down with its container */
-  max-height: 100%; /* Limit the height */
+  max-width: 100%;
+  max-height: 400px;  /* Optional limit for very large images */
   height: auto;
   border-radius: 8px;
-  margin-bottom: 10px;
   object-fit: contain;
+}
+
+.photo-info {
+  border: 1px solid #bfa18a;  /* Matching the container border */
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;  /* Centering the text */
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
+  color: #5d3a1a;  /* Matching the title color for consistency */
 }

@@ -1,13 +1,17 @@
 <template>
-  <div class="photo-section">
+  <div class="photo-tile-container">
     <h2 class="photo-title">
       {{ photo.externalName }} ({{ formattedMonth }} {{ formattedDay }}, {{ formattedYear }})
     </h2>
-    <div class="photo-wrapper">
-      <img class="photo-image" :src="photo.url" alt="Photo" @error="onImageError" />
-      <p><strong>Description:</strong> {{ photo.description }}</p>
-      <p><strong>Event Date:</strong> {{ photo.eventDate.toISOString().split("T")[0] }}</p>
-      <p><strong>Uploaded At:</strong> {{ formattedUploadedAt }}</p>
+    <div class="photo-content">
+      <div class="photo-image-container">
+        <img class="photo-image" :src="photo.url" alt="Photo" @error="onImageError" />
+      </div>
+      <div class="photo-info">
+        <p><strong>Description:</strong> {{ photo.description }}</p>
+        <p><strong>Event Date:</strong> {{ photo.eventDate.toISOString().split("T")[0] }}</p>
+        <p><strong>Uploaded At:</strong> {{ formattedUploadedAt }}</p>
+      </div>
     </div>
   </div>
 </template>

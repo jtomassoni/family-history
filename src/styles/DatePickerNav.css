@@ -1,0 +1,10 @@
+/* DatePickerNav.css */
+.datepicker-nav {
+  text-align: center;
+  padding: 1rem;
+  background: #f7f3ee;
+  border: 1px solid #bfa18a;
+  border-radius: 8px;
+  max-width: 100%;
+  margin: 0 auto 1rem auto;
+}

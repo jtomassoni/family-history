@@ -1,5 +1,9 @@
 /* main.css */
+
+/* Global Reset and Basic Styles */
 html, body {
+  margin: 0;
+  padding: 0;
   height: 100vh;
   overflow-y: hidden;
 }
@@ -10,8 +14,6 @@ body {
     no-repeat center center fixed;
   background-size: cover;
   color: black;
-  margin: 0;
-  padding: 0;
   position: relative;
 }
 
@@ -26,30 +28,39 @@ body::before {
   z-index: -1;
 }
 
-/* Let elements stack naturally from the top */
-.content-wrapper {
-  margin-top: 0;
+/* Remove any padding-top from #app (we use absolute positioning for header & datepicker) */
+#app {
+  padding-top: 0;
 }
 
-/* Day picker styling */
-.day-nav-controls {
+/* Breadcrumb-Today Container: Absolutely positioned directly below the header */
+.breadcrumb-today-container {
+  position: absolute;
+  top: var(--header-height, 76px);
+  left: 0;
   width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid #bfa18a;
+  padding: 0.5rem 0;
   display: flex;
-  justify-content: center;
-  margin-top: 1rem;
+  flex-direction: column;
+  align-items: center;
+  z-index: 90;
 }
 
-/* Boundary Message Container (adjusted so it stacks normally) */
+/* Boundary Message Container: Now positioned with a margin-top that pushes it below the datepicker nav */
 .boundary-message-container {
+  margin-top: calc(var(--header-height, 76px) + var(--datepicker-height, 80px) + 10px);
   width: 100%;
   text-align: center;
-  margin: 0.5rem 0;  /* Minimal vertical margins */
+  margin-bottom: 0.5rem;
   position: relative;
   z-index: 50;
 }
 
-/* Photo Navigation Container – let it flow naturally */
+/* Photo Navigation Container: Its top margin is now based on the header and datepicker heights */
 .photo-navigation-container {
+  margin-top: calc(var(--header-height, 76px) + var(--datepicker-height, 80px) + 10px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,7 +68,7 @@ body::before {
   padding: 1rem 0;
 }
 
-/* Container for the photo tile with a buffer to avoid overlapping arrows */
+/* Container for the photo tile */
 .photo-display-container {
   display: flex;
   justify-content: center;
@@ -67,4 +78,47 @@ body::before {
   width: 100%;
   max-width: calc(100vw - 300px);
   max-height: calc(100vh - 200px);
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 600px) {
+  .breadcrumb-today-container {
+    top: var(--header-height, 60px);
+    padding: 0.3rem 0;
+  }
+  
+  .boundary-message-container {
+    margin-top: calc(var(--header-height, 60px) + var(--datepicker-height, 60px) + 5px);
+  }
+  
+  .photo-navigation-container {
+    margin-top: calc(var(--header-height, 60px) + var(--datepicker-height, 60px) + 5px);
+  }
+  
+  .photo-display-container {
+    max-width: calc(100vw - 50px);
+    max-height: calc(100vh - 150px);
+    padding: 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .breadcrumb-today-container {
+    top: var(--header-height, 80px);
+    padding: 0.5rem 0;
+  }
+  
+  .boundary-message-container {
+    margin-top: calc(var(--header-height, 80px) + var(--datepicker-height, 80px) + 10px);
+  }
+  
+  .photo-navigation-container {
+    margin-top: calc(var(--header-height, 80px) + var(--datepicker-height, 80px) + 10px);
+  }
+  
+  .photo-display-container {
+    max-width: calc(100vw - 300px);
+    max-height: calc(100vh - 200px);
+    padding: 20px;
+  }
 }

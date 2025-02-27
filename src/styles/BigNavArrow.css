@@ -1,4 +1,3 @@
-/* BigNavArrow.css */
 .big-nav-arrow {
   background: rgba(0, 0, 0, 0.5);
   color: white;
@@ -20,23 +19,19 @@
   z-index: 10;
 }
 
-/* Left Arrow Position */
 .big-nav-arrow.left {
   left: 5%;
 }
 
-/* Right Arrow Position */
 .big-nav-arrow.right {
   right: 5%;
 }
 
-/* Hover state for enabled buttons */
 .big-nav-arrow:not(.disabled):hover {
   background: rgba(255, 255, 255, 0.3);
   color: #ddd;
 }
 
-/* Disabled state styling */
 .big-nav-arrow.disabled {
   background: rgb(255, 102, 0);
   color: white;
