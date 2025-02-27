@@ -1,9 +1,10 @@
 <template>
   <div id="app">
-    <!-- Global Fixed Header -->
     <Header title="Tomassoni Family History" />
 
-    <!-- DatePicker Navigation Container (positioned just below the header) -->
+    <!-- Swipe Hint (Only Shows on Mobile) -->
+    <SwipeHint />
+
     <div class="breadcrumb-today-container" ref="dpContainer">
       <DatePickerNav 
         :events="sortedPhotos" 
@@ -12,7 +13,6 @@
       />
     </div>
 
-    <!-- Optional Boundary Messages -->
     <div class="boundary-message-container">
       <BoundaryMessage 
         v-if="isAtBeginning" 
@@ -26,7 +26,6 @@
       />
     </div>
 
-    <!-- Photo Navigation Area with Swipe Gestures -->
     <div class="photo-navigation-container"
          v-touch:swipe.left="nextPhoto"
          v-touch:swipe.right="previousPhoto">
@@ -51,7 +50,6 @@
       />
     </div>
 
-    <!-- Global Footer -->
     <Footer />
   </div>
 </template>
@@ -67,8 +65,8 @@ import BoundaryMessage from "./components/BoundaryMessage.vue";
 import BigNavArrow from "./components/BigNavArrow.vue";
 import PhotoTile from "./components/PhotoTile.vue";
 import Footer from "./components/Footer.vue";
+import SwipeHint from "./components/SwipeHint.vue"; // Import the SwipeHint component
 
-// Sort photos (most recent first)
 const sortedPhotos = computed(() => {
   return photoData
     .slice()
@@ -89,14 +87,12 @@ const isRightArrowDisabled = computed(() => isAtEnd.value);
 
 const previousPhoto = async () => {
   if (isLeftArrowDisabled.value) return;
-  // Moving toward older photos increases the index.
   currentIndex.value = Math.min(currentIndex.value + 1, sortedPhotos.value.length - 1);
   await nextTick();
 };
 
 const nextPhoto = async () => {
   if (isRightArrowDisabled.value) return;
-  // Moving toward newer photos decreases the index.
   currentIndex.value = Math.max(currentIndex.value - 1, 0);
   await nextTick();
 };
