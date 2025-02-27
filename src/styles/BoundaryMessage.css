@@ -1,27 +1,36 @@
 /* BoundaryMessage.css */
+
+/* -------------------------------------- */
+/* 1) Base Boundary Message Styling */
+/* -------------------------------------- */
+
 .boundary-message-container {
-  /* Removed fixed positioning so it stacks naturally */
   position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0.5rem 0;  /* Minimal vertical margins */
+  margin: 0.3rem 0;  /* Slightly reduced vertical margins */
   z-index: 50;
 }
 
 .boundary-message {
-  font-size: 20px;
+  font-size: 18px; /* Slightly smaller text for better fit */
   font-weight: bold;
   background: rgba(0, 0, 0, 0.8);
-  padding: 15px 25px;
-  border-radius: 12px;
+  padding: 12px 20px; /* Reduced padding to save space */
+  border-radius: 10px;
   text-align: center;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   color: rgba(255, 255, 255, 0.8);
+  max-width: 90%; /* Prevents message from stretching too wide */
+  word-wrap: break-word;
 }
 
-/* Simple Fade-In Effect for Boundary Messages */
+/* -------------------------------------- */
+/* 2) Fade-In Effect for Boundary Messages */
+/* -------------------------------------- */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -41,7 +50,19 @@
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* 
-  You can move or reposition the boundary message on mobile by adjusting the margin 
-  or using a media query in Main.css to provide better flow.
-*/
+/* -------------------------------------- */
+/* 3) Mobile-Specific Adjustments (Better Fit on Small Screens) */
+/* -------------------------------------- */
+
+@media (max-width: 767px) {
+  .boundary-message-container {
+    margin: 0.2rem 0; /* Further reduced margins */
+  }
+
+  .boundary-message {
+    font-size: 16px; /* Smaller font for mobile */
+    padding: 10px 15px; /* Compact padding */
+    border-radius: 8px; /* Smaller border radius */
+    max-width: 85%; /* Keeps messages contained */
+  }
+}

@@ -1,6 +1,6 @@
 <template>
   <footer class="site-footer">
-    <p>&copy; {{ currentYear }} All rights reserved. Built with love by James and ChatGPT.</p>
+    <p>Built with ❤️ by JT and AI in Denver. &copy; {{ currentYear }} All rights reserved.</p>
   </footer>
 </template>
 
