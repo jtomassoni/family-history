@@ -2,7 +2,7 @@
 
 /* DatePickerNav container */
 .datepicker-nav {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -19,11 +19,14 @@
 /* Default View Buttons: Oldest, Most Recent, Select a Date */
 .default-buttons {
   display: flex;
+  flex-direction: row; /* Ensure buttons are in a row */
   justify-content: center;
+  align-items: center; /* Center buttons vertically */
   gap: 1rem;
-  margin-bottom: 1rem;
+  width: 100%;
 }
 
+/* Style for Default Buttons */
 .default-buttons button {
   background: #bfa18a;
   border: 1px solid #8c6750;
@@ -34,6 +37,8 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.1s ease;
+  width: 200px; /* Ensures all buttons are equal width */
+  text-align: center;
 }
 
 .default-buttons button:hover {
@@ -109,7 +114,7 @@
   border: 2px solid #8c6750;
 }
 
-/* Confirm Selection Button (Now Consistent with Other Buttons) */
+/* Confirm Selection Button (Matches Other Buttons) */
 .day-options button.confirm {
   background: #bfa18a;
   color: white;
@@ -152,6 +157,15 @@ button:disabled {
     padding: 0.4rem 0.4rem;
   }
 
+  .default-buttons {
+    flex-direction: column; /* Stack buttons on smaller screens */
+    gap: 0.5rem;
+  }
+
+  .default-buttons button {
+    width: 100%; /* Ensure full width for small screens */
+  }
+
   .year-options,
   .month-options,
   .day-options {
@@ -168,6 +182,10 @@ button:disabled {
     width: auto;
     max-width: 90%;
     padding: 0.5rem 0.5rem;
+  }
+
+  .default-buttons {
+    gap: 1rem;
   }
 
   .year-options,

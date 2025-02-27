@@ -3,8 +3,8 @@
     <!-- Default View: Oldest, Most Recent, Select a Date -->
     <div v-if="currentLevel === 'start'" class="default-buttons">
       <button @click="selectOldest">Oldest</button>
-      <button @click="selectMostRecent">Most Recent</button>
       <button @click="startSelection">Select a Date</button>
+      <button @click="selectMostRecent">Most Recent</button>
     </div>
 
     <!-- Selected Path (Hide Year and Month if on Confirm Screen) -->
