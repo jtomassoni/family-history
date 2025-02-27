@@ -1,10 +1,14 @@
 <template>
   <div class="photo-section">
-    <h2>{{ photo.externalName }} ({{ formattedMonth }} {{ formattedDay }}, {{ formattedYear }})</h2>
-    <img :src="photo.url" alt="Photo" @error="onImageError" />
-    <p><strong>Description:</strong> {{ photo.description }}</p>
-    <p><strong>Event Date:</strong> {{ photo.eventDate.toISOString().split("T")[0] }}</p>
-    <p><strong>Uploaded At:</strong> {{ formattedUploadedAt }}</p>
+    <h2 class="photo-title">
+      {{ photo.externalName }} ({{ formattedMonth }} {{ formattedDay }}, {{ formattedYear }})
+    </h2>
+    <div class="photo-wrapper">
+      <img class="photo-image" :src="photo.url" alt="Photo" @error="onImageError" />
+      <p><strong>Description:</strong> {{ photo.description }}</p>
+      <p><strong>Event Date:</strong> {{ photo.eventDate.toISOString().split("T")[0] }}</p>
+      <p><strong>Uploaded At:</strong> {{ formattedUploadedAt }}</p>
+    </div>
   </div>
 </template>
 
@@ -16,7 +20,6 @@ const props = defineProps({
   photo: { type: Object, required: true }
 });
 
-// Extract year, month, and day dynamically from `eventDate`
 const formattedYear = computed(() => props.photo.eventDate.getUTCFullYear().toString());
 const formattedMonth = computed(() =>
   props.photo.eventDate.toLocaleString("default", { month: "long", timeZone: "UTC" })

@@ -1,20 +1,20 @@
-/* Persistent Breadcrumb Navigation */
-.persistent-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* NavBar.css */
+.navbar {
+  background: transparent; /* No blue background */
+  padding: 10px;
+  text-align: center;
   width: 100%;
-  background: rgba(50, 50, 50, 0.9);
-  padding: 12px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  z-index: 200;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  /* Use the header height dynamically plus a little extra spacing */
+  margin-top: calc(var(--header-height) + 10px);
 }
 
-.breadcrumb-separator {
-  color: #fff;
-  font-weight: bold;
+.breadcrumb {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.breadcrumb-item {
+  font-size: 1rem;
+  color: #333;
 }

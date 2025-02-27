@@ -1,10 +1,13 @@
+/* BoundaryMessage.css */
 .boundary-message-container {
-  position: fixed;
-  bottom: 10%;
+  /* Removed fixed positioning so it stacks naturally */
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0.5rem 0;  /* Minimal vertical margins */
+  z-index: 50;
 }
 
 .boundary-message {

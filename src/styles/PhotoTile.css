@@ -1,27 +1,25 @@
-.photo-display {
+/* PhotoTile.css */
+.photo-section {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Ensures vertical centering */
+  justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
-  position: relative;
-  max-width: 75%;      /* Limit the width so it doesn't cover the left arrow */
-  margin: 0 auto;      /* Center it horizontally */
-  pointer-events: none; /* Allow clicks to pass through to elements underneath */
-}
-
-/* Adds a distinct tile background and border */
-.photo-wrapper {
-  background: rgba(255, 255, 255, 0.1); /* Subtle background */
-  border: 2px solid rgba(255, 255, 255, 0.3); /* Adds soft border */
-  border-radius: 12px; /* Smooth rounded corners */
   padding: 20px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4); /* Adds depth */
-  text-align: center;
-  max-width: 80%;
 }
 
-/* Ensures title is properly positioned */
+.photo-wrapper {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;  /* Allows scroll if content is too tall */
+}
+
 .photo-title {
   text-align: center;
   font-size: 24px;
@@ -33,9 +31,11 @@
   margin-bottom: 10px;
 }
 
-/* Ensures image fits within the tile */
 .photo-image {
-  max-width: 100%;
+  max-width: 100%;  /* Image scales down with its container */
+  max-height: 100%; /* Limit the height */
   height: auto;
   border-radius: 8px;
+  margin-bottom: 10px;
+  object-fit: contain;
 }

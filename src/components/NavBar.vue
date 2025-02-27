@@ -1,37 +1,22 @@
 <template>
-  <nav class="persistent-nav">
-    <CustomButton @click="onYearClick">
-      {{ openYear ? openYear : validYears }}
-    </CustomButton>
-    <template v-if="openYear">
-      <span class="breadcrumb-separator">&gt;</span>
-      <CustomButton @click="onMonthClick">
-        {{ openMonth ? openMonth : 'All Months' }}
-      </CustomButton>
-    </template>
-    <template v-if="openMonth">
-      <span class="breadcrumb-separator">&gt;</span>
-      <CustomButton @click="onDayClick">
-        {{ selectedDay ? selectedDay : 'All Days' }}
-      </CustomButton>
-    </template>
+  <nav class="navbar">
+    <!-- Datepicker Breadcrumb Content -->
+    <div class="breadcrumb">
+      <span class="breadcrumb-item">{{ openMonth }} {{ openYear }}</span>
+      <span class="breadcrumb-item">{{ selectedDay }}</span>
+      <span class="breadcrumb-item">({{ validYears }})</span>
+    </div>
   </nav>
 </template>
 
 <script setup>
-import CustomButton from "./CustomButton.vue";
-import { defineProps, defineEmits } from "vue";
-import "../styles//NavBar.css";
+import { defineProps } from "vue";
+import "../styles/NavBar.css";
 
 const props = defineProps({
-  openYear: String,
-  openMonth: String,
-  selectedDay: String,
+  openYear: { type: String, default: "" },
+  openMonth: { type: String, default: "" },
+  selectedDay: { type: String, default: "" },
   validYears: { type: String, default: "" }
 });
-const emit = defineEmits(["yearClick", "monthClick", "dayClick"]);
-
-const onYearClick = () => emit("yearClick");
-const onMonthClick = () => emit("monthClick");
-const onDayClick = () => emit("dayClick");
 </script>

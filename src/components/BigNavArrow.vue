@@ -10,8 +10,8 @@
 </template>
 
 <script setup>
-import "../styles/BigNavArrow.css";
 import { defineProps, defineEmits, onMounted, onUnmounted } from "vue";
+import "../styles/BigNavArrow.css";
 
 const props = defineProps({
   direction: { type: String, required: true }, // 'left' or 'right'
@@ -30,22 +30,17 @@ const handleClick = () => {
   }
 };
 
-// Keydown event handler
+// Keydown event handler (optional)
 const handleKeydown = (event) => {
-  console.log(`Key pressed: ${event.key}, Arrow direction: ${props.direction}`);
-
   if (event.key === "ArrowLeft" && props.direction === "left") {
-    console.log("Left arrow key pressed, triggering click");
     handleClick();
   }
   if (event.key === "ArrowRight" && props.direction === "right") {
-    console.log("Right arrow key pressed, triggering click");
     handleClick();
   }
 };
 
 onMounted(() => {
-  console.log(`Mounted arrow component with direction: ${props.direction}`);
   window.addEventListener("keydown", handleKeydown);
 });
 
