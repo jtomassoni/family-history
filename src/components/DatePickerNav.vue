@@ -8,7 +8,7 @@
         :disabled="isOldestDisabled"
       >
         <span class="desktop-label">Oldest</span>
-        <span class="mobile-label">Old</span>
+        <span class="mobile-label"><</span>
       </button>
 
       <button
@@ -16,7 +16,7 @@
         @click="startSelection"
       >
         <span class="desktop-label">Select a Date</span>
-        <span class="mobile-label">Date</span>
+        <span class="mobile-label">📅</span>
       </button>
 
       <button
@@ -25,7 +25,7 @@
         :disabled="isMostRecentDisabled"
       >
         <span class="desktop-label">Newest</span>
-        <span class="mobile-label">New</span>
+        <span class="mobile-label">></span>
       </button>
     </div>
 
