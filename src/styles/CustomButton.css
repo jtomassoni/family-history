@@ -1,7 +1,5 @@
 .custom-button {
   background: #b32d00;
-  border: none;
-  padding: 5px 10px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
@@ -13,4 +11,9 @@
 
 .custom-button:hover {
   background: #d14014;
+}
+
+.custom-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }

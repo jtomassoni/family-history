@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- Global Fixed Header -->
-    <Header title="My Awesome Site" />
+    <Header title="Tomassoni Family History" />
 
     <!-- DatePicker Navigation Container (positioned just below the header) -->
     <div class="breadcrumb-today-container" ref="dpContainer">
@@ -115,11 +115,18 @@ const nextPhoto = async () => {
 // When DatePickerNav emits a select event, update currentIndex accordingly.
 const handleSelectEvent = (selectedEvent) => {
   console.log("Selected event from datepicker:", selectedEvent);
+
   const index = sortedPhotos.value.findIndex(
-    (photo) => photo.eventDate.getTime() === selectedEvent.eventDate.getTime()
+    (photo) => 
+      new Date(photo.eventDate).toISOString().split("T")[0] === 
+      new Date(selectedEvent.eventDate).toISOString().split("T")[0]
   );
+
   if (index >= 0) {
+    console.log("Updating currentIndex to:", index);
     currentIndex.value = index;
+  } else {
+    console.warn("Selected event not found in sortedPhotos.");
   }
 };
 

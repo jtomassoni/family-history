@@ -16,7 +16,9 @@ const props = defineProps({
 const header = ref(null);
 
 onMounted(() => {
-  const headerHeight = header.value.offsetHeight;
+  // const headerHeight = header.value.offsetHeight;
+  const headerHeight = 38;
+
   document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
 });
 </script>

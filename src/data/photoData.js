@@ -27,7 +27,7 @@ export const photoData = [
     internalName: "family_bbq_3",
     externalName: "Family BBQ - Games",
     description: "Someone's gaming!",
-    eventDate: "2025-05-02",
+    eventDate: "2025-05-09",
     uploadedAt: "2025-05-02T12:00:00.000Z",
     url: "https://bbqgrillrecipes.com/wp-content/uploads/2024/08/bbq-party-games-2-1200x900.jpg"
   },

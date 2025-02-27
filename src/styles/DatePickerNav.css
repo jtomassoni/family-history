@@ -1,140 +1,182 @@
-/* main.css */
+/* DatePickerNav.css */
 
-/* Global Reset and Basic Styles */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  overflow-y: hidden;
-}
-
-body {
-  font-family: "Arial", sans-serif;
-  background: url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
-    no-repeat center center fixed;
-  background-size: cover;
-  color: black;
-  position: relative;
-}
-
-body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.5);
-  z-index: -1;
-}
-
-/* Ensure content starts below the fixed header.
-   The header’s height is set via a CSS variable (e.g., --header-height) */
-#app {
-  padding-top: var(--header-height, 76px);
-}
-
-/* DatePickerNav container: Removed the white container.
-   The datepicker-nav will now be placed directly in the document flow.
-   Use inline-flex with dynamic width and centered alignment.
-*/
+/* DatePickerNav container */
 .datepicker-nav {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0.5rem 0.5rem;  /* Adjust padding as needed */
+  padding: 1rem;
   background: #f7f3ee;
   border: 1px solid #bfa18a;
   border-radius: 8px;
   width: auto;
   max-width: 90%;
-  margin: 0.5rem auto;  /* Center horizontally, with a small vertical margin */
+  margin: 0.5rem auto;
 }
 
-/* Boundary Message Container: Positioned in normal flow below the datepicker-nav */
-.boundary-message-container {
-  margin-top: 20px;
-  width: 100%;
+/* Default View Buttons: Oldest, Most Recent, Select a Date */
+.default-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.default-buttons button {
+  background: #bfa18a;
+  border: 1px solid #8c6750;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.default-buttons button:hover {
+  background: #a57e65;
+  transform: scale(1.05);
+}
+
+.default-buttons button:active {
+  background: #8c6750;
+  transform: scale(0.98);
+}
+
+/* Selected Path Display */
+.selected-path {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #5d3a1a;
   text-align: center;
-  margin-bottom: 0.5rem;
-  position: relative;
-  z-index: 50;
+  margin-bottom: 0.8rem;
 }
 
-/* Photo Navigation Container: Minimal top margin */
-.photo-navigation-container {
-  margin-top: 20px;
+/* Year, Month, and Day Selection Buttons */
+.year-options,
+.month-options,
+.day-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.year-options button,
+.month-options button,
+.day-options button,
+.confirm-button,
+.back-button button {
+  background: #f7f3ee;
+  border: 1px solid #bfa18a;
+  color: #5d3a1a;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.year-options button:hover,
+.month-options button:hover,
+.day-options button:hover,
+.confirm-button:hover,
+.back-button button:hover {
+  background: #e0c8a3;
+  transform: scale(1.05);
+}
+
+.year-options button:active,
+.month-options button:active,
+.day-options button:active,
+.confirm-button:active,
+.back-button button:active {
+  background: #c2a178;
+  transform: scale(0.98);
+}
+
+/* Active (Selected) Day Button */
+.day-options button.active {
+  background: #bfa18a;
+  color: white;
+  font-weight: bold;
+  border: 2px solid #8c6750;
+}
+
+/* Confirm Selection Button (Now Consistent with Other Buttons) */
+.day-options button.confirm {
+  background: #bfa18a;
+  color: white;
+  font-weight: bold;
+  border: 2px solid #8c6750;
+  transition: all 0.3s ease-in-out;
+}
+
+.day-options button.confirm:hover {
+  background: #a57e65;
+  transform: scale(1.05);
+}
+
+.day-options button.confirm:active {
+  background: #8c6750;
+  transform: scale(0.98);
+}
+
+/* Back and Confirm Buttons */
+.back-button,
+.confirm-selection {
+  margin-top: 1.5rem;
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  padding: 1rem 0;
 }
 
-/* Container for the photo tile */
-.photo-display-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: calc(100vw - 300px);
-  max-height: calc(100vh - 200px);
+/* Disabled Buttons */
+button:disabled {
+  background: #ddd;
+  color: #999;
+  cursor: not-allowed;
+  transform: none;
 }
 
-/* Media Queries for Responsiveness */
+/* Responsive Adjustments */
 @media (max-width: 600px) {
-  #app {
-    padding-top: var(--header-height, 60px);
-  }
-  
   .datepicker-nav {
     width: auto;
     max-width: 90%;
-    padding: 0.4rem;
+    padding: 0.4rem 0.4rem;
   }
-  
-  .boundary-message-container {
-    margin-top: 20px;
+
+  .year-options,
+  .month-options,
+  .day-options {
+    margin-bottom: 1rem;
   }
-  
-  .photo-navigation-container {
-    margin-top: 20px;
-    padding: 1rem 0;
-  }
-  
-  .photo-display-container {
-    max-width: calc(100vw - 50px);
-    max-height: calc(100vh - 150px);
-    padding: 10px;
+
+  .back-button {
+    margin-top: 1rem;
   }
 }
 
 @media (min-width: 1024px) {
-  #app {
-    padding-top: var(--header-height, 80px);
-  }
-  
   .datepicker-nav {
     width: auto;
     max-width: 90%;
-    padding: 0.5rem;
+    padding: 0.5rem 0.5rem;
   }
-  
-  .boundary-message-container {
-    margin-top: 20px;
+
+  .year-options,
+  .month-options,
+  .day-options {
+    margin-bottom: 1.5rem;
   }
-  
-  .photo-navigation-container {
-    margin-top: 20px;
-    padding: 1rem 0;
-  }
-  
-  .photo-display-container {
-    max-width: calc(100vw - 300px);
-    max-height: calc(100vh - 200px);
-    padding: 20px;
+
+  .back-button {
+    margin-top: 1rem;
   }
 }

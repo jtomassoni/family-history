@@ -1,208 +1,182 @@
 <template>
   <div class="datepicker-nav">
-    <!-- Top Controls: Oldest, Most Recent, and Select a Year -->
-    <div v-if="currentLevel === 'start'" class="top-controls">
-      <div class="label">Date Navigation:</div>
-      <CustomButton @click="selectOldest" :disabled="!hasEvents || isOldest">
-        Oldest
-      </CustomButton>
-      <CustomButton @click="selectMostRecent" :disabled="!hasEvents || isMostRecent">
-        Most Recent
-      </CustomButton>
-      <CustomButton @click="startSelection">
-        Select a Year
-      </CustomButton>
+    <!-- Default View: Oldest, Most Recent, Select a Date -->
+    <div v-if="currentLevel === 'start'" class="default-buttons">
+      <button @click="selectOldest">Oldest</button>
+      <button @click="selectMostRecent">Most Recent</button>
+      <button @click="startSelection">Select a Date</button>
     </div>
 
-    <!-- Persistent Breadcrumb Display -->
-    <div v-if="currentLevel !== 'start'" class="breadcrumb-display">
-      <span v-if="selectedYear">Year: {{ selectedYear }}</span>
-      <span v-if="selectedMonth"> | Month: {{ monthName(selectedMonth) }}</span>
-      <span v-if="selectedDay"> | Day: {{ selectedDay }}</span>
+    <!-- Selected Path (Hide Year and Month if on Confirm Screen) -->
+    <div class="selected-path" v-if="selectedYear && !confirmingSelection">
+      <span v-if="selectedYear && currentLevel !== 'year'">Year: {{ selectedYear }}</span>
+      <span v-if="selectedMonth && currentLevel !== 'month'"> | Month: {{ monthName(selectedMonth) }}</span>
     </div>
 
     <!-- Year Selection -->
-    <div v-if="currentLevel === 'year'" class="level-container">
+    <div v-if="currentLevel === 'year'" class="year-selection">
       <h3>Select a Year</h3>
-      <div class="options">
-        <CustomButton
-          v-for="year in availableYears"
-          :key="year"
+      <div class="year-options">
+        <button 
+          v-for="year in availableYears" 
+          :key="year" 
           @click="selectYear(year)"
         >
           {{ year }}
-        </CustomButton>
+        </button>
       </div>
-      <CustomButton class="back" @click="resetSelection">
-        Cancel
-      </CustomButton>
+      <div class="back-button">
+        <button @click="resetSelection">Back</button>
+      </div>
     </div>
-    
+
     <!-- Month Selection -->
-    <div v-else-if="currentLevel === 'month'" class="level-container">
+    <div v-if="currentLevel === 'month'" class="month-selection">
       <h3>Select a Month</h3>
-      <div class="options">
-        <CustomButton
-          v-for="month in availableMonths"
-          :key="month"
+      <div class="month-options">
+        <button 
+          v-for="month in availableMonths" 
+          :key="month" 
           @click="selectMonth(month)"
         >
           {{ monthName(month) }}
-        </CustomButton>
+        </button>
       </div>
-      <CustomButton class="back" @click="resetToStart">
-        Back
-      </CustomButton>
+      <div class="back-button">
+        <button @click="resetToYear">Back</button>
+      </div>
     </div>
-    
-    <!-- Day Selection -->
-    <div v-else-if="currentLevel === 'day'" class="level-container">
+
+    <!-- Day Selection & Confirm Transition -->
+    <div v-if="currentLevel === 'day'" class="day-selection">
       <h3>Select a Day</h3>
-      <div class="options">
-        <CustomButton
-          v-for="day in availableDays"
+      <div class="day-options">
+        <button 
+          v-for="day in availableDays" 
           :key="day"
-          @click="selectDay(day)"
-          :class="{ active: day === selectedDay }"
+          @click="selectedDay === day ? confirmSelection() : selectDay(day)"
+          :class="{ active: selectedDay === day, confirm: selectedDay === day }"
         >
-          {{ day }}
-        </CustomButton>
+          {{ selectedDay === day ? `Confirm Selection? ${monthName(selectedMonth)} ${day}, ${selectedYear}` : day }}
+        </button>
       </div>
-      <CustomButton class="back" @click="resetToYear">
-        Back
-      </CustomButton>
+      <div class="back-button">
+        <button @click="resetToMonth">Back</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import CustomButton from './CustomButton.vue';
 import "../styles/DatePickerNav.css";
 
-// Props: parent's events array and currentIndex.
+const emit = defineEmits(['select']);
+
+const selectedYear = ref(null);
+const selectedMonth = ref(null);
+const selectedDay = ref(null);
+const currentLevel = ref('start');
+
 const props = defineProps({
   events: {
     type: Array,
     default: () => []
-  },
-  currentIndex: {
-    type: Number,
-    default: 0
   }
 });
-const emit = defineEmits(['select']);
 
-// Drill-down state: "start" (default), "year", "month", "day".
-const currentLevel = ref('start');
-const selectedYear = ref(null);
-const selectedMonth = ref(null);
-const selectedDay = ref(null);
+/** Computes available years based on events */
+const availableYears = computed(() => [...new Set(props.events.map(e => e.eventDate.getUTCFullYear()))].sort((a, b) => a - b));
 
-// Check if events exist.
-const hasEvents = computed(() => props.events.length > 0);
-
-// Use UTC methods for correct date display.
-const availableYears = computed(() => {
-  const years = props.events.map(e => e.eventDate.getUTCFullYear());
-  return [...new Set(years)].sort((a, b) => a - b);
-});
-
+/** Computes available months based on the selected year */
 const availableMonths = computed(() => {
   if (!selectedYear.value) return [];
-  const filtered = props.events.filter(e => e.eventDate.getUTCFullYear() === selectedYear.value);
-  const months = filtered.map(e => e.eventDate.getUTCMonth() + 1);
-  return [...new Set(months)].sort((a, b) => a - b);
+  return [...new Set(props.events.filter(e => e.eventDate.getUTCFullYear() === selectedYear.value).map(e => e.eventDate.getUTCMonth() + 1))].sort((a, b) => a - b);
 });
 
+/** Computes available days based on the selected year and month */
 const availableDays = computed(() => {
   if (!selectedYear.value || !selectedMonth.value) return [];
-  const filtered = props.events.filter(e =>
-    e.eventDate.getUTCFullYear() === selectedYear.value &&
-    (e.eventDate.getUTCMonth() + 1) === selectedMonth.value
-  );
-  const days = filtered.map(e => e.eventDate.getUTCDate());
-  return [...new Set(days)].sort((a, b) => a - b);
+  return [...new Set(props.events.filter(e => 
+    e.eventDate.getUTCFullYear() === selectedYear.value && 
+    e.eventDate.getUTCMonth() + 1 === selectedMonth.value
+  ).map(e => e.eventDate.getUTCDate()))].sort((a, b) => a - b);
 });
 
-// Computed properties for disabling top control buttons.
-const isMostRecent = computed(() => props.currentIndex === 0);
-const isOldest = computed(() => props.currentIndex === props.events.length - 1);
-
-// Top Controls methods.
-const selectMostRecent = () => {
-  if (!hasEvents.value) return;
-  console.log("selectMostRecent clicked");
-  console.log("Selecting event at index 0:", props.events[0]);
-  emit('select', props.events[0]);
-  resetSelection();
-};
-
+/** Selects the oldest event */
 const selectOldest = () => {
-  if (!hasEvents.value) return;
-  console.log("selectOldest clicked");
-  console.log("Selecting event at last index:", props.events[props.events.length - 1]);
+  if (!props.events.length) return;
   emit('select', props.events[props.events.length - 1]);
-  resetSelection();
 };
 
+/** Selects the most recent event */
+const selectMostRecent = () => {
+  if (!props.events.length) return;
+  emit('select', props.events[0]);
+};
+
+/** Starts the date selection flow */
 const startSelection = () => {
   currentLevel.value = 'year';
 };
 
-// Drill-down selection methods.
+/** Handles selecting a year */
 const selectYear = (year) => {
   selectedYear.value = year;
+  selectedMonth.value = null; // Reset Month
+  selectedDay.value = null; // Reset Day
   currentLevel.value = 'month';
 };
 
+/** Handles selecting a month */
 const selectMonth = (month) => {
   selectedMonth.value = month;
+  selectedDay.value = null; // Reset Day
   currentLevel.value = 'day';
 };
 
+/** Handles selecting a day */
 const selectDay = (day) => {
   selectedDay.value = day;
-  const event = props.events.find(e =>
+};
+
+/** Emits the final confirmed date */
+const confirmSelection = () => {
+  if (!selectedYear.value || !selectedMonth.value || !selectedDay.value) return;
+
+  const event = props.events.find(e => 
     e.eventDate.getUTCFullYear() === selectedYear.value &&
-    (e.eventDate.getUTCMonth() + 1) === selectedMonth.value &&
-    e.eventDate.getUTCDate() === day
+    e.eventDate.getUTCMonth() + 1 === selectedMonth.value &&
+    e.eventDate.getUTCDate() === selectedDay.value
   );
+
   if (event) {
     emit('select', event);
-  } else {
-    console.log("No matching event found for:", selectedYear.value, selectedMonth.value, day);
+    resetSelection();
   }
-  resetSelection();
 };
 
-// Reset functions.
-const resetToStart = () => {
-  currentLevel.value = 'start';
-  selectedYear.value = null;
-  selectedMonth.value = null;
-  selectedDay.value = null;
-};
-
-const resetToYear = () => {
-  currentLevel.value = 'year';
-  selectedMonth.value = null;
-  selectedDay.value = null;
-};
-
+/** Resets the selection process */
 const resetSelection = () => {
-  currentLevel.value = 'start';
   selectedYear.value = null;
   selectedMonth.value = null;
   selectedDay.value = null;
+  currentLevel.value = 'start';
 };
 
-// Helper: Return full month name using UTC.
-const monthName = (monthNumber) => {
-  const date = new Date();
-  date.setUTCMonth(monthNumber - 1);
-  return date.toLocaleString('default', { month: 'long' });
+/** Resets to Year Selection */
+const resetToYear = () => {
+  selectedMonth.value = null;
+  selectedDay.value = null;
+  currentLevel.value = 'year';
 };
+
+/** Resets to Month Selection */
+const resetToMonth = () => {
+  selectedDay.value = null;
+  currentLevel.value = 'month';
+};
+
+/** Converts month number to full month name */
+const monthName = (monthNumber) => new Date(0, monthNumber - 1).toLocaleString('default', { month: 'long' });
 </script>
-
-<style scoped src="../styles/DatePickerNav.css"></style>
