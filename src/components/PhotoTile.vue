@@ -7,7 +7,7 @@
       <div class="photo-info" ref="photoInfo">
         <h3 class="photo-title">{{ photo.externalName }}</h3>
         <p>{{ photo.description }}</p>
-        <p v-if="photo.date"><strong>Date:</strong> {{ formatDate(photo.date) }}</p>
+        <p v-if="photo.eventDate"><strong>Event Date:</strong> {{ formatDate(photo.eventDate) }}</p>
         <p v-if="photo.uploadedAt"><strong>Uploaded:</strong> {{ formatDate(photo.uploadedAt) }}</p>
       </div>
     </div>
@@ -46,18 +46,27 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 };
 
-// Dynamically adjust image height to fit between navbar & footer
+// Dynamically adjust image height to prevent cropping
 const adjustImageHeight = () => {
   nextTick(() => {
     if (photoTile.value && photoInfo.value) {
       const viewportHeight = window.innerHeight;
-      const footerHeight = 70; // Adjust based on your footer height
-      const navHeight = 100; // Adjust based on navbar height
-      const textHeight = photoInfo.value.offsetHeight + 20; // Account for text blurb
-      const availableHeight = viewportHeight - footerHeight - navHeight;
+      const footer = document.querySelector("footer");
+      const footerHeight = footer ? footer.offsetHeight : 80;
+      const navHeight = 100;
+      const textHeight = photoInfo.value.offsetHeight + 40; // Extra padding for spacing
+      const availableHeight = viewportHeight - footerHeight - navHeight - 100; // More space
 
       let newImageHeight = availableHeight - textHeight;
-      dynamicImageHeight.value = `${Math.max(25, newImageHeight)}vh`; // Ensures image doesn't get too small
+
+      // Adjust max height for desktop & mobile
+      if (window.innerWidth > 1024) {
+        newImageHeight = Math.min(newImageHeight, 50);
+      } else {
+        newImageHeight = Math.min(newImageHeight, 35);
+      }
+
+      dynamicImageHeight.value = `${Math.max(25, newImageHeight)}vh`;
     }
   });
 };

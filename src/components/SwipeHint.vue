@@ -8,7 +8,7 @@
           <span class="calendar-icon">📅</span> date picker
         </span>
         at the top!<br><br>
-        <strong>Tap an image to enlarge it!</strong>
+        <strong>Tap an image to enlarge it/shrink it!</strong>
       </p>
       <div class="arrow-container">
         <span class="arrow arrow-left">⟵</span>
