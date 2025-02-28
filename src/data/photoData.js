@@ -5,7 +5,7 @@ export const photoData = [
     description: "Mark, Guy, Paul, Carol, Granny, Poppop, Donna .",
     eventDate: "2004-07-02",
     uploadedAt: "2025-07-02T12:00:00.000Z",
-    url: "https://github.com/jtomassoni/family-history/blob/main/public/photos/IMG_0584.jpeg?raw=true"
+    url: "/photos/IMG_0584.jpeg"
   },
   {
     internalName: "john_marian_wedding",
