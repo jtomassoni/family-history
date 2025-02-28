@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Ensures it does not expand too much */
+  justify-content: flex-start; /* Prevents unnecessary stretching */
   background: #f7f3ee;
   border: 1px solid #bfa18a;
   border-radius: 12px;
@@ -20,9 +20,7 @@
   overflow: hidden;
   margin: 1rem auto;
   position: relative;
-  height: auto; /* No fixed height */
   max-height: calc(100vh - 120px); /* Ensures tile never touches footer */
-  padding-bottom: 30px; /* Adds minimal space to avoid overlap */
 }
 
 /* Title Text */
@@ -39,7 +37,7 @@
   flex-direction: column;
   gap: 0.5rem; /* Reduced space between image & text */
   align-items: center;
-  flex-grow: 1; /* Allows tile to resize properly */
+  flex-grow: 1;
   overflow: hidden;
 }
 
@@ -55,13 +53,13 @@
   width: 100%;
   max-width: 95%;
   height: auto;
-  max-height: 50vh; /* Reduces excessive height */
+  max-height: 55vh; /* Ensures image does not take excessive height */
 }
 
 /* Image */
 .photo-image {
   max-width: 100%;
-  height: auto;
+  max-height: 100%;
   object-fit: contain;
   border-radius: 8px;
   display: block;
@@ -91,13 +89,15 @@
     max-width: 90%;
     max-height: calc(100vh - 100px); /* Ensures padding above footer */
     padding: 0.5rem;
-    padding-bottom: 10px; /* Keeps spacing minimal */
-    padding-top: 0px; /* Keeps spacing minimal */
+    padding-bottom: 10px;
+  }
 
+  .photo-image-container {
+    max-height: 45vh; /* Ensures image is not too large */
   }
 
   .photo-image {
-    max-height: 35vh; /* Ensures better fit */
+    max-height: 100%;
     display: block;
     margin: 0 auto;
   }
@@ -105,6 +105,6 @@
   .photo-info {
     font-size: 0.9rem;
     padding: 0.3rem;
-    margin-top: 0.1rem; /* Ensures no extra space */
+    margin-top: 0.1rem;
   }
 }

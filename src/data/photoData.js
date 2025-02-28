@@ -1,82 +1,98 @@
 export const photoData = [
   {
-    internalName: "family_bbq_1",
-    externalName: "Family BBQ - Group Shot",
-    description: "A great summer barbecue with everyone.",
-    eventDate: "2025-07-02",
+    internalName: "group_photo_1",
+    externalName: "Family Shot",
+    description: "Mark, Guy, Paul, Carol, Granny, Poppop, Donna .",
+    eventDate: "2004-07-02",
     uploadedAt: "2025-07-02T12:00:00.000Z",
-    url: "https://images.stockcake.com/public/3/d/0/3d0bb381-d249-4d77-bf3a-559c0a96f224/family-barbecue-time-stockcake.jpg"
+    url: "src/data/photos/IMG_0584.jpeg"
   },
   {
-    internalName: "family_bbq_3",
-    externalName: "Family BBQ - Group Shot2",
-    description: "A great summer barbecue with everyone2.",
-    eventDate: "2025-07-02",
+    internalName: "john_marian_wedding",
+    externalName: "John and Marian Wedding",
+    description: "A great time with everyone.",
+    eventDate: "1950-04-22",
     uploadedAt: "2025-07-02T13:00:00.000Z",
-    url: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Korean_Family_BBQ_Picnic_%2821535627010%29.jpg"
+    url: "src/data/photos/IMG_0583.jpeg"
   },
   {
-    internalName: "family_bbq_2",
-    externalName: "Family BBQ - Grill",
-    description: "Someone's grilling burgers!",
-    eventDate: "2025-07-02",
+    internalName: "john_marian_portrait",
+    externalName: "John and Marian",
+    description: "",
+    eventDate: "1994-07-02",
     uploadedAt: "2025-07-02T12:00:00.000Z",
-    url: "https://images.stockcake.com/public/9/5/1/95102c8b-fc1f-41a7-b832-4fea7b5ca554/family-barbecue-time-stockcake.jpg"
+    url: "src/data/photos/IMG_0582.jpeg"
   },
   {
-    internalName: "family_bbq_3",
-    externalName: "Family BBQ - Games",
-    description: "Someone's gaming!",
-    eventDate: "2025-05-09",
+    internalName: "nona_outside",
+    externalName: "Nona",
+    description: "Sperendia Sabbatina!",
+    eventDate: "1920-05-09",
     uploadedAt: "2025-05-02T12:00:00.000Z",
-    url: "https://live.staticflickr.com/3218/2543077756_3a8b1b3da2_b.jpg"
+    url: "src/data/photos/IMG_0581.jpeg"
   },
   {
-    internalName: "kids_playing_1",
-    externalName: "Kids Playing in the Park",
-    description: "Running around having fun!",
-    eventDate: "2024-07-01",
+    internalName: "chet_headshot",
+    externalName: "To my best pal, Johnny",
+    description: "",
+    eventDate: "1944-08-25",
     uploadedAt: "2024-07-01T10:00:00.000Z",
-    url: "https://images.stockcake.com/public/8/0/a/80ad8242-5f5f-4530-bbde-9a9cba9f29d0/joyful-kids-jumping-stockcake.jpg"
+    url: "src/data/photos/IMG_0580.jpeg"
   },
   {
-    internalName: "mom_birthday",
-    externalName: "Frances' Birthday",
-    description: "This is gonna go poorly and old",
-    eventDate: "1950-02-09",
+    internalName: "tomassoni_guidos_family",
+    externalName: "Family Portrait",
+    description: "Johnny, Guido, Chet, Josephine, Rita",
+    eventDate: "1940-01-01",
     uploadedAt: "2023-11-16T00:00:00.000Z",
-    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRsg9Zi5f75Td-nZYODqdBnqm3doO_xeelVA&s"
+    url: "src/data/photos/IMG_0579.jpeg"
   },
   {
-    internalName: "kids_playing_2",
-    externalName: "Kids Playing - Swing Set",
-    description: "Swinging high!",
-    eventDate: "2024-07-01",
+    internalName: "chet_n_rite",
+    externalName: "Chet and Rita",
+    description: "",
+    eventDate: "1924-01-01",
     uploadedAt: "2024-07-01T10:02:00.000Z",
-    url: "https://images.pexels.com/photos/4543714/pexels-photo-4543714.jpeg"
+    url: "src/data/photos/IMG_0578.jpeg"
   },
   {
-    internalName: "dad_birthday",
-    externalName: "Mark's Birthday",
-    description: "This is gonna go poorly and old",
-    eventDate: "1952-02-09",
+    internalName: "tomassoni_guidos_family_2",
+    externalName: "Family Portrait",
+    description: "",
+    eventDate: "1925-01-01",
     uploadedAt: "2001-11-16T00:00:00.000Z",
-    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSd2kiNsdD0ZJ4oLJnLB01IsJtU5-_YewaU9w&s"
+    url: "src/data/photos/IMG_0575.jpeg"
   },
   {
-    internalName: "thanksgiving_dinner",
-    externalName: "Thanksgiving Dinner",
-    description: "A wonderful meal with friends and family.",
-    eventDate: "2023-11-16",
+    internalName: "hibbing_band",
+    externalName: "Hibbing Band",
+    description: "A motley crew.",
+    eventDate: "1911-01-01",
     uploadedAt: "2023-11-16T00:00:00.000Z",
-    url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcL3TRFY6dx3cpiI9VpJS-OA6NdeQ4a_lAhg&s"
+    url: "src/data/photos/IMG_0574.jpeg"
   },
   {
-    internalName: "jt_birthday",
-    externalName: "James' Birthday",
+    internalName: "men_of_the_mine",
+    externalName: "The men of the mine",
     description: "This is gonna go poorly",
-    eventDate: "1990-11-16",
+    eventDate: "1908-01-01",
     uploadedAt: "1990-11-16T00:00:00.000Z",
-    url: "https://freerangestock.com/sample/134363/birthday-cake--happy-birthday-.jpg"
+    url: "src/data/photos/IMG_0573.jpeg"
+  },
+  {
+    internalName: "man_of_the_mine",
+    externalName: "The man of the mine",
+    description: "This is gonna go poorly",
+    eventDate: "1908-01-01",
+    uploadedAt: "1990-11-16T00:00:00.000Z",
+    url: "src/data/photos/IMG_0572.jpeg"
+  },
+  {
+    internalName: "charley_and_guido",
+    externalName: "Charley and Guido",
+    description: "These guys are here to sell ya some trash services",
+    eventDate: "1900-01-01",
+    uploadedAt: "1990-11-16T00:00:00.000Z",
+    url: "src/data/photos/IMG_0570.jpeg"
   }
 ];
