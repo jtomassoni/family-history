@@ -18,14 +18,14 @@
   width: 100%;
   max-width: 700px;
   overflow: hidden;
-  margin: 1rem auto;
+  margin: 0.5rem auto;
   position: relative;
-  max-height: calc(100vh - 120px); /* Prevents it from touching the footer */
+  max-height: calc(100vh - 160px); /* Ensures it fits above the footer */
 }
 
 /* Title Text */
 .photo-title {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: bold;
   color: #5d3a1a;
   margin-bottom: 0.3rem;
@@ -41,7 +41,7 @@
   overflow: hidden;
 }
 
-/* Image Container */
+/* Image Container - Scales Down Image */
 .photo-image-container {
   background: #fff;
   border-radius: 8px;
@@ -53,7 +53,7 @@
   width: 100%;
   max-width: 95%;
   height: auto;
-  max-height: 50vh; /* Allows more space for text below */
+  max-height: 45vh; /* Scales image down more to leave space for text */
   cursor: pointer;
 }
 
@@ -61,7 +61,8 @@
 .photo-image {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  height: auto;
+  object-fit: contain; /* Keeps aspect ratio without cutting */
   border-radius: 8px;
   display: block;
   margin: 0 auto;
@@ -71,14 +72,14 @@
 .photo-info {
   border: 1px solid #bfa18a;
   border-radius: 8px;
-  padding: 0.5rem;
+  padding: 0.4rem;
   text-align: center;
   background: #fff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   color: #5d3a1a;
   max-width: 95%;
   font-size: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
 }
 
 /* -------------------------------------- */
@@ -112,12 +113,19 @@
 @media (max-width: 767px) {
   .photo-tile-container {
     max-width: 90%;
-    max-height: calc(100vh - 100px);
+    max-height: calc(100vh - 140px); /* Ensures enough space above footer */
     padding: 0.5rem;
   }
 
   .photo-image-container {
-    max-height: 40vh; /* Shrinks image even more on smaller screens */
+    max-width: 90%;
+    max-height: 40vh; /* Further scale down on smaller screens */
+  }
+
+  .photo-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
 
   .photo-info {
