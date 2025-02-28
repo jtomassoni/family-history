@@ -41,7 +41,7 @@
   overflow: hidden;
 }
 
-/* Image Container - Scales Down Image */
+/* Image Container */
 .photo-image-container {
   background: #fff;
   border-radius: 8px;
@@ -53,33 +53,31 @@
   width: 100%;
   max-width: 95%;
   height: auto;
-  max-height: 45vh; /* Scales image down more to leave space for text */
   cursor: pointer;
 }
 
 /* Image */
 .photo-image {
   max-width: 100%;
-  max-height: 100%;
   height: auto;
-  object-fit: contain; /* Keeps aspect ratio without cutting */
+  object-fit: contain;
   border-radius: 8px;
   display: block;
   margin: 0 auto;
 }
 
-/* Info Box */
+/* Info Box (Expands Dynamically) */
 .photo-info {
   border: 1px solid #bfa18a;
   border-radius: 8px;
-  padding: 0.4rem;
+  padding: 0.5rem;
   text-align: center;
   background: #fff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   color: #5d3a1a;
   max-width: 95%;
   font-size: 1rem;
-  margin-top: 0.4rem;
+  margin-top: 0;
 }
 
 /* -------------------------------------- */
@@ -107,29 +105,48 @@
 }
 
 /* -------------------------------------- */
-/* 3) Mobile Adjustments */
+/* 3) Mobile & Desktop Adjustments */
 /* -------------------------------------- */
 
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
   .photo-tile-container {
     max-width: 90%;
-    max-height: calc(100vh - 140px); /* Ensures enough space above footer */
+    max-height: calc(100vh - 160px);
     padding: 0.5rem;
   }
 
   .photo-image-container {
     max-width: 90%;
-    max-height: 40vh; /* Further scale down on smaller screens */
+    max-height: 40vh;
+  }
+
+  .photo-info {
+    font-size: 0.9rem;
+    padding: 0.3rem;
+    margin-bottom: 0; /* Prevent extra spacing */
+  }
+}
+
+@media (max-width: 767px) {
+  .photo-tile-container {
+    max-width: 90%;
+    max-height: calc(100vh - 140px);
+    padding: 0.5rem;
+  }
+
+  .photo-image-container {
+    max-width: 90%;
+    max-height: 35vh; /* Further scale down on smaller screens */
   }
 
   .photo-image {
     max-width: 100%;
-    max-height: 100%;
     object-fit: contain;
   }
 
   .photo-info {
     font-size: 0.9rem;
     padding: 0.3rem;
+    margin-bottom: 0; /* Prevent extra spacing */
   }
 }
