@@ -36,9 +36,16 @@ defineProps({
 
 const isModalOpen = ref(false);
 const isMobile = ref(false);
+const hasBoundaryMessage = ref(false);
 const photoTile = ref(null);
 const photoInfo = ref(null);
 const dynamicImageHeight = ref("40vh");
+
+// Detect boundary messages & adjust spacing
+const checkBoundaryMessage = () => {
+  const boundaryElement = document.querySelector(".boundary-message-container");
+  hasBoundaryMessage.value = !!boundaryElement && boundaryElement.offsetHeight > 0;
+};
 
 const openModalIfMobile = () => {
   if (isMobile.value) {
@@ -56,22 +63,25 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 };
 
-// Adjust image height dynamically
+// Adjust image height dynamically while ensuring nothing overlaps the footer
 const adjustImageHeight = () => {
   nextTick(() => {
     if (photoTile.value && photoInfo.value) {
+      checkBoundaryMessage(); // Update if a boundary message exists
+
       const viewportHeight = window.innerHeight;
       const footer = document.querySelector("footer");
       const footerHeight = footer ? footer.offsetHeight : 80;
       const navHeight = 100;
+      const boundaryHeight = hasBoundaryMessage.value ? 50 : 0; // Extra spacing for boundary messages
       const textHeight = photoInfo.value.offsetHeight + 40;
-      const availableHeight = viewportHeight - footerHeight - navHeight - 100;
+      const availableHeight = viewportHeight - footerHeight - navHeight - boundaryHeight - 100;
 
       let newImageHeight = availableHeight - textHeight;
       if (window.innerWidth > 1024) {
         newImageHeight = Math.min(newImageHeight, 50);
       } else {
-        newImageHeight = Math.min(newImageHeight, 35);
+        newImageHeight = Math.min(newImageHeight, 33);
       }
 
       dynamicImageHeight.value = `${Math.max(25, newImageHeight)}vh`;
@@ -86,4 +96,5 @@ onMounted(() => {
 });
 
 watch(() => photoInfo.value?.offsetHeight, adjustImageHeight);
+watch(hasBoundaryMessage, adjustImageHeight);
 </script>
