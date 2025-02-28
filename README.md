@@ -12,7 +12,7 @@ View the app at [www.thetomassonis.com](www.thetomassonis.com)
 
 TODO
 ----
-
+*   screen recognition of swipe before loading next image
 *   Build backend DB for images
 *   User profiles with auth
 *   Upload new pics with auth

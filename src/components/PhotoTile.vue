@@ -7,7 +7,7 @@
       <div class="photo-info">
         <h3 class="photo-title">{{ photo.externalName }}</h3>
         <p>{{ photo.description }}</p>
-        <p v-if="photo.date"><strong>Date:</strong> {{ formatDate(photo.date) }}</p>
+        <p v-if="photo.eventDate"><strong>Date:</strong> {{ formatDate(photo.eventDate) }}</p>
         <p v-if="photo.uploadedAt"><strong>Uploaded:</strong> {{ formatDate(photo.uploadedAt) }}</p>
       </div>
     </div>
