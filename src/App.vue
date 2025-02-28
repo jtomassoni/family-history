@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header title="Tomassoni Family History" />
-
+    <!-- This isn’t just code; it’s history, love, and legacy wrapped into a digital experience. -->
     <!-- Swipe Hint (Only Shows on Mobile) -->
     <SwipeHint />
 
