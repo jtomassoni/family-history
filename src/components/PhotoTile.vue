@@ -9,6 +9,8 @@
         <p>{{ photo.description }}</p>
         <p v-if="photo.eventDate"><strong>Date:</strong> {{ formatDate(photo.eventDate) }}</p>
         <p v-if="photo.uploadedAt"><strong>Uploaded:</strong> {{ formatDate(photo.uploadedAt) }}</p>
+        <p><strong>Uploaded by:</strong> James Tomassoni</p>
+
       </div>
     </div>
 
