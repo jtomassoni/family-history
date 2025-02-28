@@ -1,7 +1,12 @@
 <template>
   <div class="photo-tile-container" ref="photoTile">
     <div class="photo-content">
-      <div class="photo-image-container" :style="{ maxHeight: dynamicImageHeight }" @click="openModal">
+      <div 
+        class="photo-image-container" 
+        :class="{ 'mobile-clickable': isMobile }" 
+        :style="{ maxHeight: dynamicImageHeight }" 
+        @click="openModalIfMobile"
+      >
         <img :src="photo.url" :alt="photo.externalName" class="photo-image" />
       </div>
       <div class="photo-info" ref="photoInfo">
@@ -12,9 +17,11 @@
       </div>
     </div>
 
-    <!-- Image Modal -->
-    <div v-if="isModalOpen" class="image-modal" @click="closeModal">
-      <img :src="photo.url" :alt="photo.externalName" class="modal-image" />
+    <!-- Enlarged Full-Screen Modal (Mobile Only) -->
+    <div v-if="isModalOpen && isMobile" class="image-modal" @click="closeModal">
+      <div class="modal-content">
+        <img :src="photo.url" :alt="photo.externalName" class="modal-image" />
+      </div>
     </div>
   </div>
 </template>
@@ -28,12 +35,15 @@ defineProps({
 });
 
 const isModalOpen = ref(false);
+const isMobile = ref(false);
 const photoTile = ref(null);
 const photoInfo = ref(null);
-const dynamicImageHeight = ref("40vh"); // Default height
+const dynamicImageHeight = ref("40vh");
 
-const openModal = () => {
-  isModalOpen.value = true;
+const openModalIfMobile = () => {
+  if (isMobile.value) {
+    isModalOpen.value = true;
+  }
 };
 
 const closeModal = () => {
@@ -46,7 +56,7 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 };
 
-// Dynamically adjust image height to prevent cropping
+// Adjust image height dynamically
 const adjustImageHeight = () => {
   nextTick(() => {
     if (photoTile.value && photoInfo.value) {
@@ -54,12 +64,10 @@ const adjustImageHeight = () => {
       const footer = document.querySelector("footer");
       const footerHeight = footer ? footer.offsetHeight : 80;
       const navHeight = 100;
-      const textHeight = photoInfo.value.offsetHeight + 40; // Extra padding for spacing
-      const availableHeight = viewportHeight - footerHeight - navHeight - 100; // More space
+      const textHeight = photoInfo.value.offsetHeight + 40;
+      const availableHeight = viewportHeight - footerHeight - navHeight - 100;
 
       let newImageHeight = availableHeight - textHeight;
-
-      // Adjust max height for desktop & mobile
       if (window.innerWidth > 1024) {
         newImageHeight = Math.min(newImageHeight, 50);
       } else {
@@ -72,6 +80,7 @@ const adjustImageHeight = () => {
 };
 
 onMounted(() => {
+  isMobile.value = window.innerWidth <= 1024; // Check if device is mobile
   adjustImageHeight();
   window.addEventListener("resize", adjustImageHeight);
 });
