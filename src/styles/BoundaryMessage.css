@@ -1,68 +1,80 @@
 /* BoundaryMessage.css */
 
-/* -------------------------------------- */
-/* 1) Base Boundary Message Styling */
-/* -------------------------------------- */
-
-.boundary-message-container {
-  position: relative;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0.3rem 0;  /* Slightly reduced vertical margins */
-  z-index: 50;
-}
-
+/* Floating Boundary Message */
 .boundary-message {
-  font-size: 18px; /* Slightly smaller text for better fit */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%; /* Takes up half the screen width */
+  max-width: 600px; /* Prevents it from getting too large */
+  font-size: 18px;
   font-weight: bold;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 12px 20px; /* Reduced padding to save space */
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 20px;
+  border-radius: 12px;
   text-align: center;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 90%; /* Prevents message from stretching too wide */
-  word-wrap: break-word;
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: auto;
+  z-index: 999;
+  position: relative;
 }
 
-/* -------------------------------------- */
-/* 2) Fade-In Effect for Boundary Messages */
-/* -------------------------------------- */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Close Button (Pushed Outside the Black Box) */
+.close-btn {
+  position: absolute;
+  top: 50%;
+  right: -65px; /* Moves it fully outside the box */
+  transform: translateY(-50%);
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+  border-radius: 50%;
+  padding: 10px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-.earliest-message {
-  animation: fadeIn 0.5s ease-in-out;
+/* Fade to Red on Hover (No Moving) */
+.close-btn:hover {
+  background: #ff6b6b;
+  color: white;
 }
 
-.latest-message {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-/* -------------------------------------- */
-/* 3) Mobile-Specific Adjustments (Better Fit on Small Screens) */
-/* -------------------------------------- */
-
+/* Mobile Adjustments */
 @media (max-width: 767px) {
-  .boundary-message-container {
-    margin: 0.2rem 0; /* Further reduced margins */
+  .boundary-message {
+    width: 75%;
+    font-size: 16px;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 85%;
   }
 
-  .boundary-message {
-    font-size: 16px; /* Smaller font for mobile */
-    padding: 10px 15px; /* Compact padding */
-    border-radius: 8px; /* Smaller border radius */
-    max-width: 85%; /* Keeps messages contained */
+  /* Larger, Easy-to-Tap X Button on Mobile */
+  .close-btn {
+    right: -50px; /* Push further to the right on mobile */
+    font-size: 24px;
+    width: 20px;
+    height: 20px;
+    padding: 12px;
   }
+}
+
+/* Smooth Fade Out */
+.fade-leave-active {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-leave-to {
+  opacity: 0;
 }

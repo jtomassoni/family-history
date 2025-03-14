@@ -22,7 +22,7 @@
       <BoundaryMessage 
         v-if="isAtEnd" 
         class="latest-message" 
-        message="🚀 You’re viewing the most recent event!" 
+        message="You’re viewing the most recent event." 
       />
     </div>
 

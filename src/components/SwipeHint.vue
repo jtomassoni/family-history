@@ -2,18 +2,18 @@
   <div class="swipe-hint-overlay" v-if="showHint">
     <div class="swipe-hint-content">
       <p class="hint-text">
-        Swipe left or right to navigate through history.<br>
-        You can also use the
+        <strong>Tap an image to learn more!</strong>
+        Use the
         <span class="datepicker-text">
-          <span class="calendar-icon">📅</span> date picker
+          <span class="calendar-icon">📅</span> date picker to go wherever you want.
         </span>
-        at the top!<br><br>
-        <strong>Tap an image to enlarge it/shrink it!</strong>
+        <br><br>
       </p>
       <div class="arrow-container">
         <span class="arrow arrow-left">⟵</span>
         <span class="arrow arrow-right">⟶</span>
-      </div>
+      </div><br>
+      Swipe left or right to navigate through history.
     </div>
   </div>
 </template>
@@ -31,10 +31,10 @@ onMounted(() => {
     console.log("Showing swipe hint on mobile.");
     showHint.value = true;
     
-    setTimeout(() => {
-      console.log("Hiding swipe hint...");
-      showHint.value = false;
-    }, 4000); // Hide after 4 seconds
+    // setTimeout(() => {
+    //   console.log("Hiding swipe hint...");
+    //   showHint.value = false;
+    // }, 400000); // Hide after 4 seconds
   } else {
     console.log("Not mobile: Swipe hint will not show.");
   }

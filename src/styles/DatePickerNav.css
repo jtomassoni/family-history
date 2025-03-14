@@ -16,6 +16,7 @@
   margin: 0.5rem auto;
   overflow-x: hidden; /* Prevent horizontal overflow */
   box-sizing: border-box;
+  z-index:10000;
 }
 
 /* Background for buttons only (if used) */
