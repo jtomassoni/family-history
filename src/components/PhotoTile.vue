@@ -7,17 +7,23 @@
         @click="toggleInfoOverlay"
         :class="{ 'faded': showInfoOverlay }"
       >
-        <img :src="photo.url" :alt="photo.externalName" class="photo-image" />
+        <img :src="photo?.url" :alt="photo?.externalName" class="photo-image" />
 
-        <!-- Ensure Vue Always Renders the Data Inside `.photo-info-overlay` -->
+        <!-- Ensure Vue Only Renders Text (Prevents Object Output) -->
         <transition name="fade">
           <div v-if="showInfoOverlay" class="photo-info-overlay">
-            <h3 class="photo-title">{{ photo?.externalName || 'No Title Found' }}</h3>
+            <h3 class="photo-title" v-if="photo?.externalName">
+              {{ photo.externalName }}
+            </h3>
             <p v-if="photo?.description && photo.description.trim() !== ''">
-              {{ photo?.description || 'No Description Available' }}
+              {{ photo.description }}
             </p>
-            <p v-if="photo?.eventDate"><strong>Event Date:</strong> {{ formatDate(photo?.eventDate) }}</p>
-            <p v-if="photo?.uploadedAt"><strong>Uploaded:</strong> {{ formatDate(photo?.uploadedAt) }}</p>
+            <p v-if="photo?.eventDate">
+              <strong>Event Date:</strong> {{ formatDate(photo.eventDate) }}
+            </p>
+            <p v-if="photo?.uploadedAt">
+              <strong>Uploaded:</strong> {{ formatDate(photo.uploadedAt) }}
+            </p>
           </div>
         </transition>
       </div>
@@ -26,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps, onMounted } from "vue";
+import { ref, defineProps, watch, onMounted } from "vue";
 import "../styles/PhotoTile.css";
 
 const props = defineProps({
@@ -36,11 +42,10 @@ const props = defineProps({
 const showInfoOverlay = ref(false);
 
 const toggleInfoOverlay = () => {
-  console.log("Toggling overlay. Current state:", showInfoOverlay.value);
   showInfoOverlay.value = !showInfoOverlay.value;
 };
 
-// Debugging: Ensure Vue is Rendering the Data
+// Debugging: Ensure Vue is Rendering the Data Properly
 watch(() => props.photo, (newVal) => {
   console.log("New Photo Data Loaded:", newVal);
 });
