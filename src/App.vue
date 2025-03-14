@@ -65,7 +65,7 @@ import BoundaryMessage from "./components/BoundaryMessage.vue";
 import BigNavArrow from "./components/BigNavArrow.vue";
 import PhotoTile from "./components/PhotoTile.vue";
 import Footer from "./components/Footer.vue";
-import SwipeHint from "./components/SwipeHint.vue"; // Import the SwipeHint component
+import SwipeHint from "./components/SwipeHint.vue"
 
 const sortedPhotos = computed(() => {
   return photoData

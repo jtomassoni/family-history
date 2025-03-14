@@ -12,12 +12,18 @@ View the app at [www.thetomassonis.com](www.thetomassonis.com)
 
 TODO
 ----
-*   screen recognition of swipe before loading next image
 *   Build backend DB for images
+*   Pipe those images into front end
 *   User profiles with auth
 *   Upload new pics with auth
-*   Comments (create, edit your own, delete)
+*   Upload pics from mobile w auth
+*   Comments (create, edit your own, delete), report to admin.
 *   Activity logs (who uploaded what, who changed descriptions when from what to do)
+*   Swipe support
+*   Family Tree - interactble
+*   Stories by Marian(link to different events)
+*   Add support for story links to image gallery
+*   On mobile, once auth'd upload selfie w tags, locations, etc
 
 Features
 --------
