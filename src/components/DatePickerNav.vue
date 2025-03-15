@@ -1,6 +1,6 @@
 <template>
   <div class="datepicker-nav" :class="{ selectingDate: currentLevel !== 'start' }">
-    <!-- Start Screen: Oldest, Select a Date, Newest -->
+    <!-- Level 1: Oldest, Select a Date, Newest -->
     <div v-if="currentLevel === 'start'" class="default-buttons">
       <button class="oldest-btn" @click="selectOldest" :disabled="isOldestDisabled">
         <span class="desktop-label">Oldest</span>
@@ -18,12 +18,7 @@
       </button>
     </div>
 
-    <!-- Advanced Date Selection UI -->
-    <div class="selected-path" v-if="selectedYear">
-      <span v-if="selectedYear && currentLevel !== 'year'">Year: {{ selectedYear }}</span>
-      <span v-if="selectedMonth && currentLevel !== 'month'"> | Month: {{ monthName(selectedMonth) }}</span>
-    </div>
-
+    <!-- Level 2: Year Selection -->
     <div v-if="currentLevel === 'year'" class="year-selection">
       <h3>Select a Year</h3>
       <div class="year-options">
@@ -33,39 +28,6 @@
       </div>
       <div class="back-button">
         <button @click="resetSelection">Back</button>
-      </div>
-    </div>
-
-    <div v-if="currentLevel === 'month'" class="month-selection">
-      <h3>Select a Month</h3>
-      <div class="month-options">
-        <button v-for="month in availableMonths" :key="month" @click="selectMonth(month)">
-          {{ monthName(month) }}
-        </button>
-      </div>
-      <div class="back-button">
-        <button @click="resetToYear">Back</button>
-      </div>
-    </div>
-
-    <div v-if="currentLevel === 'day'" class="day-selection">
-      <h3>Select a Day</h3>
-      <div class="day-options">
-        <button
-          v-for="day in availableDays"
-          :key="day"
-          @click="selectedDay === day ? confirmSelection() : selectDay(day)"
-          :class="{ active: selectedDay === day, confirm: selectedDay === day }"
-        >
-          {{
-            selectedDay === day
-              ? `Confirm Selection? ${monthName(selectedMonth)} ${day}, ${selectedYear}`
-              : day
-          }}
-        </button>
-      </div>
-      <div class="back-button">
-        <button @click="resetToMonth">Back</button>
       </div>
     </div>
   </div>
@@ -79,8 +41,6 @@ const emit = defineEmits(['select']);
 
 /* Local State */
 const selectedYear = ref(null);
-const selectedMonth = ref(null);
-const selectedDay = ref(null);
 const currentLevel = ref('start');
 
 /* Props */
@@ -95,29 +55,10 @@ const props = defineProps({
   }
 });
 
-/* Compute available years, months, and days */
+/* Compute available years */
 const availableYears = computed(() => {
   const years = props.events.map(e => e.eventDate.getUTCFullYear());
   return [...new Set(years)].sort((a, b) => a - b);
-});
-const availableMonths = computed(() => {
-  if (!selectedYear.value) return [];
-  return [...new Set(
-    props.events
-      .filter(e => e.eventDate.getUTCFullYear() === selectedYear.value)
-      .map(e => e.eventDate.getUTCMonth() + 1)
-  )].sort((a, b) => a - b);
-});
-const availableDays = computed(() => {
-  if (!selectedYear.value || !selectedMonth.value) return [];
-  return [...new Set(
-    props.events
-      .filter(e =>
-        e.eventDate.getUTCFullYear() === selectedYear.value &&
-        e.eventDate.getUTCMonth() + 1 === selectedMonth.value
-      )
-      .map(e => e.eventDate.getUTCDate())
-  )].sort((a, b) => a - b);
 });
 
 /* Disable Oldest/Newest */
@@ -135,28 +76,20 @@ function selectMostRecent() {
 }
 
 /* Date Selection */
-function startSelection() { currentLevel.value = 'year'; }
-function selectYear(year) { selectedYear.value = year; selectedMonth.value = null; selectedDay.value = null; currentLevel.value = 'month'; }
-function selectMonth(month) { selectedMonth.value = month; selectedDay.value = null; currentLevel.value = 'day'; }
-function selectDay(day) { selectedDay.value = day; }
-function confirmSelection() {
-  if (!selectedYear.value || !selectedMonth.value || !selectedDay.value) return;
-  const event = props.events.find(e =>
-    e.eventDate.getUTCFullYear() === selectedYear.value &&
-    e.eventDate.getUTCMonth() + 1 === selectedMonth.value &&
-    e.eventDate.getUTCDate() === selectedDay.value
-  );
-  if (event) {
-    emit('select', event);
-    resetSelection();
-  }
+function startSelection() {
+  setTimeout(() => {
+    currentLevel.value = 'year';
+  }, 300); // Delayed switch to allow fade-out animation
 }
 
-/* Reset Flows */
-function resetSelection() { selectedYear.value = null; selectedMonth.value = null; selectedDay.value = null; currentLevel.value = 'start'; }
-function resetToYear() { selectedMonth.value = null; selectedDay.value = null; currentLevel.value = 'year'; }
-function resetToMonth() { selectedDay.value = null; currentLevel.value = 'month'; }
+function selectYear(year) {
+  selectedYear.value = year;
+  currentLevel.value = 'month';
+}
 
-/* Convert Month Number to Name */
-function monthName(num) { return new Date(0, num - 1).toLocaleString('default', { month: 'long' }); }
+/* Reset */
+function resetSelection() {
+  selectedYear.value = null;
+  currentLevel.value = 'start';
+}
 </script>

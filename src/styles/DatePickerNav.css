@@ -21,7 +21,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 
   /* Ensure it starts below the header with extra spacing */
-  margin-top: calc(var(--header-height) + 10px);
+  margin-top: var(--header-height);
   height: var(--date-nav-buttons-height);
   transition: height 0.3s ease-in-out; /* Smooth height transition */
 }
@@ -112,17 +112,28 @@
 }
 
 /* ---------------------------------------------------------
-   TRANSITION EFFECTS (HIDE OLDEST/NEWEST & MOVE TEXT UP)
+   FADE OUT LEVEL 1 (OLDEST / SELECT / NEWEST) WHEN TRANSITIONING
 ----------------------------------------------------------*/
-.datepicker-nav.selecting-date .default-buttons {
-  opacity: 0; /* Fade out Oldest/Newest buttons */
-  transform: translateY(-20px); /* Move them up before hiding */
-  pointer-events: none;
+.datepicker-nav.selectingDate .default-buttons {
+  opacity: 0; /* Fade out */
+  transform: translateY(-20px); /* Move up slightly */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  pointer-events: none; /* Prevent clicks during transition */
 }
 
-.datepicker-nav.selecting-date .select-date-btn {
+/* ---------------------------------------------------------
+   FADE IN LEVEL 2 (YEAR SELECTION)
+----------------------------------------------------------*/
+.year-selection {
+  opacity: 0; /* Hidden initially */
+  transform: translateY(20px); /* Start slightly lower */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* When transitioning, Level 2 should fade in */
+.datepicker-nav.selectingDate .year-selection {
   opacity: 1;
-  transform: translateY(-30px); /* Move text up smoothly */
+  transform: translateY(0); /* Slide into place */
 }
 
 /* ---------------------------------------------------------
@@ -169,8 +180,8 @@
 .year-options button,
 .month-options button,
 .day-options button {
-  background: #c77b4e; /* Warm Brown */
-  border: 2px solid #a8642d; /* Deep Gold */
+  background: #c77b4e;
+  border: 2px solid #a8642d;
   color: #fff;
   font-family: "Georgia", serif;
   font-weight: bold;
@@ -234,34 +245,4 @@
 .back-button button:hover {
   background: #a77d5d;
   transform: scale(1.05);
-}
-
-/* ---------------------------------------------------------
-   MOBILE RESPONSIVENESS (ENSURE ALIGNMENT & BUTTON SIZE)
-----------------------------------------------------------*/
-@media (max-width: 768px) {
-  .datepicker-nav {
-    max-width: 95%;
-    padding: 0.5rem;
-    margin-top: calc(var(--header-height) + 5px);
-  }
-
-  .year-selection,
-  .month-selection,
-  .day-selection {
-    max-width: 90%;
-  }
-
-  .year-options,
-  .month-options,
-  .day-options {
-    gap: 8px;
-  }
-
-  .year-options button,
-  .month-options button,
-  .day-options button {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-  }
 }
