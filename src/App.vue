@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <Header title="Tomassoni Family History" />
-    <!-- This isn’t just code; it’s history, love, and legacy wrapped into a digital experience. -->
     <!-- Swipe Hint (Only Shows on Mobile) -->
     <SwipeHint />
 
@@ -65,7 +64,7 @@ import BoundaryMessage from "./components/BoundaryMessage.vue";
 import BigNavArrow from "./components/BigNavArrow.vue";
 import PhotoTile from "./components/PhotoTile.vue";
 import Footer from "./components/Footer.vue";
-import SwipeHint from "./components/SwipeHint.vue"
+import SwipeHint from "./components/SwipeHint.vue";
 
 const sortedPhotos = computed(() => {
   return photoData

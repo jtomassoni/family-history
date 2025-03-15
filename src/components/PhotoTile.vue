@@ -4,11 +4,19 @@
       <div 
         class="photo-image-container" 
         @click="toggleInfoOverlay"
-        :class="{ 'faded': showInfoOverlay }"
       >
-        <img :src="photo.url" :alt="photo.externalName" class="photo-image" />
+        <!-- Wrap the image in a transition so it fades in/out with :key changes -->
+        <transition name="fade">
+          <img 
+            v-if="photo.url"
+            :src="photo.url"
+            :alt="photo.externalName"
+            class="photo-image"
+            :key="photo.id || photo.url"
+          />
+        </transition>
 
-        <!-- Debugging: Log Overlay State -->
+        <!-- Overlay for photo info -->
         <transition name="fade">
           <div v-if="showInfoOverlay" class="photo-info-overlay">
             <h3 class="photo-title">{{ photo.externalName }}</h3>
@@ -28,34 +36,31 @@
   </div>
 </template>
 
-
 <script setup>
-import { ref, defineProps, watch, onMounted } from "vue";
+import { ref, defineProps, onMounted } from "vue";
 import "../styles/PhotoTile.css";
 
 const props = defineProps({
-  photo: Object
+  photo: {
+    type: Object,
+    default: () => ({})
+  }
 });
 
 const showInfoOverlay = ref(false);
 
 const toggleInfoOverlay = () => {
+  // If the user taps the image, toggle the overlay
   showInfoOverlay.value = !showInfoOverlay.value;
 };
 
-// Debugging: Ensure Vue is Rendering the Data Properly
-watch(() => props.photo, (newVal) => {
-  console.log("New Photo Data Loaded:", newVal);
-});
-
-onMounted(() => {
-  console.log("PhotoTile Mounted. Photo Data:", props.photo);
-});
-
-// Helper function to format dates
 const formatDate = (dateString) => {
   if (!dateString) return "Unknown Date";
   const date = new Date(dateString);
   return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 };
+
+onMounted(() => {
+  console.log("PhotoTile Mounted. Photo Data:", props.photo);
+});
 </script>

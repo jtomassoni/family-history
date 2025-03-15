@@ -1,16 +1,16 @@
 /* -------------------------------------
-   Global Reset (if not already set)
+   1) Global Reset
 ------------------------------------- */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: auto;
+  overflow: auto;  /* Let the page scroll if needed on smaller screens */
   font-family: sans-serif;
 }
 
 /* -------------------------------------
-   Fade Transition Classes for Vue <transition>
+   2) Fade Transition for the <transition name="fade">
 ------------------------------------- */
 .fade-enter-active,
 .fade-leave-active {
@@ -28,112 +28,139 @@ html, body {
 }
 
 /* -------------------------------------
-   Photo Tile Container
+   3) Desktop Styles for the Photo Tile
 ------------------------------------- */
 .photo-tile-container {
-  margin: 40px auto 100px auto;
+  /* On desktop, use margins & box shadows as originally desired */
+  margin: 40px auto 100px auto; /* 40px top, 100px bottom */
   max-height: calc(100vh - 160px);
   width: 100%;
   max-width: 650px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   background: #f7f3ee;
   border: 3px solid #bfa18a;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   padding: 1rem;
+
   position: relative;
   overflow: hidden;
 }
 
-/* -------------------------------------
-   Photo Image Container 
-------------------------------------- */
+/* Content Container */
+.photo-content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Image Container */
 .photo-image-container {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+
   background: #fff;
   border-radius: 12px;
   padding: 1rem;
   box-sizing: border-box;
   margin: auto;
   overflow: hidden;
+  cursor: pointer;
+
   transition: background 0.8s ease-in-out;
 }
 
-.photo-image-container:hover {
-  cursor: pointer;
-}
-
-/* When overlay is active, we now only dim the image */
+/* Dim effect if you want to apply a class in parent code (not required) */
 .photo-image-container.faded {
   filter: brightness(80%);
 }
 
-/* -------------------------------------
-   The Image
-------------------------------------- */
+/* The Photo – Desktop */
 .photo-image {
   display: block;
   border-radius: 8px;
   max-width: 100%;
   max-height: calc((100vh - 160px) * 0.8);
-  width: auto;
   object-fit: contain;
   transition: filter 0.8s ease-in-out, opacity 0.8s ease-in-out;
 }
 
 /* -------------------------------------
-   Overlay for Info/Text 
+   4) Overlay for Info/Text
 ------------------------------------- */
 .photo-info-overlay {
   position: absolute;
+  top: 0;
+  left: 0;
+
   width: 100%;
   height: 100%;
+
   background: rgba(0, 0, 0, 0.5);
-  /* Note: No backdrop-filter here so text remains crisp */
   color: #fff;
+  font-family: "Georgia", serif;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-family: "Georgia", serif;
+
   padding: 20px;
   z-index: 10;
-  /* The transition here will animate both opacity and filter (for blur) */
+
   transition: opacity 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
-/* Overlay Text Styling */
+/* Overlay Text */
 .photo-info-overlay h3 {
   font-size: 2rem;
   margin: 0.5rem 0;
 }
-.photo-info-overlay p {
-  font-size: 1.2rem;
-  margin: 0.5rem 0;
-}
+.photo-info-overlay p,
 .photo-info-overlay strong {
   font-size: 1.2rem;
   margin: 0.5rem 0;
 }
 
 /* -------------------------------------
-   Mobile / Tablet Adjustments (if needed)
+   5) Mobile / Tablet Adjustments (max-width: 768px)
 ------------------------------------- */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
+  /* Slight margin so boundary or nav elements can appear above/below tile */
   .photo-tile-container {
-    max-width: 90vw;
-    margin: 30px auto;
-    max-height: calc(100vh - 90px);
+    margin: 10px auto 40px auto;
+    max-width: 95vw;
+    /* Let’s only subtract 100px total. If still too small, reduce further. */
+    max-height: calc(100vh - 100px);
+
+    border: 2px solid #bfa18a;
+    border-radius: 8px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
+
+  .photo-image-container {
+    padding: 0.5rem;
+  }
+
+  /* Let the image fill ~90% of the container’s height for a bigger display */
+  .photo-image {
+    max-height: 90%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
   .photo-info-overlay {
     font-size: 1rem;
-    padding: 15px;
+    padding: 10px;
   }
 }

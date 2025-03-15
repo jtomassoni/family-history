@@ -1,32 +1,21 @@
-/* Main.css */
-
-/* 
-  1. Define default (desktop) header height and override for mobile 
-*/
+/* -------------------------------------
+   Global Reset & Basic Styles
+------------------------------------- */
 :root {
-  --header-height: 76px; /* Desktop default */
+  --header-height: 76px;
 }
 
 @media (max-width: 768px) {
   :root {
-    --header-height: 38px; /* Smaller header on mobile */
+    --header-height: 38px;
   }
 }
 
-/* Ensure the container is large enough for swipe detection */
-.timeline-container {
-  min-height: 300px;
-}
-
-/* Global Reset and Basic Styles */
 html, body {
   margin: 0;
   padding: 0;
   height: 100vh;
-  overflow-y: auto; /* Restores pull-to-refresh on mobile */
-}
-
-body {
+  overflow-y: auto;
   font-family: "Arial", sans-serif;
   background: url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
     no-repeat center center fixed;
@@ -70,34 +59,18 @@ body::before {
   width: auto;
   max-width: 90%;
   margin: 0 auto 0.2rem auto;
-  z-index: 1000; /* Ensures DatePicker appears above boundary message */
+  z-index: 1000;
   position: relative;
-}
-
-/* Top Controls */
-.top-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0.3rem 0 0.2rem;
-}
-
-.top-controls .label {
-  display: flex;
-  align-items: center;
-  font-size: 1rem;
-  line-height: 1.2;
 }
 
 /* Boundary Message */
 .boundary-message-container {
-  position: fixed; /* Ensures it does not affect layout */
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 999;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 /* Photo Navigation */
@@ -108,6 +81,7 @@ body::before {
   align-items: center;
   flex-direction: row;
   padding: 1rem 0;
+  touch-action: pan-x;
 }
 
 /* Photo Display */
@@ -133,7 +107,7 @@ body::before {
   padding: 10px 20px;
   border-radius: 10px;
   text-align: center;
-  pointer-events: none;
+  pointer-events: auto;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   z-index: 9999;
@@ -144,39 +118,143 @@ body::before {
   opacity: 1;
 }
 
-/* Mobile Responsiveness */
+/* Global Fade Transition for Vue <transition> */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.8s ease-in-out, filter 0.8s ease-in-out;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  filter: blur(4px);
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Photo Tile Container (Desktop) */
+.photo-tile-container {
+  margin: 40px auto 100px auto;
+  max-height: calc(100vh - 160px);
+  width: 100%;
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f7f3ee;
+  border: 3px solid #bfa18a;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Photo Content Container */
+.photo-content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Photo Image Container (Desktop) */
+.photo-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-sizing: border-box;
+  margin: auto;
+  overflow: hidden;
+  transition: background 0.8s ease-in-out;
+  cursor: pointer;
+}
+.photo-image-container.faded {
+  filter: brightness(80%);
+}
+
+/* The Image (Desktop) */
+.photo-image {
+  display: block;
+  border-radius: 8px;
+  max-width: 100%;
+  max-height: calc((100vh - 160px) * 0.8);
+  width: auto;
+  object-fit: contain;
+  transition: filter 0.8s ease-in-out, opacity 0.8s ease-in-out;
+}
+
+/* Overlay for Info/Text (Desktop) */
+.photo-info-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: "Georgia", serif;
+  padding: 20px;
+  z-index: 10;
+  transition: opacity 0.8s ease-in-out, filter 0.8s ease-in-out;
+}
+
+/* Overlay Text Styling (Desktop) */
+.photo-info-overlay h3 {
+  font-size: 2rem;
+  margin: 0.5rem 0;
+}
+.photo-info-overlay p {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+.photo-info-overlay strong {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+/* Mobile / Tablet Adjustments (max-width: 768px) */
 @media (max-width: 768px) {
-  /* 
-    var(--header-height) is automatically 38px on mobile, 
-    pushing breadcrumb-today-container down by 38px
-  */
+  .photo-tile-container {
+    max-width: 100vw;
+    margin: 10px auto 20px auto;
+    /* Increase available height for the photo tile on mobile */
+    max-height: calc(100vh - 80px);
+    padding: 0.5rem;
+  }
   
-  .datepicker-nav {
-    max-width: 95%;
-    padding: 0.4rem;
+  .photo-image-container {
+    padding: 0.5rem;
   }
-
-  .breadcrumb-today-container {
-    padding: 0.2rem 0;
+  
+  /* Increase mobile image size (allow it to use a larger fraction of available height) */
+  .photo-image {
+    max-height: calc((100vh - 80px) * 0.9);
   }
-
-  .photo-navigation-container {
-    margin-top: 1px;
-    padding: 1px;
-  }
-
-  .photo-display-container {
-    max-width: calc(100vw - 50px);
-    max-height: calc(100vh - 150px);
+  
+  .photo-info-overlay {
+    font-size: 1rem;
     padding: 10px;
   }
-
-  .boundary-message-container {
-    top: 50%;
-    transform: translate(-50%, -50%);
+  
+  .photo-navigation-container {
+    padding: 10px 0;
   }
 }
 
+/* Desktop Adjustments (min-width: 1024px) */
 @media (min-width: 1024px) {
   .photo-display-container {
     max-width: calc(100vw - 300px);
