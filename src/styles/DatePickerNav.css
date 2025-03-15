@@ -57,7 +57,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #b4462a;
+  background: #b4462a; /* Tuscan Red */
   border: 2px solid #a8642d;
   color: #fff;
   font-family: "Georgia", serif;
@@ -91,7 +91,7 @@
   box-shadow: none;
 }
 
-/* Fade out Level 1 when transitioning */
+/* Fade out Level 1 when not on "start" */
 .datepicker-nav.selectingDate .default-navigation {
   opacity: 0;
   transform: translateY(-20px);
@@ -280,9 +280,7 @@
 }
 
 /* ---------------------------------------------------------
-   LEVEL 5 - DAY
-   If selectedDay is null, we show day-options.
-   If selectedDay is set, we show the confirm-row.
+   LEVEL 5 - DAY (In-place Confirm)
 ----------------------------------------------------------*/
 .day-options {
   display: flex;
@@ -311,42 +309,16 @@
   max-width: 30%;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
 }
+/* If day is selected, highlight it (so user sees it changed to "Confirm?") */
+.day-options button.selected-day {
+  /* Slightly different background so user sees the difference */
+  background: #cc5e3a;
+}
 .day-options button:hover {
   background: #d98b60;
   box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
 }
 .day-options button:active {
-  background: #962d1a;
-  box-shadow: none;
-}
-
-/* The row with the confirm button (shown once a day is selected) */
-.confirm-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 0.6rem;
-  flex-grow: 1;
-}
-
-.confirm-btn {
-  background: #b4462a;
-  border: 2px solid #8c3e24;
-  color: #fff;
-  font-family: "Georgia", serif;
-  font-weight: bold;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.2s ease;
-  max-width: 180px;
-}
-.confirm-btn:hover {
-  background: #d98b60;
-  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
-}
-.confirm-btn:active {
   background: #962d1a;
   box-shadow: none;
 }
@@ -360,6 +332,7 @@
     padding: 0.5rem;
     margin-top: calc(var(--header-height) + 3px);
   }
+
   .selection-header {
     padding: 0 5px;
     gap: 5px;
@@ -374,7 +347,7 @@
     font-size: 0.8rem;
     padding: 2px 6px;
   }
-  
+
   .year-range-options,
   .month-options,
   .day-options {
@@ -392,7 +365,7 @@
     flex: 1 1 32%;
     max-width: 32%;
   }
-  
+
   .year-options {
     width: 95%;
     gap: 6px;
@@ -401,11 +374,5 @@
   .year-options button {
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
-  }
-
-  .confirm-btn {
-    font-size: 0.9rem;
-    padding: 0.5rem .5rem;
-    max-width: 150px;
   }
 }
