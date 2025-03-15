@@ -1,5 +1,5 @@
 <template>
-  <div class="datepicker-nav">
+  <div class="datepicker-nav" :class="{ selectingDate: currentLevel !== 'start' }">
     <!-- Start Screen: Oldest, Select a Date, Newest -->
     <div v-if="currentLevel === 'start'" class="default-buttons">
       <button class="oldest-btn" @click="selectOldest" :disabled="isOldestDisabled">
@@ -17,7 +17,6 @@
         <span class="mobile-label">Newest</span>
       </button>
     </div>
-
 
     <!-- Advanced Date Selection UI -->
     <div class="selected-path" v-if="selectedYear">

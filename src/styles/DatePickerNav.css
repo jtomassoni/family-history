@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------
-   DATE PICKER NAVIGATION - ITALIAN-THEMED
+   DATE PICKER NAVIGATION - ITALIAN-THEMED & ANIMATED FLOW
 ----------------------------------------------------------*/
 .datepicker-nav {
   display: flex;
@@ -11,7 +11,7 @@
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  overflow-x: hidden;
+  overflow-x: hidden; /* Prevents elements from overflowing */
   box-sizing: border-box;
   z-index: 1000;
 
@@ -20,8 +20,28 @@
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 
-  /* Ensure it starts directly below the header */
+  /* Ensure it starts below the header with extra spacing */
   margin-top: calc(var(--header-height) + 10px);
+  height: var(--date-nav-buttons-height);
+  transition: height 0.3s ease-in-out; /* Smooth height transition */
+}
+
+/* ---------------------------------------------------------
+   ENSURE BUTTONS DISPLAY THE CORRECT LABEL PER SCREEN SIZE
+----------------------------------------------------------*/
+
+/* Desktop: Hide the mobile label */
+@media (min-width: 769px) {
+  .mobile-label {
+    display: none !important;
+  }
+}
+
+/* Mobile: Hide the desktop label */
+@media (max-width: 768px) {
+  .desktop-label {
+    display: none !important;
+  }
 }
 
 /* ---------------------------------------------------------
@@ -34,6 +54,25 @@
   justify-content: space-evenly;
   width: 100%;
   gap: 1.5rem;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth fade & move effect */
+}
+
+/* ---------------------------------------------------------
+   DISABLE "NEWEST" & "OLDEST" BUTTONS VISUALLY WHEN AT BOUNDARY
+----------------------------------------------------------*/
+.default-buttons button:disabled {
+  background: #ebccb9 !important; /* Muted color */
+  color: #8c6750 !important;
+  border-color: #d3a689 !important;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.6; /* Reduce opacity for disabled look */
+}
+
+/* Remove hover effect when disabled */
+.default-buttons button:disabled:hover {
+  background: #ebccb9 !important;
+  transform: none !important;
 }
 
 /* Ensure buttons are aligned evenly */
@@ -68,35 +107,22 @@
 
 /* Fix misalignment caused by `newest-btn` */
 .newest-btn {
-  border-right-width: 2px !important; /* Ensures it doesn't push content */
-  margin-right: 0; /* Prevents it from shifting */
+  border-right-width: 2px !important;
+  margin-right: 0;
 }
 
-/* Hide/Show Labels for Mobile & Desktop */
-.desktop-label {
-  display: inline; /* Default for desktop */
+/* ---------------------------------------------------------
+   TRANSITION EFFECTS (HIDE OLDEST/NEWEST & MOVE TEXT UP)
+----------------------------------------------------------*/
+.datepicker-nav.selecting-date .default-buttons {
+  opacity: 0; /* Fade out Oldest/Newest buttons */
+  transform: translateY(-20px); /* Move them up before hiding */
+  pointer-events: none;
 }
-.mobile-label {
-  display: none; /* Hide mobile label by default */
-}
 
-@media (max-width: 768px) {
-  .desktop-label {
-    display: none !important; /* Hide desktop label on mobile */
-  }
-  .mobile-label {
-    display: inline !important; /* Show mobile label */
-  }
-
-  /* Adjust button layout to keep them horizontal */
-  .default-buttons {
-    gap: 0.5rem;
-  }
-
-  .default-buttons button {
-    max-width: 33.3%; /* Keep equal width */
-    padding: 0.6rem 1rem;
-  }
+.datepicker-nav.selecting-date .select-date-btn {
+  opacity: 1;
+  transform: translateY(-30px); /* Move text up smoothly */
 }
 
 /* ---------------------------------------------------------
@@ -110,10 +136,21 @@
   text-align: center;
   width: 100%;
   max-width: 500px;
-  margin: calc(var(--header-height) + 15px) auto 0; /* Ensures it starts below header */
+  margin: calc(var(--header-height) + 15px) auto 0;
   overflow: hidden;
-  background: #f4e1c9; /* Warm Cream Background */
+  background: #f4e1c9;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  opacity: 0; /* Hidden by default */
+  transform: translateY(20px); /* Start slightly below */
+}
+
+/* When selecting a year/month/day, fade it in */
+.datepicker-nav.selecting-date .year-selection,
+.datepicker-nav.selecting-date .month-selection,
+.datepicker-nav.selecting-date .day-selection {
+  opacity: 1;
+  transform: translateY(0); /* Slide into place */
 }
 
 /* Headings */
@@ -122,7 +159,7 @@
 .day-selection h3 {
   font-family: "Georgia", serif;
   font-size: 1.4rem;
-  color: #4a2c2a; /* Deep Brown */
+  color: #4a2c2a;
   margin-bottom: 10px;
 }
 
@@ -153,7 +190,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px; /* Adds space between buttons */
+  gap: 12px;
   margin-top: 10px;
 }
 
@@ -167,7 +204,7 @@
 
 /* Confirm Selection (Highlighted Day) */
 .day-options button.confirm {
-  background: #b4462a; /* Tuscan Red */
+  background: #b4462a;
   border: 2px solid #8c3e24;
 }
 
@@ -206,6 +243,7 @@
   .datepicker-nav {
     max-width: 95%;
     padding: 0.5rem;
+    margin-top: calc(var(--header-height) + 5px);
   }
 
   .year-selection,
@@ -217,7 +255,7 @@
   .year-options,
   .month-options,
   .day-options {
-    gap: 8px; /* Slightly less spacing on mobile */
+    gap: 8px;
   }
 
   .year-options button,
@@ -225,10 +263,5 @@
   .day-options button {
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
-  }
-
-  /* Ensure DatePicker aligns with header height on mobile */
-  .datepicker-nav {
-    margin-top: calc(var(--header-height) + 5px);
   }
 }

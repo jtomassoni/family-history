@@ -16,7 +16,7 @@ export const photoData = [
     description: "James relaxing waiting for train",
     eventDate: "2025-03-13",
     uploadedAt: "2025-03-15T12:03:00.000Z",
-    url: "/photos/IMG_0678.jpeg",
+    url: "/photos/IMG_8637.jpeg",
     familyMembers:['James'],
     tags:['colorado', 'glenwood springs', 'park'],
     options: []

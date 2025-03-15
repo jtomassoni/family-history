@@ -1,6 +1,6 @@
 <template>
   <footer class="site-footer">
-    <p>Built with ❤️ by JT in Denver. &copy; {{ currentYear }} All rights reserved.</p>
+    <p>Built with ❤️ in Denver. &copy; {{ currentYear }} All rights reserved.</p>
   </footer>
 </template>
 

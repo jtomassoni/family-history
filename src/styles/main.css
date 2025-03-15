@@ -23,4 +23,6 @@ html, body {
 ----------------------------------------------------------*/
 :root {
   --header-height: 60px; /* Default header height, adjusted for mobile in Header.css */
+  --footer-height: 30px; /* Default footer height, adjusted for mobile in Footer.css */
+  --date-nav-buttons-height: 75px; /* Default height for oldest/select/newst, adjusted for mobile in DatePickerNav.css */
 }

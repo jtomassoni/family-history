@@ -1,4 +1,6 @@
-/* PhotoTile.css */
+/* ---------------------------------------------------------
+   PHOTO TILE - DESKTOP & GENERAL STYLING
+----------------------------------------------------------*/
 .photo-tile-container {
   margin: 40px auto 100px auto;
   max-height: calc(100vh - 160px);
@@ -17,10 +19,37 @@
   overflow: hidden;
 }
 
+/* Image Styling */
 .photo-image {
   display: block;
   border-radius: 8px;
   max-width: 100%;
   max-height: calc((100vh - 160px) * 0.8);
   object-fit: contain;
+}
+
+/* ---------------------------------------------------------
+   MOBILE ADJUSTMENTS (Centering & Spacing Fixes)
+----------------------------------------------------------*/
+@media (max-width: 768px) {
+  .photo-tile-container {
+    width: 90vw; /* Reduce width slightly for spacing on left & right */
+    max-width: 90vw;
+    margin: auto; /* Center horizontally */
+    max-height: calc(100vh - var(--header-height) - 100px); /* Leave space for UI elements */
+    padding: 0.5rem; /* Reduce padding slightly for better fit */
+    border-radius: 10px; /* Slightly softer rounded edges */
+
+    /* Center vertically */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .photo-image {
+    max-width: 100%;
+    max-height: 85vh; /* Adjust dynamically to prevent overflow */
+    object-fit: contain;
+  }
 }

@@ -31,10 +31,10 @@ onMounted(() => {
     console.log("Showing swipe hint on mobile.");
     showHint.value = true;
     
-    // setTimeout(() => {
-    //   console.log("Hiding swipe hint...");
-    //   showHint.value = false;
-    // }, 400000); // Hide after 4 seconds
+    setTimeout(() => {
+      console.log("Hiding swipe hint...");
+      showHint.value = false;
+    }, 1000); // Hide after 1 second til dev
   } else {
     console.log("Not mobile: Swipe hint will not show.");
   }
