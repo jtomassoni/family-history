@@ -26,12 +26,18 @@
   transition: height 0.3s ease-in-out;
 }
 
-/* Hide mobile or desktop labels appropriately */
+/* ---------------------------------------------------------
+   RESPONSIVE LABELS
+----------------------------------------------------------*/
 @media (min-width: 769px) {
-  .mobile-label { display: none !important; }
+  .mobile-label {
+    display: none !important;
+  }
 }
 @media (max-width: 768px) {
-  .desktop-label { display: none !important; }
+  .desktop-label {
+    display: none !important;
+  }
 }
 
 /* ---------------------------------------------------------
@@ -51,7 +57,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #b4462a;   /* Tuscan Red */
+  background: #b4462a;
   border: 2px solid #a8642d;
   color: #fff;
   font-family: "Georgia", serif;
@@ -65,11 +71,9 @@
   max-width: 33%;
   box-sizing: border-box;
 }
-
-/* Hover/Active/Disabled for Level 1 */
 .default-navigation button:hover {
   background: #d35d38;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
 }
 .default-navigation button:active {
   background: #962d1a;
@@ -87,11 +91,12 @@
   box-shadow: none;
 }
 
-/* Fade out Level 1 when not on "start" */
+/* Fade out Level 1 when transitioning */
 .datepicker-nav.selectingDate .default-navigation {
   opacity: 0;
   transform: translateY(-20px);
   pointer-events: none;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 /* ---------------------------------------------------------
@@ -102,12 +107,11 @@
   flex-direction: column;
   width: 100%;
   height: var(--date-nav-buttons-height);
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   position: relative;
   z-index: 5000;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
-/* Common header for each selection level (2-5) */
 .selection-header {
   display: flex;
   align-items: center;
@@ -116,7 +120,6 @@
   padding: 0 10px;
   margin-bottom: 4px;
 }
-
 .selection-header h3 {
   font-family: "Georgia", serif;
   font-size: 1rem;
@@ -126,7 +129,6 @@
   flex-grow: 1;
   text-align: left;
 }
-
 .back-btn {
   background: none;
   border: none;
@@ -143,12 +145,145 @@
   text-decoration: none;
 }
 
+/* The area that holds the main level-2-5 content */
+.selection-options {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
 /* ---------------------------------------------------------
-   YEAR RANGE (Level 2) & Month/Day (Levels 4/5)
-   We'll use separate containers: .year-range-options, .month-options, .day-options
+   LEVEL 2 - YEAR RANGE
 ----------------------------------------------------------*/
-.year-range-options,
-.month-options,
+.year-range-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  width: 90%;
+  padding: 5px;
+  max-height: calc(var(--date-nav-buttons-height) - 10px);
+  overflow-y: auto;
+  margin: 0 auto;
+}
+
+.year-range-options button {
+  background: #b4462a;
+  border: 2px solid #8c3e24;
+  color: #fff;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s ease, box-shadow 0.2s ease;
+  flex: 1 1 30%;
+  max-width: 30%;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+}
+.year-range-options button:hover {
+  background: #d98b60;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+}
+.year-range-options button:active {
+  background: #962d1a;
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------
+   LEVEL 3 - YEAR (Horizontal Scroll)
+----------------------------------------------------------*/
+.year-options {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 90%;
+  margin: 0 auto;
+  padding: 5px 0;
+  gap: 8px;
+  max-height: calc(var(--date-nav-buttons-height) - 10px);
+  justify-content: center;
+}
+.year-options button {
+  background: #b4462a;
+  border: 2px solid #8c3e24;
+  color: #fff;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  margin: 0;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+  transition: background 0.3s ease, box-shadow 0.2s ease;
+}
+.year-options button:hover {
+  background: #d98b60;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+}
+.year-options button:active {
+  background: #962d1a;
+  box-shadow: none;
+}
+.year-options::-webkit-scrollbar {
+  height: 6px;
+}
+.year-options::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+/* ---------------------------------------------------------
+   LEVEL 4 - MONTH
+----------------------------------------------------------*/
+.month-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  width: 90%;
+  padding: 5px;
+  max-height: calc(var(--date-nav-buttons-height) - 10px);
+  overflow-y: auto;
+  margin: 0 auto;
+}
+.month-options button {
+  background: #b4462a;
+  border: 2px solid #8c3e24;
+  color: #fff;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s ease, box-shadow 0.2s ease;
+  flex: 1 1 30%;
+  max-width: 30%;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+}
+.month-options button:hover {
+  background: #d98b60;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+}
+.month-options button:active {
+  background: #962d1a;
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------
+   LEVEL 5 - DAY
+   If selectedDay is null, we show day-options.
+   If selectedDay is set, we show the confirm-row.
+----------------------------------------------------------*/
 .day-options {
   display: flex;
   flex-wrap: wrap;
@@ -158,14 +293,8 @@
   padding: 5px;
   max-height: calc(var(--date-nav-buttons-height) - 10px);
   overflow-y: auto;
-  position: relative;
-  z-index: 5100;
-  margin-top: -10px;
+  margin: 0 auto;
 }
-
-/* Buttons for Year Range, Month, Day */
-.year-range-options button,
-.month-options button,
 .day-options button {
   background: #b4462a;
   border: 2px solid #8c3e24;
@@ -182,91 +311,22 @@
   max-width: 30%;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
 }
-.year-range-options button:hover,
-.month-options button:hover,
 .day-options button:hover {
   background: #d98b60;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
 }
-.year-range-options button:active,
-.month-options button:active,
 .day-options button:active {
   background: #962d1a;
   box-shadow: none;
 }
 
-/* ---------------------------------------------------------
-   SELECT A YEAR (Level 3) => .year-options
-   Smaller, single-row, horizontally scrollable
-----------------------------------------------------------*/
-.year-options {
+/* The row with the confirm button (shown once a day is selected) */
+.confirm-row {
   display: flex;
-  flex-wrap: nowrap;
+  justify-content: center;
   align-items: center;
-  overflow-x: auto;
-  overflow-y: hidden;
-  width: 90%;
-  margin: 0 auto;
-  padding: 5px 0;
-  gap: 8px;
-  max-height: calc(var(--date-nav-buttons-height) - 10px);
-}
-
-.year-options button {
-  background: #b4462a;
-  border: 2px solid #8c3e24;
-  color: #fff;
-  font-family: "Georgia", serif;
-  font-weight: bold;
-  font-size: 0.8rem;      /* Slightly smaller for short years */
-  padding: 0.3rem 0.6rem;
-  border-radius: 5px;
-  margin: 0;
-  flex: 0 0 auto;         /* No shrinking or growing */
-  white-space: nowrap;    /* Keep year text on one line */
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
-  transition: background 0.3s ease, box-shadow 0.2s ease;
-}
-.year-options button:hover {
-  background: #d98b60;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-}
-.year-options button:active {
-  background: #962d1a;
-  box-shadow: none;
-}
-
-/* Optional: style the horizontal scrollbar for year-options */
-.year-options::-webkit-scrollbar {
-  height: 6px;
-}
-.year-options::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.2);
-  border-radius: 3px;
-}
-
-/* ---------------------------------------------------------
-   LEVEL 6 - CONFIRM SELECTION
-----------------------------------------------------------*/
-.confirm-selection {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-  width: 100%;
-  height: var(--date-nav-buttons-height);
-  padding: 10px;
-  z-index: 5000;
-}
-
-.confirm-selection p {
-  font-family: "Georgia", serif;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #4a2c2a;
-  margin: 0;
+  margin-top: 0.6rem;
   flex-grow: 1;
-  text-align: left;
 }
 
 .confirm-btn {
@@ -281,11 +341,10 @@
   cursor: pointer;
   transition: background 0.3s ease, box-shadow 0.2s ease;
   max-width: 180px;
-  margin: 0 10px;
 }
 .confirm-btn:hover {
   background: #d98b60;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
 }
 .confirm-btn:active {
   background: #962d1a;
@@ -301,7 +360,6 @@
     padding: 0.5rem;
     margin-top: calc(var(--header-height) + 3px);
   }
-  
   .selection-header {
     padding: 0 5px;
     gap: 5px;
@@ -309,7 +367,6 @@
   }
   .selection-header h3 {
     font-size: 0.8rem;
-    flex-grow: 1;
     text-align: center;
     margin-top: 15px;
   }
@@ -335,7 +392,7 @@
     flex: 1 1 32%;
     max-width: 32%;
   }
-
+  
   .year-options {
     width: 95%;
     gap: 6px;
@@ -344,5 +401,11 @@
   .year-options button {
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
+  }
+
+  .confirm-btn {
+    font-size: 0.9rem;
+    padding: 0.5rem .5rem;
+    max-width: 150px;
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="datepicker-nav" :class="{ selectingDate: currentLevel !== 'start' }">
-    <!-- LEVEL 1: Default Navigation (Oldest, Select a Date, Newest) -->
+    <!-- Level 1: Default Navigation (Oldest / Select a Date / Newest) -->
     <div v-if="currentLevel === 'start'" class="default-navigation">
       <button class="oldest-btn" @click="selectOldest" :disabled="isOldestDisabled">
         <span class="desktop-label">Oldest</span>
@@ -18,82 +18,93 @@
       </button>
     </div>
 
-    <!-- LEVEL 2: Select a Year Range -->
-    <div v-if="currentLevel === 'year-range'" class="selection-container">
+    <!-- Levels 2-5: Year Range, Year, Month, Day Selection -->
+    <div v-if="['year-range', 'year', 'month', 'day'].includes(currentLevel)" class="selection-container">
       <div class="selection-header">
-        <h3>Select a Year Range</h3>
-        <button class="back-btn" @click="handleBack">Back</button>
-      </div>
-      <div class="year-range-options">
-        <button
-          v-for="range in yearRanges"
-          :key="range.label"
-          @click="selectYearRange(range)"
-        >
-          {{ range.label }}
-        </button>
-      </div>
-    </div>
+        <!-- If we are on the Day level but haven't chosen a day yet, show "Select a Day".
+             Otherwise, use the computed levelTitle. -->
+        <h3 v-if="!(currentLevel === 'day' && selectedDay)" >
+          {{ levelTitle }}
+        </h3>
 
-    <!-- LEVEL 3: Select a Year (tiny, single-row) -->
-    <div v-if="currentLevel === 'year'" class="selection-container">
-      <div class="selection-header">
-        <h3>Select a Year</h3>
-        <button class="back-btn" @click="handleBack">Back</button>
-      </div>
-      <div class="year-options">
-        <button
-          v-for="year in selectedYearRange"
-          :key="year"
-          @click="selectYear(year)"
-        >
-          {{ year }}
-        </button>
-      </div>
-    </div>
+        <!-- On the Day level, if we have a selectedDay, show "Selected Date: …" in the header -->
+        <h3 v-else>
+          Selected Date: {{ selectedYear }} - {{ formatMonth(selectedMonth) }} - {{ selectedDay }}
+        </h3>
 
-    <!-- LEVEL 4: Select a Month -->
-    <div v-if="currentLevel === 'month'" class="selection-container">
-      <div class="selection-header">
-        <h3>Select a Month</h3>
         <button class="back-btn" @click="handleBack">Back</button>
       </div>
-      <div class="month-options">
-        <button
-          v-for="month in availableMonths"
-          :key="month"
-          @click="selectMonth(month)"
-        >
-          {{ formatMonth(month) }}
-        </button>
-      </div>
-    </div>
 
-    <!-- LEVEL 5: Select a Day -->
-    <div v-if="currentLevel === 'day'" class="selection-container">
-      <div class="selection-header">
-        <h3>Select a Day</h3>
-        <button class="back-btn" @click="handleBack">Back</button>
-      </div>
-      <div class="day-options">
-        <button
-          v-for="day in availableDays"
-          :key="day"
-          @click="selectDay(day)"
-        >
-          {{ day }}
-        </button>
-      </div>
-    </div>
+      <div class="selection-options">
+        <!-- Level 2: Year Range -->
+        <template v-if="currentLevel === 'year-range'">
+          <div class="year-range-options">
+            <button
+              v-for="range in yearRanges"
+              :key="range.label"
+              @click="selectYearRange(range)"
+            >
+              {{ range.label }}
+            </button>
+          </div>
+        </template>
 
-    <!-- LEVEL 6: Confirm Selection -->
-    <div v-if="currentLevel === 'confirm'" class="confirm-selection">
-      <div class="selection-header">
-        <h3>Confirm Selection</h3>
-        <button class="back-btn" @click="handleBack">Back</button>
+        <!-- Level 3: Specific Year -->
+        <template v-if="currentLevel === 'year'">
+          <div class="year-options">
+            <button
+              v-for="year in selectedYearRange"
+              :key="year"
+              @click="selectYear(year)"
+            >
+              {{ year }}
+            </button>
+          </div>
+        </template>
+
+        <!-- Level 4: Month Selection -->
+        <template v-if="currentLevel === 'month'">
+          <div class="month-options">
+            <button
+              v-for="month in availableMonths"
+              :key="month"
+              @click="selectMonth(month)"
+            >
+              {{ formatMonth(month) }}
+            </button>
+          </div>
+        </template>
+
+        <!-- Level 5: Day Selection -->
+        <template v-if="currentLevel === 'day'">
+          <!-- If no day selected, show the day options -->
+          <div
+            v-if="!selectedDay"
+            class="day-options"
+          >
+            <button
+              v-for="day in availableDays"
+              :key="day"
+              @click="selectDay(day)"
+            >
+              {{ day }}
+            </button>
+          </div>
+
+          <!-- If a day is selected, show a row for the confirm button under the header -->
+          <div
+            v-else
+            class="confirm-row"
+          >
+            <button
+              class="confirm-btn"
+              @click="confirmSelection"
+            >
+              Confirm
+            </button>
+          </div>
+        </template>
       </div>
-      <p>{{ selectedYear }} - {{ formatMonth(selectedMonth) }} - {{ selectedDay }}</p>
-      <button class="confirm-btn" @click="confirmSelection">Confirm</button>
     </div>
   </div>
 </template>
@@ -123,7 +134,7 @@ const props = defineProps({
   }
 });
 
-/* Compute Oldest/Newest Disabled States */
+/* Compute whether Oldest/Newest are disabled */
 const isOldestDisabled = computed(() => props.currentIndex === props.events.length - 1);
 const isMostRecentDisabled = computed(() => props.currentIndex === 0);
 
@@ -157,7 +168,7 @@ const availableDays = computed(() => {
   )].sort((a, b) => a - b);
 });
 
-/* Compute Year Ranges */
+/* Compute year ranges */
 const yearRanges = computed(() => {
   if (!availableYears.value.length) return [];
   if (availableYears.value.length <= 5) {
@@ -175,51 +186,58 @@ const yearRanges = computed(() => {
   return groupedRanges;
 });
 
-/* Format Month */
-const formatMonth = (num) => new Date(0, num - 1).toLocaleString('default', { month: 'long' });
+/* Compute the level title */
+const levelTitle = computed(() => {
+  switch (currentLevel.value) {
+    case 'year-range': return "Select a Year Range";
+    case 'year': return "Select a Year";
+    case 'month': return "Select a Month";
+    case 'day': return "Select a Day";
+    default: return "";
+  }
+});
 
-/* Level 1: Oldest/Newest/Select a Date */
+/* 1) Oldest / Newest / Select a Date */
 const selectOldest = () => {
   if (!props.events.length) return;
   emit('select', props.events[props.events.length - 1]);
-  resetAll();
+  resetSelection();
 };
 
 const selectMostRecent = () => {
   if (!props.events.length) return;
   emit('select', props.events[0]);
-  resetAll();
+  resetSelection();
 };
 
 const startSelection = () => {
   currentLevel.value = 'year-range';
 };
 
-/* Level 2: Year Range */
+/* 2) Year Range */
 const selectYearRange = (range) => {
   selectedYearRange.value = range.years;
   currentLevel.value = 'year';
 };
 
-/* Level 3: Year */
+/* 3) Specific Year */
 const selectYear = (year) => {
   selectedYear.value = year;
   currentLevel.value = 'month';
 };
 
-/* Level 4: Month */
+/* 4) Month */
 const selectMonth = (month) => {
   selectedMonth.value = month;
   currentLevel.value = 'day';
 };
 
-/* Level 5: Day */
+/* 5) Day (Inline Confirm) */
 const selectDay = (day) => {
   selectedDay.value = day;
-  currentLevel.value = 'confirm';
 };
 
-/* Level 6: Confirm */
+/* Confirm selection & emit event */
 const confirmSelection = () => {
   const selectedEvent = props.events.find(e =>
     e.eventDate.getUTCFullYear() === selectedYear.value &&
@@ -228,31 +246,42 @@ const confirmSelection = () => {
   );
   if (selectedEvent) {
     emit('select', selectedEvent);
-    resetAll();
   }
+  resetSelection();
 };
 
-/* Back Button (All Levels) */
+/* Back logic */
 const handleBack = () => {
-  if (currentLevel.value === 'confirm') {
-    currentLevel.value = 'day';
-  } else if (currentLevel.value === 'day') {
-    currentLevel.value = 'month';
-  } else if (currentLevel.value === 'month') {
-    currentLevel.value = 'year';
+  if (currentLevel.value === 'year-range') {
+    resetSelection();
   } else if (currentLevel.value === 'year') {
+    selectedYear.value = null;
     currentLevel.value = 'year-range';
-  } else {
-    resetAll();
+  } else if (currentLevel.value === 'month') {
+    selectedMonth.value = null;
+    currentLevel.value = 'year';
+  } else if (currentLevel.value === 'day') {
+    if (!selectedDay.value) {
+      // If day not selected, go back to month
+      currentLevel.value = 'month';
+    } else {
+      // If day is selected (confirm state), reset the day
+      selectedDay.value = null;
+    }
   }
 };
 
-/* Reset Entire Flow */
-const resetAll = () => {
+/* Reset everything */
+const resetSelection = () => {
   selectedYear.value = null;
+  selectedYearRange.value = [];
   selectedMonth.value = null;
   selectedDay.value = null;
-  selectedYearRange.value = [];
   currentLevel.value = 'start';
+};
+
+/* Utility: format month number -> name */
+const formatMonth = (num) => {
+  return new Date(0, num - 1).toLocaleString('default', { month: 'long' });
 };
 </script>
