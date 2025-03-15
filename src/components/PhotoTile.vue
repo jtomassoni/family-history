@@ -1,27 +1,24 @@
 <template>
   <div class="photo-tile-container">
     <div class="photo-content">
-      <!-- Photo Image (Click Toggles Data Overlay) -->
       <div 
         class="photo-image-container" 
         @click="toggleInfoOverlay"
         :class="{ 'faded': showInfoOverlay }"
       >
-        <img :src="photo?.url" :alt="photo?.externalName" class="photo-image" />
+        <img :src="photo.url" :alt="photo.externalName" class="photo-image" />
 
-        <!-- Ensure Vue Only Renders Text (Prevents Object Output) -->
+        <!-- Debugging: Log Overlay State -->
         <transition name="fade">
           <div v-if="showInfoOverlay" class="photo-info-overlay">
-            <h3 class="photo-title" v-if="photo?.externalName">
-              {{ photo.externalName }}
-            </h3>
-            <p v-if="photo?.description && photo.description.trim() !== ''">
+            <h3 class="photo-title">{{ photo.externalName }}</h3>
+            <p v-if="photo.description && photo.description.trim() !== ''">
               {{ photo.description }}
             </p>
-            <p v-if="photo?.eventDate">
+            <p v-if="photo.eventDate">
               <strong>Event Date:</strong> {{ formatDate(photo.eventDate) }}
             </p>
-            <p v-if="photo?.uploadedAt">
+            <p v-if="photo.uploadedAt">
               <strong>Uploaded:</strong> {{ formatDate(photo.uploadedAt) }}
             </p>
           </div>
@@ -30,6 +27,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, defineProps, watch, onMounted } from "vue";
