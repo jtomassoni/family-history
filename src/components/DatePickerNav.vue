@@ -18,6 +18,7 @@
       </button>
     </div>
 
+
     <!-- Advanced Date Selection UI -->
     <div class="selected-path" v-if="selectedYear">
       <span v-if="selectedYear && currentLevel !== 'year'">Year: {{ selectedYear }}</span>

@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------
-   DATE PICKER NAVIGATION CONTAINER
+   DATE PICKER NAVIGATION - ITALIAN-THEMED
 ----------------------------------------------------------*/
 .datepicker-nav {
   display: flex;
@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0.5rem 1rem;
+  padding: 0.8rem 1.2rem;
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
@@ -15,12 +15,219 @@
   box-sizing: border-box;
   z-index: 1000;
 
-  /* Ensures it starts below the header */
+  /* Warm background */
+  background: #f4e1c9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+  /* Ensure it starts directly below the header */
   margin-top: calc(var(--header-height) + 10px);
 }
 
-/* Reduce space on smaller screens */
+/* ---------------------------------------------------------
+   BUTTON STYLING (BIG, READABLE, WARM COLORS)
+----------------------------------------------------------*/
+.default-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+/* Ensure buttons are aligned evenly */
+.default-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  background: #b4462a; /* Tuscan Red */
+  border: 2px solid #a8642d; /* Deep Gold */
+  color: #fff;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease;
+  white-space: nowrap;
+  flex: 1;
+  max-width: 33.3%; /* Ensure equal width for all three buttons */
+  box-sizing: border-box;
+}
+
+/* Ensure buttons have even padding */
+.oldest-btn,
+.select-date-btn,
+.newest-btn {
+  padding: 0.75rem 1.2rem;
+  border-width: 2px; /* Ensure all buttons have equal border thickness */
+}
+
+/* Fix misalignment caused by `newest-btn` */
+.newest-btn {
+  border-right-width: 2px !important; /* Ensures it doesn't push content */
+  margin-right: 0; /* Prevents it from shifting */
+}
+
+/* Hide/Show Labels for Mobile & Desktop */
+.desktop-label {
+  display: inline; /* Default for desktop */
+}
+.mobile-label {
+  display: none; /* Hide mobile label by default */
+}
+
 @media (max-width: 768px) {
+  .desktop-label {
+    display: none !important; /* Hide desktop label on mobile */
+  }
+  .mobile-label {
+    display: inline !important; /* Show mobile label */
+  }
+
+  /* Adjust button layout to keep them horizontal */
+  .default-buttons {
+    gap: 0.5rem;
+  }
+
+  .default-buttons button {
+    max-width: 33.3%; /* Keep equal width */
+    padding: 0.6rem 1rem;
+  }
+}
+
+/* ---------------------------------------------------------
+   YEAR, MONTH, DAY SELECTIONS (MATCH HEADER HEIGHT)
+----------------------------------------------------------*/
+.year-selection,
+.month-selection,
+.day-selection {
+  border-radius: 12px;
+  padding: 1.2rem;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  margin: calc(var(--header-height) + 15px) auto 0; /* Ensures it starts below header */
+  overflow: hidden;
+  background: #f4e1c9; /* Warm Cream Background */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Headings */
+.year-selection h3,
+.month-selection h3,
+.day-selection h3 {
+  font-family: "Georgia", serif;
+  font-size: 1.4rem;
+  color: #4a2c2a; /* Deep Brown */
+  margin-bottom: 10px;
+}
+
+/* ---------------------------------------------------------
+   BUTTON STYLES FOR SELECTIONS
+----------------------------------------------------------*/
+.year-options button,
+.month-options button,
+.day-options button {
+  background: #c77b4e; /* Warm Brown */
+  border: 2px solid #a8642d; /* Deep Gold */
+  color: #fff;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Add spacing between buttons */
+.year-options,
+.month-options,
+.day-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px; /* Adds space between buttons */
+  margin-top: 10px;
+}
+
+/* Hover Effects */
+.year-options button:hover,
+.month-options button:hover,
+.day-options button:hover {
+  background: #d98b60;
+  transform: scale(1.05);
+}
+
+/* Confirm Selection (Highlighted Day) */
+.day-options button.confirm {
+  background: #b4462a; /* Tuscan Red */
+  border: 2px solid #8c3e24;
+}
+
+/* ---------------------------------------------------------
+   BACK BUTTON STYLES
+----------------------------------------------------------*/
+.back-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 0.8rem;
+}
+
+.back-button button {
+  background: #8c6750;
+  border: 2px solid #5d3a1a;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+/* Back Button Hover */
+.back-button button:hover {
+  background: #a77d5d;
+  transform: scale(1.05);
+}
+
+/* ---------------------------------------------------------
+   MOBILE RESPONSIVENESS (ENSURE ALIGNMENT & BUTTON SIZE)
+----------------------------------------------------------*/
+@media (max-width: 768px) {
+  .datepicker-nav {
+    max-width: 95%;
+    padding: 0.5rem;
+  }
+
+  .year-selection,
+  .month-selection,
+  .day-selection {
+    max-width: 90%;
+  }
+
+  .year-options,
+  .month-options,
+  .day-options {
+    gap: 8px; /* Slightly less spacing on mobile */
+  }
+
+  .year-options button,
+  .month-options button,
+  .day-options button {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+
+  /* Ensure DatePicker aligns with header height on mobile */
   .datepicker-nav {
     margin-top: calc(var(--header-height) + 5px);
   }

@@ -1,5 +1,27 @@
 export const photoData = [
   {
+    internalName: "jt_selfie",
+    externalName: "Train selfie",
+    description: "James selfie on amtrak to glenwood springs",
+    eventDate: "2025-03-13",
+    uploadedAt: "2025-03-15T12:00:00.000Z",
+    url: "/photos/IMG_0678.jpeg",
+    familyMembers:['James'],
+    tags:['colorado', 'glenwood springs', 'amtrak', 'selfie'],
+    options: []
+  },
+  {
+    internalName: "jt_at_park_bench",
+    externalName: "Leaning back",
+    description: "James relaxing waiting for train",
+    eventDate: "2025-03-13",
+    uploadedAt: "2025-03-15T12:03:00.000Z",
+    url: "/photos/IMG_0678.jpeg",
+    familyMembers:['James'],
+    tags:['colorado', 'glenwood springs', 'park'],
+    options: []
+  },
+  {
     internalName: "group_photo_1",
     externalName: "Family Shot",
     description: "Mark, Guy, Paul, Carol, Granny, Poppop, Donna .",
