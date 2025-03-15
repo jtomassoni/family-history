@@ -14,7 +14,7 @@
   text-align: center;
   color: rgba(255, 255, 255, 0.9);
   opacity: 1;
-  z-index: 2147483647 !important; /* Ensure it is always above everything */
+  z-index: 9998 !important; /* Ensure it is always above everything */
   display: flex; /* Ensure it’s not hidden */
   align-items: center;
   justify-content: center;
