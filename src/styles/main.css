@@ -9,20 +9,22 @@ html, body {
   height: 100%;
   font-family: sans-serif;
 
-  /* New opacity approach: apply directly to the background */
+  /* Semi-transparent overlay plus background image */
   background: 
     linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
     url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
     no-repeat center center fixed;
   background-size: cover;
-}
 
+  /* Prevent scrolling */
+  overflow: hidden;
+}
 
 /* ---------------------------------------------------------
    2) GLOBAL VARIABLES (USABLE IN COMPONENTS)
 ----------------------------------------------------------*/
 :root {
-  --header-height: 60px; /* Default header height, adjusted for mobile in Header.css */
-  --footer-height: 20px; /* Default footer height, adjusted for mobile in Footer.css */
-  --date-nav-buttons-height: 75px; /* Default height for oldest/select/newst, adjusted for mobile in DatePickerNav.css */
+  --header-height: 60px;           /* Default header height */
+  --footer-height: 20px;           /* Default footer height */
+  --date-nav-buttons-height: 75px; /* Height for oldest/select/newest nav */
 }
