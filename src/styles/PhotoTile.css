@@ -6,8 +6,8 @@
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-
-  /* 20px gap below header+date-nav, 20px above footer on desktop */
+  
+  /* Desktop gaps: 20px below header/date-nav and 20px above footer */
   top: calc(var(--header-height) + var(--date-nav-buttons-height) + 20px);
   bottom: calc(var(--footer-height) + 20px);
 
@@ -17,44 +17,62 @@
   background: #f7f3ee;
   border: 3px solid #bfa18a;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
-  /* Fill the vertical space between top & bottom */
+  /* Use flex to structure the inner content */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-/* The content wrapper that will center the image */
+/* ---------------------------------------------------------
+   INNER CONTENT - Enforce Padding on All Sides
+----------------------------------------------------------*/
 .photo-content {
-  flex: 1; /* Take up all remaining vertical space in .photo-tile-container */
+  flex: 1; /* Fills available vertical space */
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* 30px padding around the image on desktop */
+  
+  /* Reserve 30px of space on all sides on desktop */
   padding: 30px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-/* The actual photo */
+/* ---------------------------------------------------------
+   IMAGE CONTAINER - Centers the Image
+----------------------------------------------------------*/
+.photo-image-container {
+  /* Ensure this container fills the parent and centers its child */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------
+   IMAGE STYLING
+   The image scales down so it never enters the reserved padding.
+----------------------------------------------------------*/
 .photo-image {
   display: block;
   border-radius: 8px;
-  
-  /* Keep aspect ratio and never exceed container's space */
   object-fit: contain;
   object-position: center;
-
-  /* Let the photo expand as much as it can within .photo-content’s padding */
-  max-width: 100%;
-  max-height: 100%;
+  
+  /* Force the image to stay within the padded area:
+     On desktop, subtract 60px total (30px each side) */
+  max-width: calc(100% - 60px);
+  max-height: calc(100% - 60px);
   width: auto;
   height: auto;
-
-  /* No extra margin; flex alignment centers it horizontally */
+  
+  /* No extra margins */
   margin: 0;
 }
 
@@ -63,37 +81,31 @@
 ----------------------------------------------------------*/
 @media (max-width: 768px) {
   .photo-tile-container {
-    /* 10px margin on each side so the border isn't flush with screen edge */
+    /* Leave a 10px margin on each side */
     width: calc(100vw - 20px);
     max-width: calc(100vw - 20px);
 
-    /* 10px gap below header/date-nav & above footer on mobile */
+    /* Mobile: use 10px gaps below header/date-nav & above footer */
     top: calc(var(--header-height) + var(--date-nav-buttons-height) + 10px);
     bottom: calc(var(--footer-height) + 10px);
   }
 
   .photo-content {
-    /* Slightly smaller padding on mobile */
+    /* Reserve 15px on all sides on mobile */
     padding: 15px;
   }
-}
 
-/* ---------------------------------------------------------
-   (OPTIONAL) PORTRAIT IMAGE ADJUSTMENTS
-   If you detect a portrait photo in Vue and add a .portrait class,
-   you can reduce the photo further if it’s too tall.
-----------------------------------------------------------*/
-@media (min-width: 769px) {
-  .photo-tile-container.portrait .photo-content {
-    /* Example: bigger padding if portrait images are still too large */
-    padding: 40px;
+  .photo-image {
+    /* Subtract 30px total (15px each side) on mobile */
+    max-width: calc(100% - 30px);
+    max-height: calc(100% - 30px);
   }
 }
 
 /* ---------------------------------------------------------
    TRANSITION & OVERLAY STYLING
 ----------------------------------------------------------*/
-/* Fade transition for overlay (Vue's <transition name="fade-overlay">) */
+/* Fade transition for overlay (used with Vue's <transition name="fade-overlay">) */
 .fade-overlay-enter-active,
 .fade-overlay-leave-active {
   transition: opacity 0.4s ease;
@@ -104,17 +116,17 @@
 }
 
 /* Overlay for photo info */
-.photo-overlay {
+.photo-info-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 999; /* Overlay above the tile */
-
+  
   background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
   backdrop-filter: blur(4px);
-
+  
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -125,20 +137,20 @@
   box-sizing: border-box;
 }
 
-.photo-overlay h2 {
+.photo-info-overlay h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
-.photo-overlay p {
+.photo-info-overlay p {
   font-size: 1rem;
   margin-bottom: 0.5rem;
 }
 
 @media (max-width: 768px) {
-  .photo-overlay h2 {
+  .photo-info-overlay h3 {
     font-size: 1.2rem;
   }
-  .photo-overlay p {
+  .photo-info-overlay p {
     font-size: 0.9rem;
   }
 }
