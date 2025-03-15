@@ -20,7 +20,7 @@
 
       <!-- 5) Photo Navigation & Tile -->
       <div class="photo-navigation-container" v-touch:swipe.left="nextPhoto" v-touch:swipe.right="previousPhoto">
-        <BigNavArrow direction="left" @click="previousPhoto" :disabled="isLeftArrowDisabled" />
+        <BigNavArrow direction="left" @click="previousPhoto" :disabled="isLeftArrowDisabled" label="Previous"/>
         <div class="photo-display-container">
           <transition name="fade">
             <div v-if="currentPhoto" class="photo-wrapper">
@@ -28,7 +28,9 @@
             </div>
           </transition>
         </div>
-        <BigNavArrow direction="right" @click="nextPhoto" :disabled="isRightArrowDisabled" />
+        <BigNavArrow direction="right" @click="nextPhoto" :disabled="isRightArrowDisabled" label="Next"/>
+
+
       </div>
 
       <!-- 6) Swipe Hint -->

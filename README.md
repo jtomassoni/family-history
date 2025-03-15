@@ -8,10 +8,20 @@ Overview
 
 This application allows you to explore your family history through an interactive timeline view. Built with Vue.js for the frontend and Django for the backend, the app is designed to be responsive and user-friendly.
 
-View the app at [www.thetomassonis.com](www.thetomassonis.com)
+View the app at [www.thetomassonis.com](www.thetomassonis.com)(add host info here)
 
 TODO
 ----
+*   Things that can be done before needing a real DB or auth just with the stuff in the binder, i think the move is ot make stories and tagging and stuff work before adding more pics bcz that'll be the heaviest payload from github
+    * upload all the content
+    * parse it for stories
+    * create app elements for stories
+    * create element for family tree
+    * link family tree to stories
+    * link stories to gallery
+    * link gallery to stories
+    * make sure hover,disable, etc status effects work for all buttons
+
 *   Build backend DB for images
 *   Pipe those images into front end
 *   User profiles with auth
@@ -19,11 +29,7 @@ TODO
 *   Upload pics from mobile w auth
 *   Comments (create, edit your own, delete), report to admin.
 *   Activity logs (who uploaded what, who changed descriptions when from what to do)
-*   Swipe support
-*   Family Tree - interactble
-*   Stories by Marian(link to different events)
-*   Add support for story links to image gallery
-*   On mobile, once auth'd upload selfie w tags, locations, etc
+* 
 
 Features
 --------

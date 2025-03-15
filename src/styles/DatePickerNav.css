@@ -11,33 +11,30 @@
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  overflow-x: hidden; /* Prevents elements from overflowing */
+  overflow: hidden;
   box-sizing: border-box;
   z-index: 1000;
-
+  
   /* Warm background */
   background: #f4e1c9;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 
   /* Ensure it starts below the header with extra spacing */
-  margin-top: var(--header-height);
+  margin-top: calc(var(--header-height) + 5px);
   height: var(--date-nav-buttons-height);
-  transition: height 0.3s ease-in-out; /* Smooth height transition */
+  transition: height 0.3s ease-in-out;
 }
 
 /* ---------------------------------------------------------
    ENSURE BUTTONS DISPLAY THE CORRECT LABEL PER SCREEN SIZE
 ----------------------------------------------------------*/
-
-/* Desktop: Hide the mobile label */
 @media (min-width: 769px) {
   .mobile-label {
     display: none !important;
   }
 }
 
-/* Mobile: Hide the desktop label */
 @media (max-width: 768px) {
   .desktop-label {
     display: none !important;
@@ -45,7 +42,7 @@
 }
 
 /* ---------------------------------------------------------
-   BUTTON STYLING (BIG, READABLE, WARM COLORS)
+   BUTTON STYLING (BIG, READABLE, WARM COLORS) - LEVEL 1
 ----------------------------------------------------------*/
 .default-buttons {
   display: flex;
@@ -54,28 +51,9 @@
   justify-content: space-evenly;
   width: 100%;
   gap: 1.5rem;
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth fade & move effect */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-/* ---------------------------------------------------------
-   DISABLE "NEWEST" & "OLDEST" BUTTONS VISUALLY WHEN AT BOUNDARY
-----------------------------------------------------------*/
-.default-buttons button:disabled {
-  background: #ebccb9 !important; /* Muted color */
-  color: #8c6750 !important;
-  border-color: #d3a689 !important;
-  cursor: not-allowed;
-  transform: none;
-  opacity: 0.6; /* Reduce opacity for disabled look */
-}
-
-/* Remove hover effect when disabled */
-.default-buttons button:disabled:hover {
-  background: #ebccb9 !important;
-  transform: none !important;
-}
-
-/* Ensure buttons are aligned evenly */
 .default-buttons button {
   display: flex;
   align-items: center;
@@ -90,11 +68,40 @@
   padding: 0.75rem 1.5rem;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.1s ease;
+  transition: background 0.3s ease, box-shadow 0.2s ease;
   white-space: nowrap;
   flex: 1;
-  max-width: 33.3%; /* Ensure equal width for all three buttons */
+  max-width: 33.3%;
   box-sizing: border-box;
+}
+
+/* Unified Hover Effects - Graphical Only */
+.default-buttons button:hover,
+.year-options button:hover {
+  background: #d35d38; /* Slightly lighter Tuscan Red */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Active Click Effect */
+.default-buttons button:active,
+.year-options button:active {
+  background: #962d1a; /* Darker red for click effect */
+  box-shadow: none;
+}
+
+/* Disable "NEWEST" & "OLDEST" Buttons Visually When at Boundary */
+.default-buttons button:disabled {
+  background: #ebccb9 !important;
+  color: #8c6750 !important;
+  border-color: #d3a689 !important;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.6;
+}
+
+.default-buttons button:disabled:hover {
+  background: #ebccb9 !important;
+  box-shadow: none;
 }
 
 /* Ensure buttons have even padding */
@@ -102,7 +109,7 @@
 .select-date-btn,
 .newest-btn {
   padding: 0.75rem 1.2rem;
-  border-width: 2px; /* Ensure all buttons have equal border thickness */
+  border-width: 2px;
 }
 
 /* Fix misalignment caused by `newest-btn` */
@@ -114,135 +121,169 @@
 /* ---------------------------------------------------------
    FADE OUT LEVEL 1 (OLDEST / SELECT / NEWEST) WHEN TRANSITIONING
 ----------------------------------------------------------*/
-.datepicker-nav.selectingDate .default-buttons {
-  opacity: 0; /* Fade out */
-  transform: translateY(-20px); /* Move up slightly */
+.datepicker-nav.selecting-date .default-buttons {
+  opacity: 0;
+  transform: translateY(-20px);
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  pointer-events: none; /* Prevent clicks during transition */
+  pointer-events: none;
 }
 
 /* ---------------------------------------------------------
-   FADE IN LEVEL 2 (YEAR SELECTION)
+   FIX YEAR SELECTION POSITIONING INSIDE DATE PICKER NAV
 ----------------------------------------------------------*/
 .year-selection {
-  opacity: 0; /* Hidden initially */
-  transform: translateY(20px); /* Start slightly lower */
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-/* When transitioning, Level 2 should fade in */
-.datepicker-nav.selectingDate .year-selection {
   opacity: 1;
-  transform: translateY(0); /* Slide into place */
-}
-
-/* ---------------------------------------------------------
-   YEAR, MONTH, DAY SELECTIONS (MATCH HEADER HEIGHT)
-----------------------------------------------------------*/
-.year-selection,
-.month-selection,
-.day-selection {
-  border-radius: 12px;
-  padding: 1.2rem;
-  text-align: center;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  position: relative;
   width: 100%;
-  max-width: 500px;
-  margin: calc(var(--header-height) + 15px) auto 0;
-  overflow: hidden;
-  background: #f4e1c9;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  opacity: 0; /* Hidden by default */
-  transform: translateY(20px); /* Start slightly below */
+  height: var(--date-nav-buttons-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* Ensures spacing for title, buttons, and back button */
+  z-index: 5000;
 }
 
-/* When selecting a year/month/day, fade it in */
-.datepicker-nav.selecting-date .year-selection,
-.datepicker-nav.selecting-date .month-selection,
-.datepicker-nav.selecting-date .day-selection {
-  opacity: 1;
-  transform: translateY(0); /* Slide into place */
-}
-
-/* Headings */
-.year-selection h3,
-.month-selection h3,
-.day-selection h3 {
-  font-family: "Georgia", serif;
-  font-size: 1.4rem;
-  color: #4a2c2a;
-  margin-bottom: 10px;
+/* Ensure Level 2 appears properly when transitioning */
+.datepicker-nav.selecting-date .year-selection {
+  transform: translateY(0);
 }
 
 /* ---------------------------------------------------------
-   BUTTON STYLES FOR SELECTIONS
+   STYLE FOR HEADER WITH "SELECT A YEAR" AND INLINE BACK BUTTON
 ----------------------------------------------------------*/
-.year-options button,
-.month-options button,
-.day-options button {
-  background: #c77b4e;
-  border: 2px solid #a8642d;
-  color: #fff;
+.year-header {
+  display: flex;
+  justify-content: center; /* Centers both elements */
+  align-items: center;
+  width: 100%;
+  gap: 5px; /* Brings "Select a Year" and Back button closer together */
+  margin-top: -20px; /* Moves buttons up slightly */
+
+}
+
+/* Properly center "Select a Year" */
+.year-header h3 {
   font-family: "Georgia", serif;
+  font-size: 0.85rem; /* Reduced font size */
   font-weight: bold;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.1s ease;
-  box-sizing: border-box;
+  color: #4a2c2a;
   text-align: center;
 }
 
-/* Add spacing between buttons */
-.year-options,
-.month-options,
-.day-options {
+/* Compact Back Button - Inline with Title */
+.back-button {
+  background: none;
+  border: none;
+  color: #8c6750;
+  font-size: 0.85rem; /* Reduced font size */
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 2px 6px; /* Reduce padding */
+  transition: color 0.2s ease-in-out;
+}
+
+/* Hover Effect for Back Button */
+.back-button:hover {
+  color: #a77d5d;
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------------
+   YEAR OPTIONS CONTAINER - ENSURE PROPER FIT INSIDE TAN BOX
+----------------------------------------------------------*/
+.year-options {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 4px; /* Adjust gap for tighter alignment */
+  width: 90%;
+  padding: 5px;
+  max-height: calc(var(--date-nav-buttons-height) - 15px); /* Adjusted for better spacing */
+  overflow-y: auto;
+  position: relative;
+  z-index: 5100;
+  margin-top: -20px; /* Moves buttons up slightly */
+  padding-bottom: 0px; /* Adds space below buttons */
 }
 
-/* Hover Effects */
-.year-options button:hover,
-.month-options button:hover,
-.day-options button:hover {
-  background: #d98b60;
-  transform: scale(1.05);
-}
-
-/* Confirm Selection (Highlighted Day) */
-.day-options button.confirm {
-  background: #b4462a;
-  border: 2px solid #8c3e24;
+/* Buttons for Year Ranges - Unified Styling */
+.year-options button {
+  background: #b4462a; /* Warm Tuscan Red */
+  border: 2px solid #8c3e24; /* Deep brownish-red border */
+  color: #fff;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s ease, box-shadow 0.2s ease;
+  flex: 1 1 30%;
+  max-width: 30%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 /* ---------------------------------------------------------
-   BACK BUTTON STYLES
+/* ---------------------------------------------------------
+   MOBILE FIXES - ENSURE CORRECT ALIGNMENT ON ACTUAL DEVICES
 ----------------------------------------------------------*/
-.back-button-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: 0.8rem;
-}
+@media (max-width: 768px) {
+  /* Keep DatePickerNav properly sized */
+  .datepicker-nav {
+    max-width: 95%;
+    padding: 0.5rem;
+    margin-top: calc(var(--header-height) + 3px); /* Reduce space above */
+  }
 
-.back-button button {
-  background: #8c6750;
-  border: 2px solid #5d3a1a;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.1s ease;
-}
+  /* Explicitly Align Header */
+  .year-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center; /* Fully centers content */
+    width: 100%;
+    padding: 0 5px;
+    gap: 5px;
+    margin-top: -5px; /* Move it down slightly */
+    position: relative;
+  }
 
-/* Back Button Hover */
-.back-button button:hover {
-  background: #a77d5d;
-  transform: scale(1.05);
+  /* Adjust Font Sizes */
+  .year-header h3 {
+    font-size: 0.8rem; /* Ensure it's readable but not oversized */
+    flex-grow: 1;
+    text-align: center;
+    padding: 0;
+    margin-top: 15px;
+  }
+
+  .back-button {
+    font-size: 0.8rem; /* Match size */
+    padding: 2px 6px;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  /* Ensure Year Options Fit Properly */
+  .year-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 95%;
+    padding: 4px;
+    max-height: calc(var(--date-nav-buttons-height) - 8px);
+    gap: 4px;
+    margin-top: -5px; /* Adjusted for real device positioning */
+  }
+
+  /* Adjust Year Range Buttons */
+  .year-options button {
+    font-size: 0.75rem;
+    border-radius: 5px;
+    flex: 1 1 32%;
+    max-width: 32%;
+  }
 }
