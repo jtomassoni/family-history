@@ -56,6 +56,7 @@ import Footer from "./components/Footer.vue";
 import SwipeHint from "./components/SwipeHint.vue";
 
 /** 🖼️ Prepare and sort photos */
+// fix this
 const sortedPhotos = computed(() => {
   return photoData
     .slice()

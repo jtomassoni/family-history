@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
-    <div v-if="visible" class="boundary-message">
-      <span class="close-btn" @click.stop="dismissMessage">✖</span>
+    <div v-if="visible" class="boundary-message" @click.stop="dismissMessage">
+      <span class="close-btn">✖</span>
       {{ message }}
     </div>
   </transition>
