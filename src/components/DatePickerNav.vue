@@ -2,28 +2,17 @@
   <div class="datepicker-nav">
     <!-- Start Screen: Oldest, Select a Date, Newest -->
     <div v-if="currentLevel === 'start'" class="default-buttons">
-      <button
-        class="oldest-btn"
-        @click="selectOldest"
-        :disabled="isOldestDisabled"
-      >
+      <button class="oldest-btn" @click="selectOldest" :disabled="isOldestDisabled">
         <span class="desktop-label">Oldest</span>
         <span class="mobile-label">Oldest</span>
       </button>
 
-      <button
-        class="select-date-btn"
-        @click="startSelection"
-      >
+      <button class="select-date-btn" @click="startSelection">
         <span class="desktop-label">Select a Date</span>
         <span class="mobile-label">🗓️</span>
       </button>
 
-      <button
-        class="newest-btn"
-        @click="selectMostRecent"
-        :disabled="isMostRecentDisabled"
-      >
+      <button class="newest-btn" @click="selectMostRecent" :disabled="isMostRecentDisabled">
         <span class="desktop-label">Newest</span>
         <span class="mobile-label">Newest</span>
       </button>
@@ -38,11 +27,7 @@
     <div v-if="currentLevel === 'year'" class="year-selection">
       <h3>Select a Year</h3>
       <div class="year-options">
-        <button
-          v-for="year in availableYears"
-          :key="year"
-          @click="selectYear(year)"
-        >
+        <button v-for="year in availableYears" :key="year" @click="selectYear(year)">
           {{ year }}
         </button>
       </div>
@@ -54,11 +39,7 @@
     <div v-if="currentLevel === 'month'" class="month-selection">
       <h3>Select a Month</h3>
       <div class="month-options">
-        <button
-          v-for="month in availableMonths"
-          :key="month"
-          @click="selectMonth(month)"
-        >
+        <button v-for="month in availableMonths" :key="month" @click="selectMonth(month)">
           {{ monthName(month) }}
         </button>
       </div>

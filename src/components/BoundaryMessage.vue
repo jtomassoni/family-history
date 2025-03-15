@@ -8,16 +8,18 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref, defineProps, defineEmits } from "vue";
 import "../styles/BoundaryMessage.css";
 
 const props = defineProps({
   message: String,
 });
 
+const emit = defineEmits(["close"]);
 const visible = ref(true);
 
 const dismissMessage = () => {
   visible.value = false;
+  emit("close"); // Emit event so App.vue can track when it's dismissed
 };
 </script>

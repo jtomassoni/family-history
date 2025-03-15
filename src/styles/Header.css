@@ -1,16 +1,12 @@
-/* Header.css */
-
-/* 
-   The header is fixed, spans full width, 
-   and its height matches --header-height from Main.css 
-*/
+/* ---------------------------------------------------------
+   HEADER STYLES (DYNAMIC HEIGHT USING --header-height)
+----------------------------------------------------------*/
 .site-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  /* CHANGED: Match the variable so there's no mismatch */
-  height: var(--header-height);
+  height: var(--header-height); /* Uses the global variable */
 
   background: #333;
   color: white;
@@ -22,20 +18,26 @@
   text-align: center;
 
   /* Keep the header above other elements */
-  z-index: 100;
+  z-index: 10000;
 }
 
+/* Prevent text overflow */
 .site-header h1 {
   margin: 0;
   font-size: 2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
 }
 
-/* 
-   Make the header smaller or adjust text on mobile 
-   to match the smaller var(--header-height)
-*/
+/* ---------------------------------------------------------
+   RESPONSIVENESS: ADJUST HEADER HEIGHT FOR MOBILE
+----------------------------------------------------------*/
 @media (max-width: 768px) {
   .site-header h1 {
-    font-size: 1.4rem; /* Slightly smaller for mobile screens */
+    font-size: 1.4rem;
+    max-width: 75%;
   }
 }
+

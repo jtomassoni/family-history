@@ -1,80 +1,49 @@
-/* BoundaryMessage.css */
-
-/* Floating Boundary Message */
+/* Ensure BoundaryMessage is always on screen */
 .boundary-message {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 50%; /* Takes up half the screen width */
-  max-width: 600px; /* Prevents it from getting too large */
+  max-width: 600px;
+  width: 50%;
   font-size: 18px;
   font-weight: bold;
   background: rgba(0, 0, 0, 0.85);
   padding: 20px;
   border-radius: 12px;
   text-align: center;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   color: rgba(255, 255, 255, 0.9);
   opacity: 1;
+  z-index: 2147483647 !important; /* Ensure it is always above everything */
+  display: flex; /* Ensure it’s not hidden */
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   transition: opacity 0.5s ease-in-out;
-  pointer-events: auto;
-  z-index: 999;
-  position: relative;
 }
 
-/* Close Button (Pushed Outside the Black Box) */
+/* Close button fully outside the box */
 .close-btn {
   position: absolute;
   top: 50%;
-  right: -65px; /* Moves it fully outside the box */
+  right: -55px;
   transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
   font-size: 22px;
   font-weight: bold;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.9);
+  background: #fff;
   color: black;
   border-radius: 50%;
-  padding: 10px;
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-/* Fade to Red on Hover (No Moving) */
+/* Close button hover effect */
 .close-btn:hover {
   background: #ff6b6b;
   color: white;
-}
-
-/* Mobile Adjustments */
-@media (max-width: 767px) {
-  .boundary-message {
-    width: 75%;
-    font-size: 16px;
-    padding: 15px;
-    border-radius: 10px;
-    max-width: 85%;
-  }
-
-  /* Larger, Easy-to-Tap X Button on Mobile */
-  .close-btn {
-    right: -50px; /* Push further to the right on mobile */
-    font-size: 24px;
-    width: 20px;
-    height: 20px;
-    padding: 12px;
-  }
-}
-
-/* Smooth Fade Out */
-.fade-leave-active {
-  transition: opacity 0.5s ease-in-out;
-}
-
-.fade-leave-to {
-  opacity: 0;
 }
