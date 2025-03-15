@@ -1,6 +1,6 @@
 <template>
   <div class="datepicker-nav" :class="{ selectingDate: currentLevel !== 'start' }">
-    <!-- Level 1: Default Navigation (Oldest, Select a Date, Newest) -->
+    <!-- LEVEL 1: Default Navigation (Oldest, Select a Date, Newest) -->
     <div v-if="currentLevel === 'start'" class="default-navigation">
       <button class="oldest-btn" @click="selectOldest" :disabled="isOldestDisabled">
         <span class="desktop-label">Oldest</span>
@@ -18,41 +18,79 @@
       </button>
     </div>
 
-    <!-- Level 2-5: Year Range, Year, Month, Day Selection -->
-    <div v-if="['year-range', 'year', 'month', 'day'].includes(currentLevel)" class="selection-container">
+    <!-- LEVEL 2: Select a Year Range -->
+    <div v-if="currentLevel === 'year-range'" class="selection-container">
       <div class="selection-header">
-        <h3>{{ levelTitle }}</h3>
+        <h3>Select a Year Range</h3>
         <button class="back-btn" @click="handleBack">Back</button>
       </div>
-      <div class="selection-options">
-        <template v-if="currentLevel === 'year-range'">
-          <button v-for="range in yearRanges" :key="range.label" @click="selectYearRange(range)">
-            {{ range.label }}
-          </button>
-        </template>
-        <template v-if="currentLevel === 'year'">
-          <button v-for="year in selectedYearRange" :key="year" @click="selectYear(year)">
-            {{ year }}
-          </button>
-        </template>
-        <template v-if="currentLevel === 'month'">
-          <button v-for="month in availableMonths" :key="month" @click="selectMonth(month)">
-            {{ formatMonth(month) }}
-          </button>
-        </template>
-        <template v-if="currentLevel === 'day'">
-          <button v-for="day in availableDays" :key="day" @click="selectDay(day)">
-            {{ day }}
-          </button>
-        </template>
+      <div class="year-range-options">
+        <button
+          v-for="range in yearRanges"
+          :key="range.label"
+          @click="selectYearRange(range)"
+        >
+          {{ range.label }}
+        </button>
       </div>
     </div>
 
-    <!-- Level 6: Confirm Selection -->
+    <!-- LEVEL 3: Select a Year (tiny, single-row) -->
+    <div v-if="currentLevel === 'year'" class="selection-container">
+      <div class="selection-header">
+        <h3>Select a Year</h3>
+        <button class="back-btn" @click="handleBack">Back</button>
+      </div>
+      <div class="year-options">
+        <button
+          v-for="year in selectedYearRange"
+          :key="year"
+          @click="selectYear(year)"
+        >
+          {{ year }}
+        </button>
+      </div>
+    </div>
+
+    <!-- LEVEL 4: Select a Month -->
+    <div v-if="currentLevel === 'month'" class="selection-container">
+      <div class="selection-header">
+        <h3>Select a Month</h3>
+        <button class="back-btn" @click="handleBack">Back</button>
+      </div>
+      <div class="month-options">
+        <button
+          v-for="month in availableMonths"
+          :key="month"
+          @click="selectMonth(month)"
+        >
+          {{ formatMonth(month) }}
+        </button>
+      </div>
+    </div>
+
+    <!-- LEVEL 5: Select a Day -->
+    <div v-if="currentLevel === 'day'" class="selection-container">
+      <div class="selection-header">
+        <h3>Select a Day</h3>
+        <button class="back-btn" @click="handleBack">Back</button>
+      </div>
+      <div class="day-options">
+        <button
+          v-for="day in availableDays"
+          :key="day"
+          @click="selectDay(day)"
+        >
+          {{ day }}
+        </button>
+      </div>
+    </div>
+
+    <!-- LEVEL 6: Confirm Selection -->
     <div v-if="currentLevel === 'confirm'" class="confirm-selection">
       <div class="selection-header">
         <h3>Confirm Selection</h3>
-        <button class="back-btn" @click="handleBack">Back</button> <!-- ✅ FIXED! -->
+        <button class="back-btn" @click="handleBack">Back</button>
       </div>
       <p>{{ selectedYear }} - {{ formatMonth(selectedMonth) }} - {{ selectedDay }}</p>
       <button class="confirm-btn" @click="confirmSelection">Confirm</button>
@@ -85,142 +123,136 @@ const props = defineProps({
   }
 });
 
+/* Compute Oldest/Newest Disabled States */
+const isOldestDisabled = computed(() => props.currentIndex === props.events.length - 1);
+const isMostRecentDisabled = computed(() => props.currentIndex === 0);
+
 /* Compute available years */
-const availableYears = computed(() => 
-  props.events?.length 
-    ? [...new Set(props.events.map(e => e.eventDate.getUTCFullYear()))].sort((a, b) => a - b)
-    : []
-);
+const availableYears = computed(() => {
+  if (!props.events?.length) return [];
+  const years = props.events.map(e => e.eventDate.getUTCFullYear());
+  return [...new Set(years)].sort((a, b) => a - b);
+});
 
 /* Compute available months */
-const availableMonths = computed(() => 
-  selectedYear.value
-    ? [...new Set(props.events.filter(e => e.eventDate.getUTCFullYear() === selectedYear.value)
-      .map(e => e.eventDate.getUTCMonth() + 1))].sort((a, b) => a - b)
-    : []
-);
+const availableMonths = computed(() => {
+  if (!selectedYear.value) return [];
+  return [...new Set(
+    props.events
+      .filter(e => e.eventDate.getUTCFullYear() === selectedYear.value)
+      .map(e => e.eventDate.getUTCMonth() + 1)
+  )].sort((a, b) => a - b);
+});
 
 /* Compute available days */
-const availableDays = computed(() => 
-  selectedYear.value && selectedMonth.value
-    ? [...new Set(props.events.filter(e => 
+const availableDays = computed(() => {
+  if (!selectedYear.value || !selectedMonth.value) return [];
+  return [...new Set(
+    props.events
+      .filter(e =>
         e.eventDate.getUTCFullYear() === selectedYear.value &&
-        e.eventDate.getUTCMonth() + 1 === selectedMonth.value)
-      .map(e => e.eventDate.getUTCDate()))].sort((a, b) => a - b)
-    : []
-);
+        e.eventDate.getUTCMonth() + 1 === selectedMonth.value
+      )
+      .map(e => e.eventDate.getUTCDate())
+  )].sort((a, b) => a - b);
+});
 
 /* Compute Year Ranges */
 const yearRanges = computed(() => {
   if (!availableYears.value.length) return [];
-
   if (availableYears.value.length <= 5) {
     return [{ label: availableYears.value.join(", "), years: availableYears.value }];
   }
-
-  return Array.from({ length: Math.ceil(availableYears.value.length / 5) }, (_, i) => {
-    const rangeYears = availableYears.value.slice(i * 5, (i + 1) * 5);
-    return { label: `${rangeYears[0]} - ${rangeYears[rangeYears.length - 1]}`, years: rangeYears };
-  });
+  const groupedRanges = [];
+  const chunkSize = 5;
+  for (let i = 0; i < availableYears.value.length; i += chunkSize) {
+    const rangeYears = availableYears.value.slice(i, i + chunkSize);
+    groupedRanges.push({
+      label: `${rangeYears[0]} - ${rangeYears[rangeYears.length - 1]}`,
+      years: rangeYears
+    });
+  }
+  return groupedRanges;
 });
 
-/* Compute Level Title */
-const levelTitle = computed(() => ({
-  'year-range': "Select a Year Range",
-  'year': "Select a Year",
-  'month': "Select a Month",
-  'day': "Select a Day",
-  'confirm': "Confirm Selection"
-}[currentLevel.value] || ""));
+/* Format Month */
+const formatMonth = (num) => new Date(0, num - 1).toLocaleString('default', { month: 'long' });
 
-/* Select Oldest */
+/* Level 1: Oldest/Newest/Select a Date */
 const selectOldest = () => {
-  console.log("Oldest clicked. Selecting oldest event.");
   if (!props.events.length) return;
   emit('select', props.events[props.events.length - 1]);
-  resetSelection();
+  resetAll();
 };
 
-/* Select Newest */
 const selectMostRecent = () => {
-  console.log("Newest clicked. Selecting most recent event.");
   if (!props.events.length) return;
   emit('select', props.events[0]);
-  resetSelection();
+  resetAll();
 };
 
-/* Select a Date */
 const startSelection = () => {
-  console.log("Select a Date clicked. Transitioning to 'year-range'.");
   currentLevel.value = 'year-range';
 };
 
-/* Select Year Range */
+/* Level 2: Year Range */
 const selectYearRange = (range) => {
-  console.log("Year Range Selected:", range.label);
   selectedYearRange.value = range.years;
   currentLevel.value = 'year';
 };
 
-/* Select Year */
+/* Level 3: Year */
 const selectYear = (year) => {
-  console.log("Year Selected:", year);
   selectedYear.value = year;
   currentLevel.value = 'month';
 };
 
-/* Select Month */
+/* Level 4: Month */
 const selectMonth = (month) => {
-  console.log("Month Selected:", month);
   selectedMonth.value = month;
   currentLevel.value = 'day';
 };
 
-/* Select Day */
+/* Level 5: Day */
 const selectDay = (day) => {
-  console.log("Day Selected:", day);
   selectedDay.value = day;
-  currentLevel.value = 'confirm'; // ✅ Now correctly transitions to Confirm screen
+  currentLevel.value = 'confirm';
 };
 
-/* Confirm Selection */
+/* Level 6: Confirm */
 const confirmSelection = () => {
-  console.log("Confirm Selection:", selectedYear.value, selectedMonth.value, selectedDay.value);
-
   const selectedEvent = props.events.find(e =>
     e.eventDate.getUTCFullYear() === selectedYear.value &&
     e.eventDate.getUTCMonth() + 1 === selectedMonth.value &&
     e.eventDate.getUTCDate() === selectedDay.value
   );
-
   if (selectedEvent) {
     emit('select', selectedEvent);
-    resetSelection();
+    resetAll();
   }
 };
 
-/* Handle Back Navigation */
+/* Back Button (All Levels) */
 const handleBack = () => {
-  console.log("Back button clicked. Current level:", currentLevel.value);
-  const levelMap = { 
-    'year': () => currentLevel.value = 'year-range', 
-    'month': () => currentLevel.value = 'year', 
-    'day': () => currentLevel.value = 'month',
-    'confirm': () => currentLevel.value = 'day', // ✅ Fixes Back button on Confirm screen
-    'year-range': resetSelection 
-  };
-  levelMap[currentLevel.value]?.();
+  if (currentLevel.value === 'confirm') {
+    currentLevel.value = 'day';
+  } else if (currentLevel.value === 'day') {
+    currentLevel.value = 'month';
+  } else if (currentLevel.value === 'month') {
+    currentLevel.value = 'year';
+  } else if (currentLevel.value === 'year') {
+    currentLevel.value = 'year-range';
+  } else {
+    resetAll();
+  }
 };
 
-/* Reset Selection */
-const resetSelection = () => {
+/* Reset Entire Flow */
+const resetAll = () => {
   selectedYear.value = null;
-  selectedYearRange.value = [];
   selectedMonth.value = null;
   selectedDay.value = null;
+  selectedYearRange.value = [];
   currentLevel.value = 'start';
 };
-
-/* Convert Month Number to Name */
-const formatMonth = (num) => new Date(0, num - 1).toLocaleString('default', { month: 'long' });
 </script>

@@ -15,36 +15,29 @@
   box-sizing: border-box;
   z-index: 1000;
 
-  /* Warm background */
+  /* Warm background + rounded corners */
   background: #f4e1c9;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 
-  /* Ensure it starts below the header with extra spacing */
+  /* Position below header */
   margin-top: calc(var(--header-height) + 5px);
   height: var(--date-nav-buttons-height);
   transition: height 0.3s ease-in-out;
 }
 
-/* ---------------------------------------------------------
-   ENSURE BUTTONS DISPLAY THE CORRECT LABEL PER SCREEN SIZE
-----------------------------------------------------------*/
+/* Hide mobile or desktop labels appropriately */
 @media (min-width: 769px) {
-  .mobile-label {
-    display: none !important;
-  }
+  .mobile-label { display: none !important; }
 }
-
 @media (max-width: 768px) {
-  .desktop-label {
-    display: none !important;
-  }
+  .desktop-label { display: none !important; }
 }
 
 /* ---------------------------------------------------------
-   LEVEL 1 - DEFAULT NAVIGATION BUTTONS
+   LEVEL 1 - DEFAULT NAVIGATION (Oldest / Select a Date / Newest)
 ----------------------------------------------------------*/
-.default-buttons {
+.default-navigation {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -54,11 +47,11 @@
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-.default-buttons button {
+.default-navigation button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #b4462a;
+  background: #b4462a;   /* Tuscan Red */
   border: 2px solid #a8642d;
   color: #fff;
   font-family: "Georgia", serif;
@@ -73,83 +66,68 @@
   box-sizing: border-box;
 }
 
-/* Hover Effects */
-.default-buttons button:hover {
+/* Hover/Active/Disabled for Level 1 */
+.default-navigation button:hover {
   background: #d35d38;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
-
-/* Active Click Effect */
-.default-buttons button:active {
+.default-navigation button:active {
   background: #962d1a;
   box-shadow: none;
 }
-
-/* Disabled Buttons */
-.default-buttons button:disabled {
+.default-navigation button:disabled {
   background: #ebccb9 !important;
   color: #8c6750 !important;
   border-color: #d3a689 !important;
   cursor: not-allowed;
-  transform: none;
   opacity: 0.6;
 }
+.default-navigation button:disabled:hover {
+  background: #ebccb9 !important;
+  box-shadow: none;
+}
 
-/* ---------------------------------------------------------
-   FADE OUT LEVEL 1 WHEN TRANSITIONING TO LEVEL 2
-----------------------------------------------------------*/
-.datepicker-nav.selecting-date .default-buttons {
+/* Fade out Level 1 when not on "start" */
+.datepicker-nav.selectingDate .default-navigation {
   opacity: 0;
   transform: translateY(-20px);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   pointer-events: none;
 }
 
 /* ---------------------------------------------------------
-   LEVEL 2 & 3 - YEAR RANGE & SPECIFIC YEAR SELECTION
+   SHARED SELECTION CONTAINER (Levels 2-5)
 ----------------------------------------------------------*/
-.year-selection {
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  position: relative;
-  width: 100%;
-  height: var(--date-nav-buttons-height);
+.selection-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  width: 100%;
+  height: var(--date-nav-buttons-height);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  position: relative;
   z-index: 5000;
 }
 
-/* Ensure Level 2 appears properly when transitioning */
-.datepicker-nav.selecting-date .year-selection {
-  transform: translateY(0);
-}
-
-/* ---------------------------------------------------------
-   HEADER FOR YEAR RANGE & INLINE BACK BUTTON
-----------------------------------------------------------*/
-.year-header {
+/* Common header for each selection level (2-5) */
+.selection-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   padding: 0 10px;
+  margin-bottom: 4px;
 }
 
-/* Style for "Select a Range" */
-.year-header h3 {
+.selection-header h3 {
   font-family: "Georgia", serif;
   font-size: 1rem;
   font-weight: bold;
   color: #4a2c2a;
-  text-align: left;
-  flex-grow: 1;
   margin: 0;
+  flex-grow: 1;
+  text-align: left;
 }
 
-/* Compact Back Button */
-.back-button {
+.back-btn {
   background: none;
   border: none;
   color: #8c6750;
@@ -160,17 +138,16 @@
   padding: 4px 8px;
   transition: color 0.2s ease-in-out;
 }
-
-/* Hover Effect */
-.back-button:hover {
+.back-btn:hover {
   color: #a77d5d;
   text-decoration: none;
 }
 
 /* ---------------------------------------------------------
-   YEAR/MONTH/DAY SELECTION BUTTONS
+   YEAR RANGE (Level 2) & Month/Day (Levels 4/5)
+   We'll use separate containers: .year-range-options, .month-options, .day-options
 ----------------------------------------------------------*/
-.year-options,
+.year-range-options,
 .month-options,
 .day-options {
   display: flex;
@@ -186,8 +163,8 @@
   margin-top: -10px;
 }
 
-/* Buttons for Year, Month, Day */
-.year-options button,
+/* Buttons for Year Range, Month, Day */
+.year-range-options button,
 .month-options button,
 .day-options button {
   background: #b4462a;
@@ -203,7 +180,69 @@
   transition: background 0.3s ease, box-shadow 0.2s ease;
   flex: 1 1 30%;
   max-width: 30%;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+}
+.year-range-options button:hover,
+.month-options button:hover,
+.day-options button:hover {
+  background: #d98b60;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.year-range-options button:active,
+.month-options button:active,
+.day-options button:active {
+  background: #962d1a;
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------
+   SELECT A YEAR (Level 3) => .year-options
+   Smaller, single-row, horizontally scrollable
+----------------------------------------------------------*/
+.year-options {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 90%;
+  margin: 0 auto;
+  padding: 5px 0;
+  gap: 8px;
+  max-height: calc(var(--date-nav-buttons-height) - 10px);
+}
+
+.year-options button {
+  background: #b4462a;
+  border: 2px solid #8c3e24;
+  color: #fff;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 0.8rem;      /* Slightly smaller for short years */
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  margin: 0;
+  flex: 0 0 auto;         /* No shrinking or growing */
+  white-space: nowrap;    /* Keep year text on one line */
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+  transition: background 0.3s ease, box-shadow 0.2s ease;
+}
+.year-options button:hover {
+  background: #d98b60;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.year-options button:active {
+  background: #962d1a;
+  box-shadow: none;
+}
+
+/* Optional: style the horizontal scrollbar for year-options */
+.year-options::-webkit-scrollbar {
+  height: 6px;
+}
+.year-options::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
 }
 
 /* ---------------------------------------------------------
@@ -214,25 +253,23 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  text-align: center;
   width: 100%;
   height: var(--date-nav-buttons-height);
   padding: 10px;
   z-index: 5000;
 }
 
-/* Selected Date Display */
 .confirm-selection p {
   font-family: "Georgia", serif;
   font-size: 1rem;
   font-weight: bold;
   color: #4a2c2a;
-  text-align: left;
   margin: 0;
+  flex-grow: 1;
+  text-align: left;
 }
 
-/* Confirm Button */
-.confirm-button {
+.confirm-btn {
   background: #b4462a;
   border: 2px solid #8c3e24;
   color: #fff;
@@ -243,17 +280,69 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s ease, box-shadow 0.2s ease;
-  text-align: center;
   max-width: 180px;
   margin: 0 10px;
 }
-
-.confirm-button:hover {
-  background: #d35d38;
+.confirm-btn:hover {
+  background: #d98b60;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
-
-.confirm-button:active {
+.confirm-btn:active {
   background: #962d1a;
   box-shadow: none;
+}
+
+/* ---------------------------------------------------------
+   MOBILE ADJUSTMENTS
+----------------------------------------------------------*/
+@media (max-width: 768px) {
+  .datepicker-nav {
+    max-width: 95%;
+    padding: 0.5rem;
+    margin-top: calc(var(--header-height) + 3px);
+  }
+  
+  .selection-header {
+    padding: 0 5px;
+    gap: 5px;
+    margin-top: -5px;
+  }
+  .selection-header h3 {
+    font-size: 0.8rem;
+    flex-grow: 1;
+    text-align: center;
+    margin-top: 15px;
+  }
+  .back-btn {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+  }
+  
+  .year-range-options,
+  .month-options,
+  .day-options {
+    width: 95%;
+    padding: 4px;
+    max-height: calc(var(--date-nav-buttons-height) - 8px);
+    gap: 4px;
+    margin-top: -5px;
+  }
+  .year-range-options button,
+  .month-options button,
+  .day-options button {
+    font-size: 0.75rem;
+    border-radius: 5px;
+    flex: 1 1 32%;
+    max-width: 32%;
+  }
+
+  .year-options {
+    width: 95%;
+    gap: 6px;
+    padding: 4px 0;
+  }
+  .year-options button {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
 }
