@@ -14,34 +14,24 @@
   overflow: hidden;
   box-sizing: border-box;
   z-index: 1000;
-
-  /* Warm background + rounded corners */
   background: #f4e1c9;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-
-  /* Position below header */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   margin-top: calc(var(--header-height) + 5px);
   height: var(--date-nav-buttons-height);
   transition: height 0.3s ease-in-out;
 }
 
-/* ---------------------------------------------------------
-   RESPONSIVE LABELS
-----------------------------------------------------------*/
+/* Responsive Label Visibility */
 @media (min-width: 769px) {
-  .mobile-label {
-    display: none !important;
-  }
+  .mobile-label { display: none !important; }
 }
 @media (max-width: 768px) {
-  .desktop-label {
-    display: none !important;
-  }
+  .desktop-label { display: none !important; }
 }
 
 /* ---------------------------------------------------------
-   LEVEL 1 - DEFAULT NAVIGATION (Oldest / Select a Date / Newest)
+   LEVEL 1 - DEFAULT NAVIGATION BUTTONS
 ----------------------------------------------------------*/
 .default-navigation {
   display: flex;
@@ -57,7 +47,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #b4462a; /* Tuscan Red */
+  background: #b4462a;
   border: 2px solid #a8642d;
   color: #fff;
   font-family: "Georgia", serif;
@@ -71,6 +61,7 @@
   max-width: 33%;
   box-sizing: border-box;
 }
+
 .default-navigation button:hover {
   background: #d35d38;
   box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
@@ -91,7 +82,7 @@
   box-shadow: none;
 }
 
-/* Fade out Level 1 when not on "start" */
+/* Fade out Level 1 when transitioning */
 .datepicker-nav.selectingDate .default-navigation {
   opacity: 0;
   transform: translateY(-20px);
@@ -109,9 +100,10 @@
   height: var(--date-nav-buttons-height);
   position: relative;
   z-index: 5000;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
+/* Common header for Levels 2-5 */
 .selection-header {
   display: flex;
   align-items: center;
@@ -145,16 +137,8 @@
   text-decoration: none;
 }
 
-/* The area that holds the main level-2-5 content */
-.selection-options {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-}
-
 /* ---------------------------------------------------------
-   LEVEL 2 - YEAR RANGE
+   LEVEL 2 - YEAR RANGE SELECTION
 ----------------------------------------------------------*/
 .year-range-options {
   display: flex;
@@ -165,9 +149,10 @@
   padding: 5px;
   max-height: calc(var(--date-nav-buttons-height) - 10px);
   overflow-y: auto;
+  position: relative;
+  z-index: 5100;
   margin: 0 auto;
 }
-
 .year-range-options button {
   background: #b4462a;
   border: 2px solid #8c3e24;
@@ -194,7 +179,7 @@
 }
 
 /* ---------------------------------------------------------
-   LEVEL 3 - YEAR (Horizontal Scroll)
+   LEVEL 3 - SPECIFIC YEAR SELECTION (Horizontal Scroll)
 ----------------------------------------------------------*/
 .year-options {
   display: flex;
@@ -218,7 +203,6 @@
   font-size: 0.8rem;
   padding: 0.3rem 0.6rem;
   border-radius: 5px;
-  margin: 0;
   flex: 0 0 auto;
   white-space: nowrap;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
@@ -241,7 +225,7 @@
 }
 
 /* ---------------------------------------------------------
-   LEVEL 4 - MONTH
+   LEVEL 4 - MONTH SELECTION
 ----------------------------------------------------------*/
 .month-options {
   display: flex;
@@ -280,7 +264,7 @@
 }
 
 /* ---------------------------------------------------------
-   LEVEL 5 - DAY (In-place Confirm)
+   LEVEL 5 - DAY SELECTION
 ----------------------------------------------------------*/
 .day-options {
   display: flex;
@@ -309,17 +293,63 @@
   max-width: 30%;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
 }
-/* If day is selected, highlight it (so user sees it changed to "Confirm?") */
-.day-options button.selected-day {
-  /* Slightly different background so user sees the difference */
-  background: #cc5e3a;
-}
 .day-options button:hover {
   background: #d98b60;
   box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
 }
 .day-options button:active {
   background: #962d1a;
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------
+   LEVEL 6 - CONFIRM SELECTION
+----------------------------------------------------------*/
+.confirm-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--date-nav-buttons-height);
+  padding: 10px;
+  z-index: 5000;
+}
+.confirm-selection .selection-header {
+  margin-bottom: 4px;
+}
+.confirm-selection p {
+  font-family: "Georgia", serif;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #4a2c2a;
+  margin: 0 0 5px 0;
+  flex-grow: 1;
+  text-align: left;
+}
+.confirm-btn {
+  background: #b4462a;
+  border: 2px solid #8c3e24;
+  color: #fff;
+  font-family: "Georgia", serif;
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s ease, box-shadow 0.2s ease;
+  flex: 1 1 30%;
+  max-width: 30%;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+}
+.confirm-btn:hover {
+  background: #4CAF50;
+  border-color: #4CAF50;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+}
+.confirm-btn:active {
+  background: #388E3C;
   box-shadow: none;
 }
 
@@ -332,7 +362,6 @@
     padding: 0.5rem;
     margin-top: calc(var(--header-height) + 3px);
   }
-
   .selection-header {
     padding: 0 5px;
     gap: 5px;
@@ -340,6 +369,7 @@
   }
   .selection-header h3 {
     font-size: 0.8rem;
+    flex-grow: 1;
     text-align: center;
     margin-top: 15px;
   }
@@ -347,7 +377,6 @@
     font-size: 0.8rem;
     padding: 2px 6px;
   }
-
   .year-range-options,
   .month-options,
   .day-options {
@@ -365,7 +394,6 @@
     flex: 1 1 32%;
     max-width: 32%;
   }
-
   .year-options {
     width: 95%;
     gap: 6px;
