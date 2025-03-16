@@ -1,0 +1,112 @@
+.hint-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6); /* Darkens the background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.hint-modal-content {
+  background: linear-gradient(135deg, #f4e1c9, #e1c7b3); /* Warm, earthy gradient */
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  width: 70%;          /* Modal is 70% of viewport width */
+  max-width: 500px;    /* Limit width to 500px */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  animation: bounceIn 0.6s ease-out;
+  position: relative;
+}
+
+/* Bounce in animation for a dynamic entrance */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.05);
+  }
+  70% {
+    transform: translateY(5px) scale(0.98);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hint-text {
+  font-size: 1.2rem;
+  margin-bottom: 1.2rem;
+  color: #3a3a3a;
+  font-weight: bold;
+}
+
+.instruction-text {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.fun-facts {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  color: #666;
+  font-style: italic;
+}
+
+/* Icons styling (adjust font-size and margin as needed) */
+.icon {
+  margin-right: 5px;
+}
+
+/* Mobile instructions visible only on small screens */
+.mobile-instructions {
+  display: block;
+}
+
+/* Desktop instructions visible only on wider screens */
+.desktop-instructions {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .mobile-instructions {
+    display: none;
+  }
+  .desktop-instructions {
+    display: block;
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: background 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #ff6b6b;
+}
+
+.hint-fade-enter-active, .hint-fade-leave-active {
+  transition: opacity 0.5s;
+}
+.hint-fade-enter-from, .hint-fade-leave-to {
+  opacity: 0;
+}

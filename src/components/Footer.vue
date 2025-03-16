@@ -1,10 +1,9 @@
 <template>
   <footer class="site-footer">
-    <p>Built with ❤️ in Denver. &copy; {{ currentYear }} All rights reserved.</p>
+    <p class="footer-text">© 2025 Tomassoni Family History</p>
   </footer>
 </template>
 
 <script setup>
 import "../styles/Footer.css";
-const currentYear = new Date().getFullYear();
 </script>

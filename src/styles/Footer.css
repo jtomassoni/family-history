@@ -1,25 +1,17 @@
-/* ---------------------------------------------------------
-   FOOTER - DYNAMIC HEIGHT USING --footer-height
-----------------------------------------------------------*/
 .site-footer {
+  background: #333;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100%;
-  height: var(--footer-height); /* Uses the global variable */
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
+  right: 0;
+  z-index: 10000;
+  opacity: 75%;
 }
 
-/* Adjust font size on smaller screens */
-@media (max-width: 768px) {
-  .site-footer {
-    font-size: 0.65rem;
-  }
+.footer-text {
+  margin: 0;
+  font-size: 0.8rem;
 }

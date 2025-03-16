@@ -13,6 +13,7 @@ View the app at [www.thetomassonis.com](www.thetomassonis.com)(add host info her
 TODO
 ----
 *   Things that can be done before needing a real DB or auth just with the stuff in the binder, i think the move is ot make stories and tagging and stuff work before adding more pics bcz that'll be the heaviest payload from github
+    * make hint work help
     * upload all the content
     * parse it for stories
     * create app elements for stories
