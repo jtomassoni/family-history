@@ -40,7 +40,7 @@
 import { ref } from 'vue';
 import MobileMenu from '../components/MobileMenu.vue';
 import HintModal from '../components/HintModal.vue';
-import "../styles/header.css";
+import "../styles/Header.css";
 
 const mobileMenuOpen = ref(false);
 const hintModalOpen = ref(false);
