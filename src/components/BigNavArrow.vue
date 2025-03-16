@@ -3,14 +3,20 @@
     class="big-nav-arrow" 
     :class="[direction, { disabled }]" 
     @click="handleClick"
+    @touchend="handleTouchEnd"
     :aria-label="label"
   >
-    {{ direction === 'left' ? '‹' : '›' }}
+    <component 
+      :is="direction === 'left' ? ChevronLeftIcon : ChevronRightIcon" 
+      class="big-nav-icon" 
+    />
+    <span class="arrow-hint"></span>
   </button>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, onUnmounted } from "vue";
+import { defineProps, defineEmits } from "vue";
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
 import "../styles/BigNavArrow.css";
 
 const props = defineProps({
@@ -19,32 +25,36 @@ const props = defineProps({
   disabled: Boolean
 });
 
-const emit = defineEmits(["click"]);
+const emit = defineEmits(["click", "boundary"]);
 
+// Single click works only on desktop
 const handleClick = () => {
+  if (window.innerWidth < 768) {
+    console.log("Single tap ignored on mobile");
+    return;
+  }
   if (!props.disabled) {
-    console.log(`Arrow clicked: ${props.direction}`);
+    console.log(`Arrow clicked (desktop): ${props.direction}`);
     emit("click");
   } else {
-    console.log(`Arrow disabled: ${props.direction}`);
+    console.log(`Arrow disabled (desktop): ${props.direction} - emitting boundary`);
+    emit("boundary");
   }
 };
 
-// Keydown event handler (optional)
-const handleKeydown = (event) => {
-  if (event.key === "ArrowLeft" && props.direction === "left") {
-    handleClick();
+// For mobile: detect double-tap using touchend events (if applicable)
+let lastTap = 0;
+const handleTouchEnd = () => {
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+  if (tapLength > 0 && tapLength < 300) {
+    console.log(`Double tap detected on mobile for ${props.direction}`);
+    if (!props.disabled) {
+      emit("click");
+    } else {
+      emit("boundary");
+    }
   }
-  if (event.key === "ArrowRight" && props.direction === "right") {
-    handleClick();
-  }
+  lastTap = currentTime;
 };
-
-onMounted(() => {
-  window.addEventListener("keydown", handleKeydown);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("keydown", handleKeydown);
-});
 </script>

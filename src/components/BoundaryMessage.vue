@@ -20,6 +20,6 @@ const visible = ref(true);
 
 const dismissMessage = () => {
   visible.value = false;
-  emit("close"); // Emit event so App.vue can track when it's dismissed
+  emit("close"); // Notify parent that the message was dismissed
 };
 </script>
