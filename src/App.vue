@@ -176,17 +176,7 @@ const dismissDateSelect = () => {
 
 /** Keyboard Navigation and ESC/Space key handling */
 const handleKeyDown = (event) => {
-  if (event.key === "Escape") {
-    // ESC always works: close any open modal; if none are open, open the general hint.
-    if (showLatest.value || showEarliest.value || showHintModal.value || showDateSelect.value) {
-      showLatest.value = false;
-      showEarliest.value = false;
-      showHintModal.value = false;
-      showDateSelect.value = false;
-    } else {
-      showHintModal.value = true;
-    }
-  } else if (window.innerWidth >= 769) { // Desktop hotkeys.
+ if (window.innerWidth >= 769) { // Desktop hotkeys.
     if (event.key === "ArrowLeft") {
       if (event.shiftKey) {
         // Shift + ArrowLeft: Jump to the oldest event.

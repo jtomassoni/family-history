@@ -1,52 +1,34 @@
-/* ---------------------------------------------------------
-   HEADER STYLES (DYNAMIC HEIGHT USING --header-height)
-----------------------------------------------------------*/
+/* HEADER STYLES (Assuming global variables are defined in main.css) */
 .site-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: var(--header-height);
-  background: #333;
-  color: white;
-  display: flex;
+  background: var(--header-bg);
+  color: var(--header-text-color);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 10px;
+  padding: 0 var(--global-padding);
   z-index: 10000;
 }
 
-/* Header Left container */
+/* Header Left container (for nav buttons or icons) */
 .header-left {
   display: flex;
   align-items: center;
 }
 
-/* Hamburger button (mobile only) */
-.hamburger-button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  transition: background 0.2s ease, transform 0.2s ease;
-  border-radius: 6px;
+/* Header Right container (for the help button, etc.) */
+.header-right {
+  display: flex;
+  align-items: center;
 }
 
-.hamburger-button:hover {
-  background: linear-gradient(135deg, rgba(210,190,170,0.8), rgba(230,210,190,0.8));
-  transform: scaleX(1.1);  /* Expand horizontally only */
-}
-
-.hamburger-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  fill: white;
-}
-
-/* Title container, centered */
+/* Title container (centered using grid layout) */
 .site-title-container {
   text-align: center;
-  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -65,26 +47,84 @@
   opacity: 0.8;
 }
 
+/* Hamburger button (mobile only) */
+.hamburger-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: background 0.2s ease, transform 0.2s ease;
+  border-radius: 6px;
+}
+
+/* Hide desktop navigation on mobile */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none;
+  }
+}
+
+/* Hide the hamburger button on desktop */
+@media (min-width: 769px) {
+  .hamburger-button {
+    display: none;
+  }
+}
+
+.hamburger-button:hover {
+  background: linear-gradient(135deg, #708238, #A1C349);
+  transform: scaleX(1.1);
+}
+
+.hamburger-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: white;
+}
+
+/* Desktop navigation menu */
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 15px;
+}
+
+.nav-item a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-item a:hover {
+  color: #8B0000;
+}
+
 /* Help button on top right */
 .help-button {
-  background: linear-gradient(135deg, rgba(210,190,170,0.8), rgba(230,210,190,0.8));
+  background: linear-gradient(135deg, #C97B63, #B56B5A);
   border: none;
   cursor: pointer;
   padding: 7px 10px;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   border-radius: 6px;
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .help-button:hover {
-  background: linear-gradient(135deg, rgba(190,170,150,0.9), rgba(210,190,170,0.9));
-  transform: scaleX(1.1); /* Expand only horizontally */
+  background: linear-gradient(135deg, #903d2a, #64241c);
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .help-button:active {
-  background: linear-gradient(135deg, rgba(170,150,130,1), rgba(190,170,150,1));
-  transform: none;
+  background: linear-gradient(135deg, #A45D53, #8F514E);
+  transform: scale(1.0);
+  box-shadow: none;
 }
 
 .help-label {
@@ -98,6 +138,21 @@
   width: 1.3rem;
   height: 1.3rem;
   fill: white;
+  position: relative;
+}
+
+.help-icon::before {
+  content: "?";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 1.3rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* RESPONSIVENESS */
@@ -108,7 +163,6 @@
   .site-subtitle {
     font-size: 0.9rem;
   }
-  .hamburger-icon,
   .help-icon {
     width: 1.3rem;
     height: 1.3rem;

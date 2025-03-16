@@ -1,27 +1,29 @@
 <template>
   <transition name="hint-fade">
-    <div class="hint-modal-overlay" v-if="showHint" @click="dismissHint">
+    <div class="hint-modal-overlay" @click="dismiss">
       <div class="hint-modal-content" @click.stop>
-        <button class="close-btn" @click="dismissHint">✖</button>
+        <button class="close-btn" @click.stop="dismiss">✖</button>
         <p class="hint-text">
           <strong>Get curious!</strong><br>
           Tap an image to uncover its story.
         </p>
-        <p class="instruction-text mobile-instructions">
+        <!-- Mobile-specific instructions -->
+        <p class="instruction-text mobile-only">
           <span class="icon">📱</span>
-          Swipe left or right to journey through history.
+          Swipe left or right to navigate photos.
         </p>
-        <p class="instruction-text desktop-instructions">
+        <p class="fun-facts mobile-only">
+          <span class="icon">📅</span>
+          Tap the calendar icon to open the date picker.
+        </p>
+        <!-- Desktop-specific instructions -->
+        <p class="instruction-text desktop-only">
           <span class="icon">⌨️</span>
-          Use the navigation arrows or press the left/right arrow keys on your keyboard.
+          Use the left/right arrow keys to navigate photos.
         </p>
-        <p class="fun-facts desktop-instructions">
+        <p class="fun-facts desktop-only">
           <span class="icon">⚡</span>
           Hotkey tip: Shift+Arrow keys jump directly to the boundary!
-        </p>
-        <p class="fun-facts mobile-instructions">
-          <span class="icon">📅</span>
-          Fun fact: Tap the calendar icon to open the date picker.
         </p>
       </div>
     </div>
@@ -29,31 +31,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { defineEmits } from "vue";
 import "../styles/HintModal.css";
 
-const showHint = ref(false);
+const emit = defineEmits(["close"]);
 
-const dismissHint = () => {
-  showHint.value = false;
-};
-
-onMounted(() => {
-  // On mobile and desktop, show the hint immediately on first load for 5 seconds.
-  showHint.value = true;
-  setTimeout(() => {
-    showHint.value = false;
-  }, 5000);
-
-  // Optionally, dismiss the hint if user presses arrow keys.
-  const handleKeydown = (event) => {
-    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-      dismissHint();
-    }
-  };
-  window.addEventListener("keydown", handleKeydown);
-  onUnmounted(() => {
-    window.removeEventListener("keydown", handleKeydown);
-  });
-});
+function dismiss() {
+  console.log("dismiss triggered");
+  emit("close");
+}
 </script>

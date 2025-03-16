@@ -9,9 +9,9 @@ html, body {
   height: 100%;
   font-family: sans-serif;
 
-  /* Semi-transparent overlay plus background image */
+  /* Semi-transparent warm overlay plus background image */
   background: 
-    linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
+    linear-gradient(rgba(255, 248, 240, 0.6), rgba(255, 248, 240, 0.6)), 
     url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
     no-repeat center center fixed;
   background-size: cover;
@@ -27,4 +27,7 @@ html, body {
   --header-height: 60px;           /* Default header height */
   --footer-height: 20px;           /* Default footer height */
   --date-nav-buttons-height: 75px; /* Height for oldest/select/newest nav */
+  --header-bg: #C97B63;            /* Muted terracotta tone */
+  --header-text-color: rgb(0, 0, 0);
+  --global-padding: 10px;
 }
