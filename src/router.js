@@ -11,9 +11,9 @@ const routes = [
   { path: '/', name: 'Home', component: HomeView },
   { path: '/about', name: 'About', component: AboutPage, meta: { hideBreadcrumbs: true } },
   { path: '/contact', name: 'Contact', component: ContactPage, meta: { hideBreadcrumbs: true } },
-  { path: '/gallery', name: 'Gallery', component: GalleryView },
-  { path: '/family-tree', name: 'FamilyTree', component: FamilyTreeView, meta: { hideBreadcrumbs: true } },
-  { path: '/stories', name: 'Stories', component: StoriesView, meta: { hideBreadcrumbs: true } },
+  { path: '/gallery', name: 'Gallery', component: GalleryPage },
+  { path: '/family-tree', name: 'FamilyTree', component: FamilyTreePage, meta: { hideBreadcrumbs: true } },
+  { path: '/stories', name: 'Stories', component: StoriesPage, meta: { hideBreadcrumbs: true } },
 ];
 
 const router = createRouter({
