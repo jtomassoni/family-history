@@ -27,15 +27,21 @@
     </div>
     <div class="header-right">
       <!-- Help button opens modal only if it's not already open -->
-      <button class="help-button" :disabled="hintModalOpen" @click="openHelp">
+      <button class="help-button" :disabled="isHintModalOpen" @click="openHelp">
         <span class="help-label">Help</span>
-        <svg class="help-icon" viewBox="0 0 24 24"></svg>
+        <!-- Changed from SVG to span -->
+        <span class="help-icon"></span>
       </button>
     </div>
     <!-- Mobile Menu Component -->
-    <MobileMenu :isOpen="mobileMenuOpen" @close="closeMobileMenu" />
+    <MobileMenu :isOpen="isMobileMenuOpen" @close="closeMobileMenu" />
     <!-- Hint Modal Component -->
-    <HintModal v-if="hintModalOpen" @close="closeHintModal" />
+    <HintModal 
+      v-if="isHintModalOpen"
+      :desktopHint="'Use your ⬅️ arrow keys ➡️ to glide through photos.<br>For a quick jump to the oldest or newest, hold ⬆️ Shift ⬆️ with your arrows!<br>⌨️ Press space to open the 🗓️ date selector.'"
+      :mobileHint="'📱 Swipe left/right to cruise through family memories.<br>👆Tap the 🗓️ icon to pick a special date!'"
+      @dismiss="closeHintModal"
+    />
   </header>
 </template>
 
@@ -45,24 +51,29 @@ import MobileMenu from '../components/MobileMenu.vue';
 import HintModal from '../components/HintModal.vue';
 import "../styles/Header.css";
 
-const mobileMenuOpen = ref(false);
-const hintModalOpen = ref(false);
+// Renamed reactive variables for clarity
+const isMobileMenuOpen = ref(false);
+const isHintModalOpen = ref(false);
 
-function toggleMobileMenu() {
-  mobileMenuOpen.value = !mobileMenuOpen.value;
-}
+// Toggle mobile menu visibility.
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
 
-function closeMobileMenu() {
-  mobileMenuOpen.value = false;
-}
+// Close mobile menu.
+const closeMobileMenu = () => {
+  isMobileMenuOpen.value = false;
+};
 
-function openHelp() {
-  if (!hintModalOpen.value) {
-    hintModalOpen.value = true;
+// Open the hint modal.
+const openHelp = () => {
+  if (!isHintModalOpen.value) {
+    isHintModalOpen.value = true;
   }
-}
+};
 
-function closeHintModal() {
-  hintModalOpen.value = false;
-}
+// Close the hint modal.
+const closeHintModal = () => {
+  isHintModalOpen.value = false;
+};
 </script>

@@ -8,12 +8,12 @@
       <!-- 3) Centered Boundary Messages -->
       <BoundaryMessage 
         v-if="showEarliest" 
-        message="📜 You’ve reached the earliest photo! (Tap X to close)" 
+        message="📜 You’ve reached the earliest photo!" 
         @close="showEarliest = false" 
       />
       <BoundaryMessage 
         v-if="showLatest" 
-        message="You’re viewing the most recent event! (Tap X to close)" 
+        message="You’re viewing the most recent event!" 
         @close="showLatest = false" 
       />
 
@@ -53,8 +53,17 @@
         />
       </div>
 
-      <!-- 6) Hint Modal -->
-      <HintModal v-if="showHintModal" @dismiss="dismissHintModal" />
+      <!-- Hint Modal -->
+      <HintModal 
+        v-if="showHintModal"
+        :desktopHint="'Use your ⬅️ arrow keys ➡️ to glide through photos.<br>For a quick jump to the oldest or newest, hold ⬆️ Shift ⬆️ with your arrows!<br>⌨️ Press space to open the 🗓️ date selector.'"
+        :mobileHint="'📱 Swipe left/right to cruise through family memories.<br>👆Tap the 🗓️ icon to pick a special date!'"
+        @dismiss="dismissHintModal"
+      />
+
+
+
+
 
       <!-- 7) Date Selection Modal (opens on Spacebar) -->
       <transition name="fade">
@@ -117,7 +126,7 @@ const showLatest = ref(false);
 const showDataOverlay = ref(false);
 
 /** HintModal and DateSelect Modal Flags */
-const showHintModal = ref(false);
+const showHintModal = ref(true);
 const showDateSelect = ref(false);
 
 /** Watch current index for boundary changes */
@@ -174,7 +183,7 @@ const dismissDateSelect = () => {
   showDateSelect.value = false;
 };
 
-/** Keyboard Navigation and ESC/Space key handling */
+/** Keyboard Navigation and handling */
 const handleKeyDown = (event) => {
  if (window.innerWidth >= 769) { // Desktop hotkeys.
     if (event.key === "ArrowLeft") {
