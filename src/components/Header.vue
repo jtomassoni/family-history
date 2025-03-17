@@ -29,9 +29,22 @@
       <!-- Help button opens modal only if it's not already open -->
       <button class="help-button" :disabled="isHintModalOpen" @click="openHelp">
         <span class="help-label">Help</span>
-        <!-- Changed from SVG to span -->
         <span class="help-icon"></span>
       </button>
+      <!-- Login / User area -->
+      <div class="login-container">
+        <button class="login-button" @click="toggleLoginMenu">
+          <template v-if="isLoggedIn">
+            Howdy, {{ username }}
+          </template>
+          <template v-else>
+            Login
+          </template>
+        </button>
+        <div v-if="showLoginMenu" class="login-menu">
+          <button class="logout-button" @click="logout">Logout</button>
+        </div>
+      </div>
     </div>
     <!-- Mobile Menu Component -->
     <MobileMenu :isOpen="isMobileMenuOpen" @close="closeMobileMenu" />
@@ -51,11 +64,16 @@ import MobileMenu from '../components/MobileMenu.vue';
 import HintModal from '../components/HintModal.vue';
 import "../styles/Header.css";
 
-// Renamed reactive variables for clarity
+// Reactive variables for menu and hint modal states.
 const isMobileMenuOpen = ref(false);
 const isHintModalOpen = ref(false);
 
-// Toggle mobile menu visibility.
+// For login: track logged in status, username, and whether the login fly-out is visible.
+const isLoggedIn = ref(false);
+const username = ref(""); // Populate this when the user logs in.
+const showLoginMenu = ref(false);
+
+// Toggle mobile menu.
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
@@ -65,15 +83,28 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
 };
 
-// Open the hint modal.
+// Open the help modal.
 const openHelp = () => {
   if (!isHintModalOpen.value) {
     isHintModalOpen.value = true;
   }
 };
 
-// Close the hint modal.
+// Close the help modal.
 const closeHintModal = () => {
   isHintModalOpen.value = false;
+};
+
+// Toggle login menu visibility.
+const toggleLoginMenu = () => {
+  showLoginMenu.value = !showLoginMenu.value;
+};
+
+// Example logout function.
+const logout = () => {
+  isLoggedIn.value = false;
+  username.value = "";
+  showLoginMenu.value = false;
+  // You can add further logout logic (e.g., API calls) here.
 };
 </script>

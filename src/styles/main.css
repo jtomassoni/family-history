@@ -27,7 +27,22 @@ html, body {
   --header-height: 60px;           /* Default header height */
   --footer-height: 20px;           /* Default footer height */
   --date-nav-buttons-height: 75px; /* Height for oldest/select/newest nav */
-  --header-bg: #C97B63;            /* Muted terracotta tone */
-  --header-text-color: rgb(0, 0, 0);
-  --global-padding: 10px;
+  
+  /* Header & Global Layout */
+  --header-bg: #A67B5B;
+  --header-text-color: #ecf0f1;
+  --global-padding: 1rem;
+
+  /* Navigation & button colors */
+  --nav-link-color: #ecf0f1;
+  --nav-link-hover-color: #e74c3c;
+
+  /* Help button gradients */
+  --help-gradient-default: linear-gradient(135deg, #ff9a9e, #ffe0cc);
+  --help-gradient-hover: linear-gradient(135deg, #ffd6e0, #d6a4a4);
+  --help-gradient-active: linear-gradient(135deg, #c4878a, #a3737c);
+
+  /* Login button colors */
+  --login-border-color: #fff;
+  --login-hover-bg: rgba(255, 255, 255, 0.2);
 }

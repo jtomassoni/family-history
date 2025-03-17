@@ -1,20 +1,15 @@
 <template>
   <div id="app">
-    <!-- 1) Thick Fixed Header -->
     <Header title="Tomassoni Family History" @help="toggleHintModal" />
 
-    <!-- 2) Main content properly spaced -->
     <div class="app-content">
-      <!-- 3) Centered Boundary Messages -->
-      <BoundaryMessage 
-        v-if="showEarliest" 
-        message="📜 You’ve reached the earliest photo!" 
-        @close="showEarliest = false" 
-      />
-      <BoundaryMessage 
-        v-if="showLatest" 
-        message="You’re viewing the most recent event!" 
-        @close="showLatest = false" 
+      <!-- Boundary Hint Modal for Earliest/Latest events (dark theme, 3000ms timeout) -->
+      <HintModal 
+        v-if="isBoundaryHintVisible"
+        :desktopHint="boundaryDesktopHint"
+        :mobileHint="boundaryMobileHint"
+        :timeoutDuration="4000"
+        @dismiss="dismissBoundaryHint"
       />
 
       <!-- 4) Breadcrumb Buttons -->
@@ -53,32 +48,26 @@
         />
       </div>
 
-      <!-- Hint Modal -->
+      <!-- Normal Hint Modal (e.g., help) -->
       <HintModal 
         v-if="showHintModal"
-        :desktopHint="'Use your ⬅️ arrow keys ➡️ to glide through photos.<br>For a quick jump to the oldest or newest, hold ⬆️ Shift ⬆️ with your arrows!<br>⌨️ Press space to open the 🗓️ date selector.'"
-        :mobileHint="'📱 Swipe left/right to cruise through family memories.<br>👆Tap the 🗓️ icon to pick a special date!'"
+        :desktopHint="helpDesktopHint"
+        :mobileHint="helpMobileHint"
         @dismiss="dismissHintModal"
       />
 
-
-
-
-
-      <!-- 7) Date Selection Modal (opens on Spacebar) -->
+      <!-- Date Selection Modal -->
       <transition name="fade">
         <div v-if="showDateSelect" class="date-select-modal" @click="dismissDateSelect">
           <button class="close-btn" @click.stop="dismissDateSelect">✖</button>
           <p class="modal-text">
             <strong>Select a date:</strong><br>
             Use the calendar below or type a date.
-            <!-- Replace with your date picker UI -->
           </p>
         </div>
       </transition>
     </div>
 
-    <!-- 8) Footer -->
     <Footer />
   </div>
 </template>
@@ -90,7 +79,6 @@ import { photoData } from "./data/photoData.js";
 
 import Header from "./components/Header.vue";
 import DatePickerNav from "./components/DatePickerNav.vue";
-import BoundaryMessage from "./components/BoundaryMessage.vue";
 import BigNavArrow from "./components/BigNavArrow.vue";
 import PhotoTile from "./components/PhotoTile.vue";
 import Footer from "./components/Footer.vue";
@@ -118,22 +106,48 @@ const isAtEnd = computed(() => currentIndex.value === 0);
 const isLeftArrowDisabled = computed(() => isAtBeginning.value);
 const isRightArrowDisabled = computed(() => isAtEnd.value);
 
-/** Boundary Message Flags */
+/** Boundary flags */
 const showEarliest = ref(false);
 const showLatest = ref(false);
 
-/** Overlay Flag */
-const showDataOverlay = ref(false);
+/** Dedicated reactive flag for boundary hint modal */
+const isBoundaryHintVisible = ref(false);
 
-/** HintModal and DateSelect Modal Flags */
-const showHintModal = ref(true);
-const showDateSelect = ref(false);
+/** Watch currentIndex with immediate option */
+watch(
+  currentIndex,
+  () => {
+    showEarliest.value = (currentIndex.value === sortedPhotos.value.length - 1);
+    showLatest.value = (currentIndex.value === 0);
+    // Show boundary hint if either boundary is reached.
+    if (showEarliest.value || showLatest.value) {
+      isBoundaryHintVisible.value = true;
+    } else {
+      isBoundaryHintVisible.value = false;
+    }
+  },
+  { immediate: true }
+);
 
-/** Watch current index for boundary changes */
-watch(currentIndex, () => {
-  showEarliest.value = (currentIndex.value === sortedPhotos.value.length - 1);
-  showLatest.value = (currentIndex.value === 0);
+/** Custom boundary hint messages */
+const boundaryDesktopHint = computed(() => {
+  if (showEarliest.value) return "📜 You've reached the earliest photo!<br>Use your arrow keys to browse or press space to select a date.";
+  if (showLatest.value) return "🎉 You're at the most recent photo!<br>Use your arrow keys to browse or press space to select a date.";
+  return "";
 });
+const boundaryMobileHint = computed(() => {
+  if (showEarliest.value) return "📜 Earliest photo reached!<br>Swipe to explore or tap the calendar for dates.";
+  if (showLatest.value) return "🎉 Most recent photo!<br>Swipe to explore or tap the calendar for dates.";
+  return "";
+});
+
+/** Normal help hint messages */
+const helpDesktopHint = "Need help?<br>Use your ⬅️/➡️ arrow keys to navigate, or press space for the date selector.";
+const helpMobileHint = "Need help?<br>Swipe left/right to navigate, or tap the calendar icon for dates.";
+
+/** Other Modal Flags */
+const showHintModal = ref(false);
+const showDateSelect = ref(false);
 
 /** Navigation Functions */
 const previousPhoto = async () => {
@@ -160,7 +174,7 @@ const handleSelectEvent = (selectedEvent) => {
   }
 };
 
-/** Boundary Handler: simply reopen the boundary message */
+/** Boundary Handler */
 const handleBoundary = (direction) => {
   console.log(`Boundary event received for direction: ${direction}`);
   if (direction === 'left') {
@@ -178,6 +192,11 @@ const dismissHintModal = () => {
   showHintModal.value = false;
 };
 
+/** Dismiss Boundary Hint Modal */
+const dismissBoundaryHint = () => {
+  isBoundaryHintVisible.value = false;
+};
+
 /** Dismiss Date Selection Modal */
 const dismissDateSelect = () => {
   showDateSelect.value = false;
@@ -185,29 +204,31 @@ const dismissDateSelect = () => {
 
 /** Keyboard Navigation and handling */
 const handleKeyDown = (event) => {
- if (window.innerWidth >= 769) { // Desktop hotkeys.
+  // If boundary hint is visible, dismiss it on any key press.
+  if (isBoundaryHintVisible.value) {
+    console.log("[App] Dismissing boundary hint due to keyboard input.");
+    dismissBoundaryHint();
+    return; // Prevent further handling so the modal dismisses immediately.
+  }
+  if (window.innerWidth >= 769) { // Desktop hotkeys.
     if (event.key === "ArrowLeft") {
       if (event.shiftKey) {
-        // Shift + ArrowLeft: Jump to the oldest event.
         currentIndex.value = sortedPhotos.value.length - 1;
       } else if (!isLeftArrowDisabled.value) {
         previousPhoto();
       }
     } else if (event.key === "ArrowRight") {
       if (event.shiftKey) {
-        // Shift + ArrowRight: Jump to the newest event.
         currentIndex.value = 0;
       } else if (!isRightArrowDisabled.value) {
         nextPhoto();
       }
     } else if (event.key === " " && event.shiftKey) {
-      // Shift + Space: simulate a click on the "Select a Date" button.
       const selectDateBtn = document.querySelector(".select-date-btn");
       if (selectDateBtn) {
         selectDateBtn.click();
       }
     } else if (event.key.toLowerCase() === "d" && event.shiftKey) {
-      // Shift + D: simulate a click on the photo-image-container div.
       const photoContainer = document.querySelector(".photo-image-container");
       if (photoContainer) {
         photoContainer.click();
@@ -217,11 +238,12 @@ const handleKeyDown = (event) => {
 };
 
 onMounted(() => {
-  currentIndex.value = 0; // Start at most recent event
-  showLatest.value = true;  // Show boundary message for newest event on load
+  currentIndex.value = 0; // Start at the most recent event.
+  showLatest.value = true;  // Show boundary message for the newest event on load.
   window.addEventListener("keydown", handleKeyDown);
 });
 onUnmounted(() => {
   window.removeEventListener("keydown", handleKeyDown);
 });
 </script>
+

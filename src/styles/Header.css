@@ -1,4 +1,4 @@
-/* HEADER STYLES (Assuming global variables are defined in main.css) */
+/* HEADER STYLES (Using global variables defined in :root) */
 .site-header {
   position: fixed;
   top: 0;
@@ -7,9 +7,9 @@
   height: var(--header-height);
   background: var(--header-bg);
   color: var(--header-text-color);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
+  justify-content: space-between; /* Space between left and right containers */
   padding: 0 var(--global-padding);
   z-index: 10000;
 }
@@ -20,25 +20,29 @@
   align-items: center;
 }
 
-/* Header Right container (for the help button, etc.) */
+/* Header Right container (for help button and login area) */
 .header-right {
   display: flex;
   align-items: center;
+  gap: 1rem;
 }
 
-/* Title container (centered using grid layout) */
+/* Title container absolutely centered in the header */
 .site-title-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  /* Ensure the title container does not exceed a max width */
+  max-width: 70%;
+  pointer-events: none; /* So that clicks fall through if needed */
 }
 
 .site-name {
   font-size: 2.2rem;
   font-weight: bold;
   line-height: 1;
+  pointer-events: auto; /* Re-enable pointer events on text if needed */
 }
 
 .site-subtitle {
@@ -57,14 +61,12 @@
   border-radius: 6px;
 }
 
-/* Hide desktop navigation on mobile */
 @media (max-width: 768px) {
   .desktop-nav {
     display: none;
   }
 }
 
-/* Hide the hamburger button on desktop */
 @media (min-width: 769px) {
   .hamburger-button {
     display: none;
@@ -92,19 +94,19 @@
 }
 
 .nav-item a {
-  color: white;
+  color: var(--nav-link-color);
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.2s ease-in-out;
 }
 
 .nav-item a:hover {
-  color: #8B0000;
+  color: var(--nav-link-hover-color);
 }
 
-/* Help button on top right */
+/* Help button with improved (softer) gradient */
 .help-button {
-  background: linear-gradient(135deg, #C97B63, #B56B5A);
+  background: var(--help-gradient-default);
   border: none;
   cursor: pointer;
   padding: 7px 10px;
@@ -116,13 +118,13 @@
 }
 
 .help-button:hover {
-  background: linear-gradient(135deg, #903d2a, #64241c);
+  background: var(--help-gradient-hover);
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .help-button:active {
-  background: linear-gradient(135deg, #A45D53, #8F514E);
+  background: var(--help-gradient-active);
   transform: scale(1.0);
   box-shadow: none;
 }
@@ -153,6 +155,51 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Login area styles */
+.login-container {
+  position: relative;
+}
+
+.login-button {
+  background: transparent;
+  border: 1px solid var(--login-border-color);
+  color: var(--header-text-color);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.login-button:hover {
+  background: var(--login-hover-bg);
+}
+
+.login-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.logout-button {
+  background: transparent;
+  border: 1px solid var(--login-border-color);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.logout-button:hover {
+  background: var(--login-hover-bg);
 }
 
 /* RESPONSIVENESS */
