@@ -12,17 +12,13 @@ View the app at [www.thetomassonis.com](www.thetomassonis.com)(add host info her
 
 TODO
 ----
-*   Things that can be done before needing a real DB or auth just with the stuff in the binder, i think the move is ot make stories and tagging and stuff work before adding more pics bcz that'll be the heaviest payload from github
-    * make hint work help
-    * upload all the content
-    * parse it for stories
-    * create app elements for stories
-    * create element for family tree
-    * link family tree to stories
-    * link stories to gallery
-    * link gallery to stories
-    * make sure hover,disable, etc status effects work for all buttons
-
+*   create app elements for stories and family tree
+*   make sure hover,disable, etc status effects work for all buttons
+*   upload all the content
+*   parse it for stories
+*   link family tree to stories
+*   link stories to gallery
+*   link gallery to stories
 *   Build backend DB for images
 *   Pipe those images into front end
 *   User profiles with auth
@@ -30,7 +26,6 @@ TODO
 *   Upload pics from mobile w auth
 *   Comments (create, edit your own, delete), report to admin.
 *   Activity logs (who uploaded what, who changed descriptions when from what to do)
-* 
 
 Features
 --------

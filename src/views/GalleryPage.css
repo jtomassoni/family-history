@@ -1,0 +1,31 @@
+.gallery-page {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: 'Georgia', serif;
+  line-height: 1.6;
+  color: #4a4a4a;
+}
+
+.gallery-page h1 {
+  text-align: center;
+  color: #5d3a1a;
+  margin-bottom: 1.5rem;
+}
+
+.gallery-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.gallery-item {
+  flex: 1 1 calc(33% - 1rem);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-item img {
+  width: 100%;
+  display: block;
+}

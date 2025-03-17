@@ -13,14 +13,17 @@
       <nav class="desktop-nav">
         <ul class="nav-list">
           <li class="nav-item"><a href="#">Home</a></li>
+          <li class="nav-item"><a href="#">Gallery</a></li>
+          <li class="nav-item"><a href="#">Stories</a></li>
+          <li class="nav-item"><a href="#">Family Tree</a></li>
           <li class="nav-item"><a href="#">About</a></li>
           <li class="nav-item"><a href="#">Contact</a></li>
         </ul>
       </nav>
     </div>
     <div class="site-title-container">
-      <div class="site-name">My Site</div>
-      <div class="site-subtitle">A wonderful experience</div>
+      <div class="site-name">Tomassoni</div>
+      <div class="site-subtitle">Family History</div>
     </div>
     <div class="header-right">
       <!-- Help button opens modal only if it's not already open -->
