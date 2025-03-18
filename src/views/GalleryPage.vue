@@ -49,6 +49,7 @@
 
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
+import moment from 'moment';
 import { photoData } from '../data/photoData.js';
 import DatePickerNav from '../components/DatePickerNav.vue';
 import BigNavArrow from '../components/BigNavArrow.vue';
@@ -56,13 +57,13 @@ import PhotoTile from '../components/PhotoTile.vue';
 import HintModal from '../components/HintModal.vue';
 import "./GalleryPage.css";
 
-
-// Prepare and sort photos.
+// Prepare and sort photos using Moment.js without UTC conversion.
+// This ensures that the eventDate (e.g., "1900-01-01") is treated as a local date.
 const sortedPhotos = computed(() => {
   return photoData.slice().map(photo => ({
     ...photo,
-    eventDate: new Date(photo.eventDate + "T00:00:00Z"),
-    uploadedAt: new Date(photo.uploadedAt)
+    eventDate: moment(photo.eventDate, "YYYY-MM-DD").toDate(),
+    uploadedAt: moment(photo.uploadedAt).toDate()
   })).sort((a, b) => b.eventDate - a.eventDate);
 });
 
@@ -115,7 +116,7 @@ const nextPhoto = async () => {
 
 const handleSelectEvent = (selectedEvent) => {
   const index = sortedPhotos.value.findIndex(
-    photo => new Date(photo.eventDate).toISOString().split("T")[0] === new Date(selectedEvent.eventDate).toISOString().split("T")[0]
+    photo => moment(photo.eventDate).format("YYYY-MM-DD") === moment(selectedEvent.eventDate, "YYYY-MM-DD").format("YYYY-MM-DD")
   );
   if (index >= 0) currentIndex.value = index;
 };

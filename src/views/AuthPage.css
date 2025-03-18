@@ -1,0 +1,179 @@
+/* Wrapper: Centers login form between header & footer */
+.auth-page-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, calc(-50% + var(--header-height) / 2 - var(--footer-height) / 2));
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  width: 100%;
+  height: calc(100vh - var(--header-height) - var(--footer-height)); /* Keep between header & footer */
+  z-index: 9000;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* Login container: Fully centered & styled */
+.auth-page-container {
+  width: 100%;
+  max-width: 450px;
+  background: var(--container-bg, #fff);
+  border: 3px solid var(--accent-color, #8b4513);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow: auto; /* Prevents content from getting cut off */
+}
+
+/* Header inside the form */
+.auth-page-container h1 {
+  font-size: 1.75rem;
+  color: var(--primary-color, #a0522d);
+  margin-bottom: 1rem;
+}
+
+/* Form layout */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+}
+
+.auth-form label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: var(--text-color, #333);
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 4px;
+  font-size: 1rem;
+  width: calc(100% - 20px); /* Adds spacing inside */
+  max-width: 360px; /* Prevents them from being too wide */
+}
+
+/* Buttons */
+.submit-button {
+  padding: 0.75rem;
+  background: var(--primary-color, #a0522d);
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.submit-button:hover {
+  background: var(--primary-hover, #8b4513);
+  transform: scale(1.03);
+}
+
+.submit-button:active {
+  transform: scale(0.98);
+}
+
+/* SSO Section */
+.sso-section {
+  margin: 1.5rem 0;
+  width: 100%;
+  text-align: center;
+}
+
+.sso-section p {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: var(--text-color, #333);
+}
+
+.sso-button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.sso-button:hover {
+  transform: scale(1.02);
+}
+
+.spid-button {
+  background: var(--sso-spid-bg, #6b8e23);
+  color: #fff;
+}
+
+.cie-button {
+  background: var(--sso-cie-bg, #d2691e);
+  color: #fff;
+}
+
+/* Signup/Login Links */
+.auth-info {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.auth-info a {
+  color: var(--primary-color, #a0522d);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-info a:hover {
+  text-decoration: underline;
+}
+
+/* MOBILE: Scale down form while keeping it centered */
+@media (max-width: 768px) {
+  .auth-page-wrapper {
+    top: 50%;
+    transform: translate(-50%, calc(-50% + var(--header-height) / 2 - var(--footer-height) / 2));
+    padding: 10px 0;
+  }
+
+  .auth-page-container {
+    width: calc(100vw - 50px);
+    max-width: 360px;
+    padding: 1.2rem;
+  }
+
+  .auth-page-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .auth-form input[type="text"],
+  .auth-form input[type="email"],
+  .auth-form input[type="password"] {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .submit-button,
+  .sso-button {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .auth-info {
+    font-size: 0.85rem;
+  }
+}

@@ -15,3 +15,13 @@
   margin: 0;
   font-size: 0.8rem;
 }
+
+/* Override link styles inside the footer */
+.site-footer a,
+.site-footer a:link,
+.site-footer a:visited,
+.site-footer a:hover,
+.site-footer a:active {
+  color: inherit !important;
+  text-decoration: none !important;
+}

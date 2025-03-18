@@ -13,52 +13,22 @@
       <nav class="desktop-nav">
         <ul class="nav-list">
           <li class="nav-item">
-            <router-link 
-              to="/" 
-              :class="{ current: route.path === '/' }"
-            >
-              Home
-            </router-link>
+            <router-link to="/" :class="{ current: route.path === '/' }">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link 
-              to="/gallery" 
-              :class="{ current: route.path === '/gallery' }"
-            >
-              Gallery
-            </router-link>
+            <router-link to="/gallery" :class="{ current: route.path === '/gallery' }">Gallery</router-link>
           </li>
           <li class="nav-item">
-            <router-link 
-              to="/stories" 
-              :class="{ current: route.path === '/stories' }"
-            >
-              Stories
-            </router-link>
+            <router-link to="/stories" :class="{ current: route.path === '/stories' }">Stories</router-link>
           </li>
           <li class="nav-item">
-            <router-link 
-              to="/family-tree" 
-              :class="{ current: route.path === '/family-tree' }"
-            >
-              Family Tree
-            </router-link>
+            <router-link to="/family-tree" :class="{ current: route.path === '/family-tree' }">Family Tree</router-link>
           </li>
           <li class="nav-item">
-            <router-link 
-              to="/about" 
-              :class="{ current: route.path === '/about' }"
-            >
-              About
-            </router-link>
+            <router-link to="/about" :class="{ current: route.path === '/about' }">About</router-link>
           </li>
           <li class="nav-item">
-            <router-link 
-              to="/contact" 
-              :class="{ current: route.path === '/contact' }"
-            >
-              Contact
-            </router-link>
+            <router-link to="/contact" :class="{ current: route.path === '/contact' }">Contact</router-link>
           </li>
         </ul>
       </nav>
@@ -68,67 +38,49 @@
       <div class="site-subtitle">Family History</div>
     </div>
     <div class="header-right">
-      <!-- Help button that emits a "help" event -->
-      <button class="help-button" @click="openHelp">
+      <!-- Help button (only visible on the Gallery page) -->
+      <button v-if="route.path === '/gallery'" class="help-button" @click="openHelp">
         <span class="help-label">Help</span>
         <span class="help-icon"></span>
       </button>
+      
       <!-- Login area -->
       <div class="login-container">
-        <button class="login-button" @click="toggleLoginMenu">
+        <router-link to="/login" class="login-button" :class="{ disabled: route.path === '/login' }">
+          <span class="login-icon">🔑</span>
           <template v-if="isLoggedIn">
             Howdy, {{ username }}
           </template>
           <template v-else>
             Login
           </template>
-        </button>
-        <div v-if="showLoginMenu" class="login-menu">
-          <button class="logout-button" @click="logout">Logout</button>
-        </div>
+        </router-link>
       </div>
     </div>
-    <!-- Mobile Menu Component -->
-    <MobileMenu :isOpen="isMobileMenuOpen" @close="closeMobileMenu" />
   </header>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import MobileMenu from '../components/MobileMenu.vue';
 import "../styles/Header.css";
 
-// Define event emitter for "help"
-const emit = defineEmits(['help']);
+// Define emits for help and toggling mobile menu
+const emit = defineEmits(['help', 'toggle-mobile-menu']);
 
-// Get current route object
+// Get current route for active link highlighting
 const route = useRoute();
 
-const isMobileMenuOpen = ref(false);
 const isLoggedIn = ref(false);
 const username = ref("");
-const showLoginMenu = ref(false);
-
-const toggleMobileMenu = () => {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value;
-};
-
-const closeMobileMenu = () => {
-  isMobileMenuOpen.value = false;
-};
 
 const openHelp = () => {
   emit('help');
 };
 
-const toggleLoginMenu = () => {
-  showLoginMenu.value = !showLoginMenu.value;
-};
-
-const logout = () => {
-  isLoggedIn.value = false;
-  username.value = "";
-  showLoginMenu.value = false;
+// Emit event to toggle the mobile menu when the hamburger is clicked.
+const toggleMobileMenu = () => {
+  console.log("Hamburger clicked");
+  emit('toggle-mobile-menu');
 };
 </script>

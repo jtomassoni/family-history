@@ -7,7 +7,7 @@
   background: var(--header-bg);
   color: var(--header-text-color);
   display: grid;
-  grid-template-columns: auto 1fr auto; /* By default, three columns */
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: 0 var(--global-padding);
   z-index: 10000;
@@ -47,7 +47,7 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   justify-self: end;
   z-index: 9999;
 }
@@ -57,7 +57,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  padding: 4px;
   transition: background 0.2s ease, transform 0.2s ease;
   border-radius: 6px;
   display: none;
@@ -72,12 +72,12 @@
 }
 
 .hamburger-button:hover {
-  background: linear-gradient(135deg, #708238, #A1C349);
+  background: #000;
   transform: scaleX(1.1);
 }
 .hamburger-icon {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.3rem;
+  height: 1.3rem;
   fill: white;
 }
 
@@ -113,10 +113,10 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -5px;  /* adjust spacing as needed */
+  bottom: -5px;
   height: 4px;
   background-color: #000;
-  opacity: 0; /* hidden by default */
+  opacity: 0;
   transition: opacity 0.5s ease;
 }
 
@@ -135,17 +135,18 @@
   background: var(--help-gradient-default);
   border: none;
   cursor: pointer;
-  padding: 7px 10px;
+  padding: 4px 8px;
   transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   border-radius: 6px;
   display: flex;
   align-items: center;
-  position: relative;
+  font-size: 0.7rem;
+  font-weight: bold;
 }
 .help-button:hover {
   background: var(--help-gradient-hover);
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 .help-button:active {
   background: var(--help-gradient-active);
@@ -155,78 +156,80 @@
 .help-label {
   font-size: 0.7rem;
   font-weight: bold;
-  margin-right: 2px;
+  margin-right: 3px;
   color: white;
 }
 .help-icon {
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 1rem;
+  height: 1rem;
   fill: white;
-  position: relative;
-}
-.help-icon::before {
-  content: "?";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  color: white;
 }
 
 /* Login container */
 .login-container {
   position: relative;
 }
+
+/* Login button: Now small, sleek, and fits properly */
 .login-button {
-  background: transparent;
-  border: 1px solid var(--login-border-color);
-  color: var(--header-text-color);
-  padding: 5px 10px;
-  border-radius: 4px;
+  background: var(--help-gradient-default);
+  border: none;
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-.login-button:hover {
-  background: var(--login-hover-bg);
-  transform: scale(1.05);
-}
-.login-menu {
-  position: absolute;
-  top: 110%;
-  right: 0;
-  background: rgba(0, 0, 0, 0.9);
+  padding: 4px 8px; /* Same as Help button */
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
   color: white;
-  padding: 0.5rem;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  z-index: 100;
+  height: 22px;
+  min-width: 55px;
+  max-width: 65px;
+  gap: 4px;
 }
-.logout-button {
-  background: transparent;
-  border: 1px solid var(--login-border-color);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
+
+/* Disabled state for login button */
+.login-button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+  background: rgba(255, 255, 255, 0.2);
 }
-.logout-button:hover {
-  background: var(--login-hover-bg);
+
+/* Hover effect */
+.login-button:not(.disabled):hover {
+  background: var(--help-gradient-hover);
+  transform: scale(1.03);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Active effect */
+.login-button:not(.disabled):active {
+  background: var(--help-gradient-active);
+  transform: scale(1.0);
+  box-shadow: none;
+}
+
+/* Login icon */
+.login-icon {
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* RESPONSIVENESS: revert the title container to normal flow on mobile */
 @media (max-width: 768px) {
   .site-title-container {
-    position: static;       /* remove absolute positioning */
-    transform: none;        /* remove translateX */
+    position: static;
+    transform: none;
     pointer-events: auto;
-    margin-left: 10px;      /* shift it a bit from the left if you like */
+    margin-left: 10px;
   }
   .site-name {
-    font-size: 1.6rem;      /* slightly smaller on mobile */
+    font-size: 1.6rem;
   }
   .site-subtitle {
     font-size: 0.85rem;

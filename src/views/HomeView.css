@@ -1,52 +1,94 @@
+/* Ensures home view correctly fills screen without overlap */
 .home-view {
-  height: 100vh;
+  flex: 1; /* Takes up remaining space between header & footer */
   display: flex;
-  align-items: center;
   justify-content: center;
-  /* Background image with overlay for warmth */
+  align-items: center;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  padding: var(--header-height) 1rem var(--footer-height);
   background: 
-    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-    url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
+    linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+    url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg") 
     no-repeat center center;
   background-size: cover;
+  background-position: center;
 }
 
+/* Fix hero misalignment */
 .hero {
-  text-align: center;
-  /* Optional background box to enhance readability */
-  background: rgba(0, 0, 0, 0.5);
-  padding: 2rem;
+  text-align: center; /* Ensures all text is centered */
+  background: rgba(0, 0, 0, 0.6);
+  padding: 3rem;
   max-width: 800px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  color: #fff; /* Ensure text is light for contrast */
+  width: 90%;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  color: #fff;
+  
+  /* Forces proper vertical alignment */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
+/* Title & text adjustments */
 .hero-title {
-  font-size: 3.5rem; /* slightly larger */
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   margin-bottom: 1rem;
-  font-family: 'Georgia', serif; /* Example serif font for a classic feel */
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+  font-family: 'Georgia', serif;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+  font-weight: bold;
+  text-align: center;
 }
 
-.hero-subtitle {
-  font-size: 1.75rem; /* increased size */
+.hero p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  max-width: 700px;
   margin-bottom: 2rem;
-  font-family: 'Arial', sans-serif;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  text-align: center;
 }
 
+/* CTA Button */
 .cta-button {
   display: inline-block;
-  font-size: 1rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  font-size: 1.1rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 6px;
   background: var(--help-gradient-default);
   color: white;
   text-decoration: none;
-  transition: background 0.2s ease;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .cta-button:hover {
   background: var(--help-gradient-hover);
+  transform: scale(1.05);
+}
+
+/* Mobile fixes */
+@media (max-width: 768px) {
+  .home-view {
+    padding: 1rem;
+  }
+
+  .hero {
+    width: 90%;
+    padding: 2rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .cta-button {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
 }
