@@ -1,4 +1,4 @@
-/* HEADER STYLES (Using global variables defined in :root) */
+/* HEADER STYLES (Using global variables from :root) */
 .site-header {
   position: fixed;
   top: 0;
@@ -7,51 +7,38 @@
   height: var(--header-height);
   background: var(--header-bg);
   color: var(--header-text-color);
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between; /* Space between left and right containers */
   padding: 0 var(--global-padding);
   z-index: 10000;
 }
 
-/* Header Left container (for nav buttons or icons) */
+/* Header Left container */
 .header-left {
   display: flex;
   align-items: center;
 }
 
-/* Header Right container (for help button and login area) */
-.header-right {
+/* Desktop navigation (hidden on mobile) */
+.desktop-nav .nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  gap: 15px;
 }
-
-/* Title container absolutely centered in the header */
-.site-title-container {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  /* Ensure the title container does not exceed a max width */
-  max-width: 70%;
-  pointer-events: none; /* So that clicks fall through if needed */
-}
-
-.site-name {
-  font-size: 2.2rem;
-  font-weight: bold;
-  line-height: 1;
-  pointer-events: auto; /* Re-enable pointer events on text if needed */
-}
-
-.site-subtitle {
+.nav-item a {
+  color: var(--nav-link-color);
+  text-decoration: none;
   font-size: 1rem;
-  line-height: 1;
-  opacity: 0.8;
+  transition: color 0.2s ease-in-out;
+}
+.nav-item a:hover {
+  color: var(--nav-link-hover-color);
 }
 
-/* Hamburger button (mobile only) */
+/* Hamburger button (only on mobile) */
 .hamburger-button {
   background: transparent;
   border: none;
@@ -59,52 +46,58 @@
   padding: 5px;
   transition: background 0.2s ease, transform 0.2s ease;
   border-radius: 6px;
+  display: none;
 }
-
 @media (max-width: 768px) {
+  .hamburger-button {
+    display: block;
+  }
   .desktop-nav {
     display: none;
   }
 }
-
-@media (min-width: 769px) {
-  .hamburger-button {
-    display: none;
-  }
-}
-
 .hamburger-button:hover {
   background: linear-gradient(135deg, #708238, #A1C349);
   transform: scaleX(1.1);
 }
-
 .hamburger-icon {
   width: 1.5rem;
   height: 1.5rem;
   fill: white;
 }
 
-/* Desktop navigation menu */
-.nav-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 15px;
+/* Title container absolutely centered */
+.site-title-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none; /* Let clicks pass through if needed */
 }
-
-.nav-item a {
-  color: var(--nav-link-color);
-  text-decoration: none;
+.site-name,
+.site-subtitle {
+  pointer-events: auto;
+}
+.site-name {
+  font-size: 2.2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+.site-subtitle {
   font-size: 1rem;
-  transition: color 0.2s ease-in-out;
+  opacity: 0.8;
 }
 
-.nav-item a:hover {
-  color: var(--nav-link-hover-color);
+/* Header Right container */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-self: end;
+  z-index: 9999;
 }
 
-/* Help button with improved (softer) gradient */
+/* Help button */
 .help-button {
   background: var(--help-gradient-default);
   border: none;
@@ -116,19 +109,18 @@
   align-items: center;
   position: relative;
 }
-
 .help-button:hover {
   background: var(--help-gradient-hover);
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: --nav-link-hover-color
+  
 }
-
 .help-button:active {
   background: var(--help-gradient-active);
   transform: scale(1.0);
   box-shadow: none;
 }
-
 .help-label {
   font-size: 0.7rem;
   font-weight: bold;
@@ -142,38 +134,40 @@
   fill: white;
   position: relative;
 }
-
 .help-icon::before {
   content: "?";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  font-size: 1.3rem;
-  color: white;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.3rem;
+  color: white;
 }
 
-/* Login area styles */
+/* Login area */
 .login-container {
   position: relative;
 }
 
+/* Login button enhancements */
 .login-button {
   background: transparent;
   border: 1px solid var(--login-border-color);
   color: var(--header-text-color);
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 7px 12px; /* Slightly more padding */
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .login-button:hover {
   background: var(--login-hover-bg);
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: var(--nav-link-hover-color);
+  border: 1px solid var(--nav-link-hover-color);
 }
 
 .login-menu {
@@ -187,7 +181,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   z-index: 100;
 }
-
 .logout-button {
   background: transparent;
   border: 1px solid var(--login-border-color);
@@ -197,7 +190,6 @@
   cursor: pointer;
   font-size: 0.85rem;
 }
-
 .logout-button:hover {
   background: var(--login-hover-bg);
 }

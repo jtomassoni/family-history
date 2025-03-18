@@ -1,26 +1,44 @@
 .home-view {
-  text-align: center;
-  margin-top: 2rem;
-  font-family: 'Georgia', serif;
-  color: #4a4a4a;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Background image with overlay for warmth */
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
+    no-repeat center center;
+  background-size: cover;
 }
 
-.home-view h1 {
-  font-size: 2.5rem;
-  color: #5d3a1a;
+.hero {
+  text-align: center;
+  color: var(--header-text-color); /* Uses global text color */
+  padding: 2rem;
+  max-width: 800px;
+}
+
+.hero-title {
+  font-size: 3rem;
   margin-bottom: 1rem;
 }
 
-.home-view nav {
-  margin-top: 1rem;
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.home-view nav a {
-  margin: 0 1rem;
+.cta-button {
+  display: inline-block;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  background: var(--help-gradient-default);
+  color: white;
   text-decoration: none;
-  color: #5d3a1a;
+  transition: background 0.2s ease;
 }
 
-.home-view nav a:hover {
-  text-decoration: underline;
+.cta-button:hover {
+  background: var(--help-gradient-hover);
 }

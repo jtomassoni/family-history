@@ -12,12 +12,12 @@
       <!-- Desktop navigation -->
       <nav class="desktop-nav">
         <ul class="nav-list">
-          <li class="nav-item"><a href="#">Home</a></li>
-          <li class="nav-item"><a href="#">Gallery</a></li>
-          <li class="nav-item"><a href="#">Stories</a></li>
-          <li class="nav-item"><a href="#">Family Tree</a></li>
-          <li class="nav-item"><a href="#">About</a></li>
-          <li class="nav-item"><a href="#">Contact</a></li>
+          <li class="nav-item"><router-link to="/">Home</router-link></li>
+          <li class="nav-item"><router-link to="/gallery">Gallery</router-link></li>
+          <li class="nav-item"><router-link to="/stories">Stories</router-link></li>
+          <li class="nav-item"><router-link to="/family-tree">Family Tree</router-link></li>
+          <li class="nav-item"><router-link to="/about">About</router-link></li>
+          <li class="nav-item"><router-link to="/contact">Contact</router-link></li>
         </ul>
       </nav>
     </div>
@@ -26,12 +26,12 @@
       <div class="site-subtitle">Family History</div>
     </div>
     <div class="header-right">
-      <!-- Help button opens modal only if it's not already open -->
+      <!-- Help button -->
       <button class="help-button" :disabled="isHintModalOpen" @click="openHelp">
         <span class="help-label">Help</span>
         <span class="help-icon"></span>
       </button>
-      <!-- Login / User area -->
+      <!-- Login area -->
       <div class="login-container">
         <button class="login-button" @click="toggleLoginMenu">
           <template v-if="isLoggedIn">
@@ -48,63 +48,41 @@
     </div>
     <!-- Mobile Menu Component -->
     <MobileMenu :isOpen="isMobileMenuOpen" @close="closeMobileMenu" />
-    <!-- Hint Modal Component -->
-    <HintModal 
-      v-if="isHintModalOpen"
-      :desktopHint="'Use your ⬅️ arrow keys ➡️ to glide through photos.<br>For a quick jump to the oldest or newest, hold ⬆️ Shift ⬆️ with your arrows!<br>⌨️ Press space to open the 🗓️ date selector.'"
-      :mobileHint="'📱 Swipe left/right to cruise through family memories.<br>👆Tap the 🗓️ icon to pick a special date!'"
-      @dismiss="closeHintModal"
-    />
   </header>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import MobileMenu from '../components/MobileMenu.vue';
-import HintModal from '../components/HintModal.vue';
 import "../styles/Header.css";
 
-// Reactive variables for menu and hint modal states.
 const isMobileMenuOpen = ref(false);
 const isHintModalOpen = ref(false);
 
-// For login: track logged in status, username, and whether the login fly-out is visible.
+// Login state
 const isLoggedIn = ref(false);
-const username = ref(""); // Populate this when the user logs in.
+const username = ref("");  // Set when user logs in
 const showLoginMenu = ref(false);
 
-// Toggle mobile menu.
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
 
-// Close mobile menu.
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
 };
 
-// Open the help modal.
 const openHelp = () => {
-  if (!isHintModalOpen.value) {
-    isHintModalOpen.value = true;
-  }
+  isHintModalOpen.value = true;
 };
 
-// Close the help modal.
-const closeHintModal = () => {
-  isHintModalOpen.value = false;
-};
-
-// Toggle login menu visibility.
 const toggleLoginMenu = () => {
   showLoginMenu.value = !showLoginMenu.value;
 };
 
-// Example logout function.
 const logout = () => {
   isLoggedIn.value = false;
   username.value = "";
   showLoginMenu.value = false;
-  // You can add further logout logic (e.g., API calls) here.
 };
 </script>

@@ -1,133 +1,92 @@
-/* ---------------------------------------------------------
-   PHOTO TILE - GENERAL STYLING
-----------------------------------------------------------*/
-.photo-tile-container {
-  /* Pin the tile between header/date-nav and footer */
+/* 
+  A full-screen wrapper behind everything. 
+  We'll center the tile horizontally, and the tile container itself 
+  has top/bottom margins to ensure it doesn't collide with the nav or footer.
+*/
+.photo-tile-fullscreen-wrapper {
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  
-  /* Desktop gaps: 20px below header/date-nav and 20px above footer */
-  top: calc(var(--header-height) + var(--date-nav-buttons-height) + 20px);
-  bottom: calc(var(--footer-height) + 20px);
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  display: flex;
+  justify-content: center;  /* center horizontally */
+  overflow: hidden;
+  z-index: 9000;
+  background: transparent;  /* So main page BG is visible */
+}
 
+/* 
+  The tile container has a 66px top margin to clear the nav, 
+  plus some bottom margin for the footer. 
+  It also has a max-height so portrait photos don't overlap the header. 
+*/
+.photo-tile-container {
+  margin-top: 150px;
+  margin-bottom: 40px;
   width: 100%;
   max-width: 650px;
-
+  max-height: min(600px, 70vh);
+  
   background: #f7f3ee;
   border: 3px solid #bfa18a;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
-  /* Use flex to structure the inner content */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-/* ---------------------------------------------------------
-   INNER CONTENT - Enforce Padding on All Sides
-----------------------------------------------------------*/
+/* 
+  The content area with moderate padding, 
+  ensuring horizontal photos can expand while tall vertical photos stay contained. 
+*/
 .photo-content {
-  flex: 1; /* Fills available vertical space */
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* Reserve 30px of space on all sides on desktop */
-  padding: 30px;
+  padding: 15px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-/* ---------------------------------------------------------
-   IMAGE CONTAINER - Centers the Image
-----------------------------------------------------------*/
+/* 
+  The image container covers only the tile area, 
+  not the entire screen. 
+*/
 .photo-image-container {
-  /* Ensure this container fills the parent and centers its child */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-/* ---------------------------------------------------------
-   IMAGE STYLING
-   The image scales down so it never enters the reserved padding.
-----------------------------------------------------------*/
+/* 
+  The image fits within the tile's max-height, 
+  preventing vertical pics from overlapping the header. 
+*/
 .photo-image {
   display: block;
   border-radius: 8px;
   object-fit: contain;
   object-position: center;
-  
-  /* Force the image to stay within the padded area:
-     On desktop, subtract 60px total (30px each side) */
-  max-width: calc(100% - 60px);
-  max-height: calc(100% - 60px);
-  width: auto;
-  height: auto;
-  
-  /* No extra margins */
-  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
 }
 
-/* ---------------------------------------------------------
-   MOBILE ADJUSTMENTS
-----------------------------------------------------------*/
-@media (max-width: 768px) {
-  .photo-tile-container {
-    /* Leave a 10px margin on each side */
-    width: calc(100vw - 20px);
-    max-width: calc(100vw - 20px);
-
-    /* Mobile: use 10px gaps below header/date-nav & above footer */
-    top: calc(var(--header-height) + var(--date-nav-buttons-height) + 10px);
-    bottom: calc(var(--footer-height) + 10px);
-  }
-
-  .photo-content {
-    /* Reserve 15px on all sides on mobile */
-    padding: 15px;
-  }
-
-  .photo-image {
-    /* Subtract 30px total (15px each side) on mobile */
-    max-width: calc(100% - 30px);
-    max-height: calc(100% - 30px);
-  }
-}
-
-/* ---------------------------------------------------------
-   TRANSITION & OVERLAY STYLING
-----------------------------------------------------------*/
-/* Fade transition for overlay (used with Vue's <transition name="fade-overlay">) */
-.fade-overlay-enter-active,
-.fade-overlay-leave-active {
-  transition: opacity 0.4s ease;
-}
-.fade-overlay-enter,
-.fade-overlay-leave-to {
-  opacity: 0;
-}
-
-/* Overlay for photo info */
+/* 
+  Overlay only covers the tile's image container. 
+*/
 .photo-info-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 999; /* Overlay above the tile */
-  
-  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+  inset: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
-  
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -147,11 +106,26 @@
   margin-bottom: 0.5rem;
 }
 
+/* Fade transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* MOBILE ADJUSTMENTS */
 @media (max-width: 768px) {
-  .photo-info-overlay h3 {
-    font-size: 1.2rem;
+  .photo-tile-container {
+    margin-top: 140px;
+    margin-bottom: 30px;
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    max-height: min(500px, 70vh);
   }
-  .photo-info-overlay p {
-    font-size: 0.9rem;
+  .photo-content {
+    padding: 10px;
   }
 }

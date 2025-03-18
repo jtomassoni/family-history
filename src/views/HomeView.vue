@@ -1,7 +1,12 @@
 <template>
   <div class="home-view">
-    <!-- <h1>Family History Timeline</h1>
-    <p>Welcome to the family history site! Explore our heritage, stories, and photos.</p> -->
+    <div class="hero">
+      <h1 class="hero-title">Family History Timeline</h1>
+      <p class="hero-subtitle">
+        Welcome to our family history site! Right now the only thing working is the gallery, but check back often as we explore our heritage through stories and photos.
+      </p>
+      <router-link to="/gallery" class="cta-button">Explore Now</router-link>
+    </div>
   </div>
 </template>
 

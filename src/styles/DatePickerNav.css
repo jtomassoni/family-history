@@ -17,18 +17,25 @@
   background: #f4e1c9;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  margin-top: calc(var(--header-height) + 5px);
+  margin-top: 15px; /* Default for desktop */
   height: var(--date-nav-buttons-height);
   transition: height 0.3s ease-in-out;
 }
 
-/* Responsive Label Visibility */
+/* Hide mobile or desktop labels as before */
 @media (min-width: 769px) {
   .mobile-label { display: none !important; }
 }
 @media (max-width: 768px) {
   .desktop-label { display: none !important; }
+
+  /* On mobile, remove extra margin-top so it sits under the header */
+  .datepicker-nav {
+    margin-top: 20px !important; 
+    padding: 0.5rem 1rem; /* Slightly smaller padding on mobile if you like */
+  }
 }
+
 
 /* ---------------------------------------------------------
    LEVEL 1 - DEFAULT NAVIGATION BUTTONS
@@ -360,7 +367,7 @@
   .datepicker-nav {
     max-width: 95%;
     padding: 0.5rem;
-    margin-top: calc(var(--header-height) + 3px);
+    margin-top: calc(var(--header-height) + 0px);
   }
   .selection-header {
     padding: 0 5px;
