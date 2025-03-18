@@ -35,6 +35,7 @@ const dismissHintModal = () => {
   showHintModal.value = false;
 };
 
-const helpDesktopHint = "Need help?<br>Use your ⬅️/➡️ arrow keys to navigate, or press space for the date selector.";
-const helpMobileHint = "Need help?<br>Swipe left/right to navigate, or tap the calendar icon for dates.";
+const helpDesktopHint = "❓ LOST? ❓ <br>Use your ⬅️/➡️ arrow keys to navigate.<br>Press space ⌨️ for the date selection.";
+const helpMobileHint = "❓ LOST? ❓ <br>Swipe (👈 and 👉) to navigate.<br>Tap the 📅 for date selection.";
+
 </script>

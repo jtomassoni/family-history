@@ -1,4 +1,3 @@
-/* HEADER STYLES (Using global variables from :root) */
 .site-header {
   position: fixed;
   top: 0;
@@ -8,7 +7,7 @@
   background: var(--header-bg);
   color: var(--header-text-color);
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto; /* By default, three columns */
   align-items: center;
   padding: 0 var(--global-padding);
   z-index: 10000;
@@ -20,22 +19,37 @@
   align-items: center;
 }
 
-/* Desktop navigation (hidden on mobile) */
-.desktop-nav .nav-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 15px;
+/* Title container absolutely centered on desktop, 
+   but revert to normal flow on mobile. */
+.site-title-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
 }
-.nav-item a {
-  color: var(--nav-link-color);
-  text-decoration: none;
+.site-name,
+.site-subtitle {
+  pointer-events: auto;
+}
+.site-name {
+  font-size: 2.2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+.site-subtitle {
   font-size: 1rem;
-  transition: color 0.2s ease-in-out;
+  line-height: 1;
+  opacity: 0.8;
 }
-.nav-item a:hover {
-  color: var(--nav-link-hover-color);
+
+/* Header Right container */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-self: end;
+  z-index: 9999;
 }
 
 /* Hamburger button (only on mobile) */
@@ -56,6 +70,7 @@
     display: none;
   }
 }
+
 .hamburger-button:hover {
   background: linear-gradient(135deg, #708238, #A1C349);
   transform: scaleX(1.1);
@@ -66,35 +81,22 @@
   fill: white;
 }
 
-/* Title container absolutely centered */
-.site-title-container {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  pointer-events: none; /* Let clicks pass through if needed */
-}
-.site-name,
-.site-subtitle {
-  pointer-events: auto;
-}
-.site-name {
-  font-size: 2.2rem;
-  font-weight: bold;
-  line-height: 1;
-}
-.site-subtitle {
-  font-size: 1rem;
-  opacity: 0.8;
-}
-
-/* Header Right container */
-.header-right {
+/* Desktop navigation menu */
+.desktop-nav .nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  justify-self: end;
-  z-index: 9999;
+  gap: 15px;
+}
+.nav-item a {
+  color: var(--nav-link-color);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s ease-in-out;
+}
+.nav-item a:hover {
+  color: var(--nav-link-hover-color);
 }
 
 /* Help button */
@@ -113,8 +115,6 @@
   background: var(--help-gradient-hover);
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  color: --nav-link-hover-color
-  
 }
 .help-button:active {
   background: var(--help-gradient-active);
@@ -127,7 +127,6 @@
   margin-right: 2px;
   color: white;
 }
-
 .help-icon {
   width: 1.3rem;
   height: 1.3rem;
@@ -145,31 +144,24 @@
   color: white;
 }
 
-/* Login area */
+/* Login container */
 .login-container {
   position: relative;
 }
-
-/* Login button enhancements */
 .login-button {
   background: transparent;
   border: 1px solid var(--login-border-color);
   color: var(--header-text-color);
-  padding: 7px 12px; /* Slightly more padding */
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
   transition: background 0.2s ease, transform 0.2s ease;
 }
-
 .login-button:hover {
   background: var(--login-hover-bg);
   transform: scale(1.05);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  color: var(--nav-link-hover-color);
-  border: 1px solid var(--nav-link-hover-color);
 }
-
 .login-menu {
   position: absolute;
   top: 110%;
@@ -194,16 +186,18 @@
   background: var(--login-hover-bg);
 }
 
-/* RESPONSIVENESS */
+/* RESPONSIVENESS: revert the title container to normal flow on mobile */
 @media (max-width: 768px) {
+  .site-title-container {
+    position: static;       /* remove absolute positioning */
+    transform: none;        /* remove translateX */
+    pointer-events: auto;
+    margin-left: 10px;      /* shift it a bit from the left if you like */
+  }
   .site-name {
-    font-size: 1.8rem;
+    font-size: 1.6rem;      /* slightly smaller on mobile */
   }
   .site-subtitle {
-    font-size: 0.9rem;
-  }
-  .help-icon {
-    width: 1.3rem;
-    height: 1.3rem;
+    font-size: 0.85rem;
   }
 }

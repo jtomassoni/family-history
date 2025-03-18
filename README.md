@@ -12,7 +12,6 @@ View the app at [www.thetomassonis.com](www.thetomassonis.com)(add host info her
 
 TODO
 ----
-*   create app elements for stories and family tree
 *   make sure hover,disable, etc status effects work for all buttons
 *   upload all the content
 *   parse it for stories

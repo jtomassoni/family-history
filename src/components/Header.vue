@@ -26,8 +26,8 @@
       <div class="site-subtitle">Family History</div>
     </div>
     <div class="header-right">
-      <!-- Help button -->
-      <button class="help-button" :disabled="isHintModalOpen" @click="openHelp">
+      <!-- Help button that emits a "help" event -->
+      <button class="help-button" @click="openHelp">
         <span class="help-label">Help</span>
         <span class="help-icon"></span>
       </button>
@@ -52,16 +52,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import MobileMenu from '../components/MobileMenu.vue';
 import "../styles/Header.css";
 
-const isMobileMenuOpen = ref(false);
-const isHintModalOpen = ref(false);
+// Define event emitter for "help"
+const emit = defineEmits(['help']);
 
-// Login state
+const isMobileMenuOpen = ref(false);
+// Remove local modal flag; parent controls it.
+
 const isLoggedIn = ref(false);
-const username = ref("");  // Set when user logs in
+const username = ref("");
 const showLoginMenu = ref(false);
 
 const toggleMobileMenu = () => {
@@ -72,8 +74,9 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
 };
 
+// When help is clicked, emit the "help" event for the parent.
 const openHelp = () => {
-  isHintModalOpen.value = true;
+  emit('help');
 };
 
 const toggleLoginMenu = () => {

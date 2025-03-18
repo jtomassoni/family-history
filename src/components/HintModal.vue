@@ -8,9 +8,9 @@
           <p class="hint-text hint-desktop" v-html="desktopHint"></p>
           <p class="hint-text hint-mobile" v-html="mobileHint"></p>
           <div class="close-message">
-            <span class="close-text">Tap anywhere to close!👆👆</span>
+            <span class="close-text">👆Tap anywhere to close!👆👆</span>
             <span class="countdown-text">
-              ⏱️ Auto-closing in {{ countdownSeconds }} second<span v-if="countdownSeconds !== 1">s</span> 
+              ⏱️Auto-closing in {{ countdownSeconds }} second<span v-if="countdownSeconds !== 1">s</span> 
             </span>
           </div>
         </div>

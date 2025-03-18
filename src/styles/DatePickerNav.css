@@ -1,7 +1,11 @@
-/* ---------------------------------------------------------
-   DATE PICKER NAVIGATION - ITALIAN-THEMED & ANIMATED FLOW
-----------------------------------------------------------*/
+/* 
+  DATE PICKER NAVIGATION
+  Ensure it's on top by using position + a higher z-index than the tile.
+*/
 .datepicker-nav {
+  position: relative;  /* So z-index applies */
+  z-index: 11000;      /* Above tile's 8000 */
+  
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,7 +17,6 @@
   margin: 0 auto;
   overflow: hidden;
   box-sizing: border-box;
-  z-index: 1000;
   background: #f4e1c9;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -28,18 +31,15 @@
 }
 @media (max-width: 768px) {
   .desktop-label { display: none !important; }
-
-  /* On mobile, remove extra margin-top so it sits under the header */
   .datepicker-nav {
     margin-top: 20px !important; 
-    padding: 0.5rem 1rem; /* Slightly smaller padding on mobile if you like */
+    padding: 0.5rem 1rem;
+    position: relative; 
+    z-index: 11000 !important; /* Ensure it stays above tile */
   }
 }
 
-
-/* ---------------------------------------------------------
-   LEVEL 1 - DEFAULT NAVIGATION BUTTONS
-----------------------------------------------------------*/
+/* LEVEL 1 - DEFAULT NAVIGATION BUTTONS */
 .default-navigation {
   display: flex;
   flex-direction: row;
@@ -97,16 +97,14 @@
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-/* ---------------------------------------------------------
-   SHARED SELECTION CONTAINER (Levels 2-5)
-----------------------------------------------------------*/
+/* SHARED SELECTION CONTAINER (Levels 2-5) */
 .selection-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: var(--date-nav-buttons-height);
   position: relative;
-  z-index: 5000;
+  z-index: 11000;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
@@ -144,9 +142,7 @@
   text-decoration: none;
 }
 
-/* ---------------------------------------------------------
-   LEVEL 2 - YEAR RANGE SELECTION
-----------------------------------------------------------*/
+/* LEVEL 2 - YEAR RANGE SELECTION */
 .year-range-options {
   display: flex;
   flex-wrap: wrap;
@@ -157,7 +153,7 @@
   max-height: calc(var(--date-nav-buttons-height) - 10px);
   overflow-y: auto;
   position: relative;
-  z-index: 5100;
+  z-index: 11000;
   margin: 0 auto;
 }
 .year-range-options button {
@@ -185,9 +181,7 @@
   box-shadow: none;
 }
 
-/* ---------------------------------------------------------
-   LEVEL 3 - SPECIFIC YEAR SELECTION (Horizontal Scroll)
-----------------------------------------------------------*/
+/* LEVEL 3 - SPECIFIC YEAR SELECTION (Horizontal Scroll) */
 .year-options {
   display: flex;
   flex-wrap: nowrap;
@@ -231,9 +225,7 @@
   border-radius: 3px;
 }
 
-/* ---------------------------------------------------------
-   LEVEL 4 - MONTH SELECTION
-----------------------------------------------------------*/
+/* LEVEL 4 - MONTH SELECTION */
 .month-options {
   display: flex;
   flex-wrap: wrap;
@@ -270,9 +262,7 @@
   box-shadow: none;
 }
 
-/* ---------------------------------------------------------
-   LEVEL 5 - DAY SELECTION
-----------------------------------------------------------*/
+/* LEVEL 5 - DAY SELECTION */
 .day-options {
   display: flex;
   flex-wrap: wrap;
@@ -309,9 +299,7 @@
   box-shadow: none;
 }
 
-/* ---------------------------------------------------------
-   LEVEL 6 - CONFIRM SELECTION
-----------------------------------------------------------*/
+/* LEVEL 6 - CONFIRM SELECTION */
 .confirm-selection {
   display: flex;
   flex-direction: column;
@@ -320,7 +308,7 @@
   width: 100%;
   height: var(--date-nav-buttons-height);
   padding: 10px;
-  z-index: 5000;
+  z-index: 11000;
 }
 .confirm-selection .selection-header {
   margin-bottom: 4px;
@@ -360,14 +348,14 @@
   box-shadow: none;
 }
 
-/* ---------------------------------------------------------
-   MOBILE ADJUSTMENTS
-----------------------------------------------------------*/
+/* MOBILE ADJUSTMENTS */
 @media (max-width: 768px) {
   .datepicker-nav {
     max-width: 95%;
     padding: 0.5rem;
-    margin-top: calc(var(--header-height) + 0px);
+    margin-top: 20px !important;
+    position: relative; 
+    z-index: 11000 !important;
   }
   .selection-header {
     padding: 0 5px;
