@@ -28,7 +28,7 @@ import { ref } from 'vue';
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import HintModal from './components/HintModal.vue';
-import "./styles/Main.css";
+import "./styles/main.css";
 
 
 const showHintModal = ref(false);
