@@ -1,7 +1,7 @@
 <template>
   <transition name="hint-fade" @after-enter="logAfterEnter">
     <div class="hint-modal-overlay" @click="dismiss">
-      <!-- Remove click-stop here so clicking inside the modal also closes it -->
+      <!-- Now clicking anywhere in the content dismisses the modal -->
       <div class="hint-modal-content-wrapper" @click="dismiss">
         <div :class="['hint-modal-content', themeClass]">
           <!-- Display desktop and mobile hint content -->
@@ -10,7 +10,7 @@
           <div class="close-message">
             <span class="close-text">👆Tap anywhere to close!👆👆</span>
             <span class="countdown-text">
-              ⏱️Auto-closing in {{ countdownSeconds }} second<span v-if="countdownSeconds !== 1">s</span> 
+              ⏱️Auto-closing in {{ countdownSeconds }} second<span v-if="countdownSeconds !== 1">s</span>
             </span>
           </div>
         </div>
@@ -18,6 +18,7 @@
     </div>
   </transition>
 </template>
+
 
 <script setup>
 import { defineEmits, defineProps, computed, ref, onMounted, onUnmounted } from 'vue';

@@ -44,17 +44,6 @@
         @boundary="handleBoundary('right')"
       />
     </div>
-
-    <!-- Date Selection Modal -->
-    <transition name="fade">
-      <div v-if="showDateSelect" class="date-select-modal" @click="dismissDateSelect">
-        <button class="close-btn" @click.stop="dismissDateSelect">✖</button>
-        <p class="modal-text">
-          <strong>Select a date:</strong><br>
-          Use the calendar below or type a date.
-        </p>
-      </div>
-    </transition>
   </div>
 </template>
 
