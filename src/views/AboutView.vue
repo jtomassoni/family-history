@@ -16,5 +16,5 @@
 </template>
 
 <script setup>
-import './AboutPage.css'
+import './AboutView.css'
 </script>

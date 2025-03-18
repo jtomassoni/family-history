@@ -12,5 +12,5 @@
 </template>
 
 <script setup>
-import './ContactPage.css'
+import './ContactView.css'
 </script>

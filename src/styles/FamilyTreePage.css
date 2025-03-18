@@ -1,0 +1,17 @@
+.family-tree-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: 'Georgia', serif;
+  line-height: 1.6;
+  color: #4a4a4a;
+  /* Olive tree background image from Wikimedia Commons (Creative Commons licensed) */
+  background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Olive_trees_in_Sicily.jpg/1920px-Olive_trees_in_Sicily.jpg') no-repeat center center;
+  background-size: cover;
+}
+
+.family-tree-page h1 {
+  text-align: center;
+  color: #5d3a1a;
+  margin-bottom: 1.5rem;
+}
