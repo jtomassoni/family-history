@@ -33,7 +33,7 @@ body {
   --nav-link-hover-color: #b22222; /* slightly lighter to contrast */
 
   /* Help button gradients */
-  --help-gradient-default: linear-gradient(135deg, #ff9a9e, #ffe0cc);
+  --help-gradient-default: linear-gradient(135deg, #ffd6e0, #6d2a2a);
   --help-gradient-hover: linear-gradient(135deg, #ffd6e0, #d6a4a4);
   --help-gradient-active: linear-gradient(135deg, #c4878a, #a3737c);
 

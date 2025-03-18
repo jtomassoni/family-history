@@ -4,7 +4,7 @@
 */
 .datepicker-nav {
   position: relative;  /* So z-index applies */
-  z-index: 11000;      /* Above tile's 8000 */
+  z-index: auto;      /* Above tile's 8000 */
   
   display: flex;
   flex-direction: column;
