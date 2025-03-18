@@ -93,10 +93,41 @@
   color: var(--nav-link-color);
   text-decoration: none;
   font-size: 1rem;
-  transition: color 0.2s ease-in-out;
+  transition: color 0.5s ease-in-out;
 }
 .nav-item a:hover {
   color: var(--nav-link-hover-color);
+}
+
+.nav-item a {
+  position: relative;
+  color: var(--nav-link-color);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.5s ease-in-out;
+}
+
+/* Create the underline using a pseudo-element */
+.nav-item a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;  /* adjust spacing as needed */
+  height: 4px;
+  background-color: #000;
+  opacity: 0; /* hidden by default */
+  transition: opacity 0.5s ease;
+}
+
+/* When the link is active, show the underline */
+.nav-item a.current {
+  font-weight: bold;
+  color: var(--nav-link-hover-color);
+}
+
+.nav-item a.current::after {
+  opacity: 1;
 }
 
 /* Help button */

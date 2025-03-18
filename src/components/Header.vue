@@ -12,12 +12,54 @@
       <!-- Desktop navigation -->
       <nav class="desktop-nav">
         <ul class="nav-list">
-          <li class="nav-item"><router-link to="/">Home</router-link></li>
-          <li class="nav-item"><router-link to="/gallery">Gallery</router-link></li>
-          <li class="nav-item"><router-link to="/stories">Stories</router-link></li>
-          <li class="nav-item"><router-link to="/family-tree">Family Tree</router-link></li>
-          <li class="nav-item"><router-link to="/about">About</router-link></li>
-          <li class="nav-item"><router-link to="/contact">Contact</router-link></li>
+          <li class="nav-item">
+            <router-link 
+              to="/" 
+              :class="{ current: route.path === '/' }"
+            >
+              Home
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link 
+              to="/gallery" 
+              :class="{ current: route.path === '/gallery' }"
+            >
+              Gallery
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link 
+              to="/stories" 
+              :class="{ current: route.path === '/stories' }"
+            >
+              Stories
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link 
+              to="/family-tree" 
+              :class="{ current: route.path === '/family-tree' }"
+            >
+              Family Tree
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link 
+              to="/about" 
+              :class="{ current: route.path === '/about' }"
+            >
+              About
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link 
+              to="/contact" 
+              :class="{ current: route.path === '/contact' }"
+            >
+              Contact
+            </router-link>
+          </li>
         </ul>
       </nav>
     </div>
@@ -52,16 +94,18 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 import MobileMenu from '../components/MobileMenu.vue';
 import "../styles/Header.css";
 
 // Define event emitter for "help"
 const emit = defineEmits(['help']);
 
-const isMobileMenuOpen = ref(false);
-// Remove local modal flag; parent controls it.
+// Get current route object
+const route = useRoute();
 
+const isMobileMenuOpen = ref(false);
 const isLoggedIn = ref(false);
 const username = ref("");
 const showLoginMenu = ref(false);
@@ -74,7 +118,6 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
 };
 
-// When help is clicked, emit the "help" event for the parent.
 const openHelp = () => {
   emit('help');
 };

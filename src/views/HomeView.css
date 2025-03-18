@@ -5,7 +5,7 @@
   justify-content: center;
   /* Background image with overlay for warmth */
   background: 
-    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
     url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
     no-repeat center center;
   background-size: cover;
@@ -13,19 +13,27 @@
 
 .hero {
   text-align: center;
-  color: var(--header-text-color); /* Uses global text color */
+  /* Optional background box to enhance readability */
+  background: rgba(0, 0, 0, 0.5);
   padding: 2rem;
   max-width: 800px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: #fff; /* Ensure text is light for contrast */
 }
 
 .hero-title {
-  font-size: 3rem;
+  font-size: 3.5rem; /* slightly larger */
   margin-bottom: 1rem;
+  font-family: 'Georgia', serif; /* Example serif font for a classic feel */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
 }
 
 .hero-subtitle {
-  font-size: 1.5rem;
+  font-size: 1.75rem; /* increased size */
   margin-bottom: 2rem;
+  font-family: 'Arial', sans-serif;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
 
 .cta-button {
