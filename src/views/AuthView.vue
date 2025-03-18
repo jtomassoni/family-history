@@ -67,7 +67,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import './AuthPage.css'
+import './AuthView.css'
 
 
 const route = useRoute();

@@ -8,5 +8,5 @@
 </template>
 
 <script setup>
-import './StoriesPage.css'
+import './StoriesView.css'
 </script>

@@ -45,8 +45,8 @@ const dismissHintModal = () => {
 };
 
 // Hint texts
-const helpDesktopHint = "LOST ❓ <br>Use your ⬅️/➡️ arrow keys to navigate.<br>Press space ⌨️ for the date selection.";
-const helpMobileHint = "LOST ❓ <br>Swipe (👈 and 👉) to navigate.<br>Tap the 📅 for date selection.";
+const helpDesktopHint = "LOST ❓<br> Click a pic 🖼️ to see details.<br>Use your ⬅️/➡️ arrow keys to navigate.<br>Press space ⌨️ for the date selection.";
+const helpMobileHint = "LOST ❓<br> Click a pic 🖼️ to see details.<br>Swipe (👈 and 👉) to navigate.<br>Tap the 📅 for date selection.";
 
 // Mobile menu state
 const isMobileMenuOpen = ref(false);

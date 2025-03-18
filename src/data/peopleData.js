@@ -1,0 +1,86 @@
+export const peopleData = [
+  {
+    name: 'James Tomassoni',
+    birthday: '1990-11-16',
+    parents: ['Mark Tomassoni', 'Frances Tomassoni'],
+    children: [],
+    siblings: ['Joanna Tomassoni'],
+    partner: [],
+    gender: 'm',
+    bio: 'this is a bio string.',
+    tags:[],
+    options: []
+  },
+  {
+    name: 'Mark Tomassoni',
+    birthday: '1952-02-09',
+    parents: ['John Tomassoni', 'Marian Tomassoni'],
+    children: [],
+    siblings: ['Guy Tomassoni', 'Paul Tomassoni', 'Carol Tomassoni', 'Donna Tomassoni'],
+    partner: 'Frances Tomassoni',
+    gender: 'm',
+    bio: 'this is a bio string.',
+    tags:[],
+    options: []
+  },
+  {
+    name: 'Frances Tomassoni',
+    birthday: '1950-02-09',
+    parents: ['Mary Hoy', 'James Hoy'],
+    children: [],
+    siblings: ['Irene', 'Mary', 'Jim', 'Barry'],
+    partner: 'Mark Tomassoni',
+    gender: 'f',
+    bio: 'this is a bio string.',
+    tags:[],
+    options: []
+  },
+  {
+    name: 'Joanna Tomassoni',
+    birthday: '1989-08-06',
+    parents: ['Mark Tomassoni', 'Frances Tomasoni'],
+    children: [],
+    siblings: ['James Tomassoni'],
+    partner: 'Max Backaloff',
+    gender: 'f',
+    bio: 'this is a bio string.',
+    tags:[],
+    options: []
+  },
+  {
+    name: 'Marian Tomassoni',
+    birthday: '1900-01-01',
+    parents: ['Great Grand parents'],
+    children: [],
+    siblings: [],
+    partner: 'John Tomassoni',
+    gender: 'f',
+    bio: 'this is a bio string.',
+    tags:[],
+    options: []
+  },
+  {
+    name: 'John Tomassoni',
+    birthday: '1900-01-01',
+    parents: ['Great Grand Parents'],
+    children: [],
+    siblings: [],
+    partner: 'Marian Tomassoni',
+    gender: 'f',
+    bio: 'this is a bio string.',
+    tags:[],
+    options: []
+  },
+  {
+    name: 'Baby Tomassoni',
+    birthday: '2025-04-01',
+    parents: ['Joanna Tomassoni', 'Max Backaloff'],
+    children: [],
+    siblings: [],
+    partner: '',
+    gender: 'm',
+    bio: 'this is a bio string.',
+    tags:[],
+    options: []
+  },
+]
