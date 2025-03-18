@@ -10,12 +10,16 @@
     <Footer />
 
     <!-- Optional: Global hint modal (if needed) -->
-    <HintModal 
-      v-if="showHintModal"
-      :desktopHint="helpDesktopHint"
-      :mobileHint="helpMobileHint"
-      @dismiss="dismissHintModal"
-    />
+    <transition name="hint-fade">
+      <HintModal 
+        v-if="showHintModal"
+        :desktopHint="helpDesktopHint"
+        :mobileHint="helpMobileHint"
+        @dismiss="dismissHintModal"
+      />
+    </transition>
+
+    
   </div>
 </template>
 
@@ -35,7 +39,7 @@ const dismissHintModal = () => {
   showHintModal.value = false;
 };
 
-const helpDesktopHint = "❓ LOST? ❓ <br>Use your ⬅️/➡️ arrow keys to navigate.<br>Press space ⌨️ for the date selection.";
-const helpMobileHint = "❓ LOST? ❓ <br>Swipe (👈 and 👉) to navigate.<br>Tap the 📅 for date selection.";
+const helpDesktopHint = "LOST ❓ <br>Use your ⬅️/➡️ arrow keys to navigate.<br>Press space ⌨️ for the date selection.";
+const helpMobileHint = "LOST ❓ <br>Swipe (👈 and 👉) to navigate.<br>Tap the 📅 for date selection.";
 
 </script>

@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.7); /* Slightly opaque overlay */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,9 +108,13 @@
 /* Transition for modal appearance */
 .hint-fade-enter-active,
 .hint-fade-leave-active {
-  transition: opacity 0.3s;
+  transition: opacity 0.5s ease-out !important;
 }
 .hint-fade-enter-from,
 .hint-fade-leave-to {
   opacity: 0;
+}
+.hint-fade-enter-to,
+.hint-fade-leave-from {
+  opacity: 1;
 }
