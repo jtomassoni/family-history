@@ -1,235 +1,119 @@
 <template>
-  <header class="site-header">
-    <!-- LEFT: Hamburger + Desktop Nav -->
-    <div class="header-left">
-      <button class="hamburger-button" @click="toggleMobileMenu" aria-label="Toggle menu">
-        <svg class="hamburger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      
+  <header class="header">
+    <div class="header-content">
+      <!-- Logo/Site Title -->
+      <router-link to="/" class="site-title">
+        <h1 class="title">
+          <span class="site-name" :data-text="siteTitle">{{ siteTitle }}</span>
+          <span class="site-subtitle">Family History</span>
+        </h1>
+      </router-link>
+
+      <!-- Desktop Navigation -->
       <nav class="desktop-nav">
         <ul class="nav-list">
           <li v-for="item in navItems" :key="item.path" class="nav-item">
             <router-link 
               :to="item.path" 
-              :class="{ current: route.path === item.path }"
+              :class="{ 'current': isCurrentRoute(item.path) }"
               class="nav-link"
             >
               {{ item.label }}
+              <span class="nav-indicator"></span>
             </router-link>
           </li>
         </ul>
       </nav>
-    </div>
 
-    <!-- MIDDLE: Site Title -->
-    <div class="site-title-container">
-      <router-link to="/" class="site-title-link">
-        <h1 class="site-title">
-          <span class="site-name">TOMASSONI</span>
-          <span class="site-subtitle">Family History</span>
-        </h1>
-      </router-link>
-    </div>
-
-    <!-- RIGHT: Help button (Gallery only) + Login button -->
-    <div class="header-right">
-      <button
-        v-if="route.path === '/gallery'"
-        class="help-button"
-        @click="openHelp"
-      >
-        <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 17h.01" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="button-label">Help</span>
-      </button>
-
-      <button
-        class="login-button"
-        @click="openAuth"
-      >
+      <!-- Desktop Auth Button -->
+      <button class="auth-button" @click="openAuth">
         <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M15 12H3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span class="button-label">Login</span>
+        <span>Login</span>
+      </button>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-menu-toggle" @click="$emit('toggle-mobile-menu')" aria-label="Toggle menu">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
     </div>
-
-    <!-- Auth Flyout -->
-    <AuthFlyout
-      :is-open="isAuthOpen"
-      @close="closeAuth"
-      @submit="handleAuthSubmit"
-    />
   </header>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-import AuthFlyout from './auth/AuthFlyout.vue';
+import { useNavigation } from '../composables/useNavigation';
 
-const emit = defineEmits(['help', 'toggle-mobile-menu']);
-const route = useRoute();
-const isLoggedIn = ref(false);
-const isAuthOpen = ref(false);
+const { navItems, isCurrentRoute } = useNavigation();
+const siteTitle = 'TOMASSONI';
 
-const navItems = [
-  { path: '/', label: 'Home' },
-  { path: '/gallery', label: 'Gallery' },
-  { path: '/stories', label: 'Stories' },
-  { path: '/family-tree', label: 'Family Tree' },
-  { path: '/about', label: 'About' },
-  { path: '/contact', label: 'Contact' }
-];
+const emit = defineEmits(['help', 'toggle-mobile-menu', 'auth']);
 
-const openHelp = () => emit('help');
-const toggleMobileMenu = () => emit('toggle-mobile-menu');
-const openAuth = () => isAuthOpen.value = true;
-const closeAuth = () => isAuthOpen.value = false;
-
-const handleAuthSubmit = async (credentials) => {
-  // TODO: Implement actual authentication
-  console.log('Auth submitted:', credentials);
-  closeAuth();
+const openAuth = () => {
+  emit('auth');
 };
 </script>
 
 <style scoped>
-.site-header {
-  position: sticky;
+.header {
+  position: fixed;
   top: 0;
-  z-index: var(--z-index-header);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 80px;
-  padding: 0 var(--spacing-lg);
+  left: 0;
+  right: 0;
+  height: var(--header-height);
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
+  z-index: var(--z-index-header);
 }
 
-/* Left Section */
-.header-left {
-  display: flex;
+.header-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: var(--spacing-xs);
-  width: 320px;
-}
-
-.hamburger-button {
-  display: none;
-  padding: var(--spacing-sm);
-  color: var(--color-text-primary);
-  background: transparent;
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.hamburger-button:hover {
-  color: var(--color-primary-600);
-}
-
-.hamburger-icon {
-  width: 24px;
-  height: 24px;
-}
-
-.nav-list {
-  display: flex;
-  gap: var(--spacing-xs);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  flex-wrap: nowrap;
-}
-
-.nav-link {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  text-decoration: none;
-  border-radius: var(--border-radius-full);
-  transition: all var(--transition-base);
-  white-space: nowrap;
-  position: relative;
-}
-
-.nav-link:hover {
-  color: var(--color-text-primary);
-  background-color: var(--color-surface-hover);
-}
-
-.nav-link.current {
-  color: var(--color-primary-700);
-  font-weight: 600;
-  background-color: var(--color-primary-50);
-}
-
-/* Remove these hover-related styles */
-.nav-link.current::after,
-.nav-link.current:hover::after {
-  display: none;
-}
-
-/* Middle Section */
-.site-title-container {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-}
-
-.site-title-link {
-  text-decoration: none;
-  transition: opacity var(--transition-base);
-}
-
-.site-title-link:hover {
-  opacity: 0.9;
+  gap: var(--spacing-lg);
 }
 
 .site-title {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.title {
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 0;
 }
 
 .site-name {
-  display: block;
+  display: inline-block;
   font-family: var(--font-family-display);
-  font-size: var(--font-size-3xl);
+  font-size: calc(var(--font-size-xl) * 1.5);
   font-weight: 800;
   color: var(--color-text-primary);
   letter-spacing: 0.05em;
   line-height: 1;
   position: relative;
+  text-transform: uppercase;
+  padding-bottom: 1px;
 }
 
 .site-name::after {
   content: '';
   position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40%;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   height: 2px;
   background-color: var(--color-primary-600);
   border-radius: var(--border-radius-full);
@@ -238,126 +122,216 @@ const handleAuthSubmit = async (credentials) => {
 .site-subtitle {
   display: block;
   font-family: var(--font-family-display);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   font-weight: 500;
   color: var(--color-text-secondary);
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-align: center;
+  margin-top: 1px;
+  line-height: 1;
 }
 
-/* Right Section */
-.header-right {
+.desktop-nav {
+  display: none;
+}
+
+.auth-button {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 0 var(--spacing-lg);
+  color: var(--color-surface);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+  border: none;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  justify-self: flex-end;
+  position: relative;
+  overflow: hidden;
+  height: 40px;
+}
+
+.mobile-menu-toggle {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  width: 320px;
-  justify-content: flex-end;
-}
-
-.help-button,
-.login-button {
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
-  height: 40px;
-  padding: 0 var(--spacing-lg);
   color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.login-button {
-  background-color: var(--color-primary-600);
-  color: var(--color-surface);
+  background: transparent;
   border: none;
+  cursor: pointer;
+  transition: color var(--transition-base);
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  position: relative;
 }
 
-.help-button:hover {
-  border-color: var(--color-primary-400);
-  background-color: var(--color-surface-hover);
+.menu-icon {
+  width: 20px;
+  height: 20px;
 }
 
-.login-button:hover {
-  background-color: var(--color-primary-700);
+/* Desktop styles */
+@media (min-width: 768px) {
+  .header {
+    height: 64px;
+  }
+
+  .header-content {
+    grid-template-columns: auto minmax(auto, 1fr) auto;
+    padding-right: var(--spacing-lg);
+  }
+
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    justify-self: flex-end;
+    height: 100%;
+    margin-right: var(--spacing-md);
+  }
+
+  .nav-list {
+    gap: calc(var(--spacing-md) * 0.5);
+    height: 100%;
+    align-items: center;
+    justify-content: flex-end;
+    padding-left: var(--spacing-2xl);
+  }
+
+  .auth-button {
+    display: flex;
+    height: 32px;
+    font-size: var(--font-size-sm);
+    padding: 0 var(--spacing-md);
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 767px) {
+  .header-content {
+    padding: 0 var(--spacing-md);
+    gap: var(--spacing-md);
+    grid-template-columns: 1fr auto;
+  }
+
+  .site-title {
+    grid-column: 1;
+    align-items: center;
+  }
+
+  .mobile-menu-toggle {
+    grid-column: 2;
+    justify-self: end;
+    margin-right: var(--spacing-sm);
+  }
+
+  .site-name {
+    font-size: var(--font-size-lg);
+  }
+
+  .site-subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .desktop-nav,
+  .auth-button {
+    display: none;
+  }
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: calc(var(--spacing-md) * 0.5);
+  height: 100%;
+  align-items: center;
+}
+
+.nav-item {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2xs);
+  padding: 0 var(--spacing-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--transition-base);
+  height: 100%;
+  justify-content: center;
+}
+
+.nav-link:hover {
+  color: var(--color-text-primary);
+}
+
+.nav-link.current {
+  color: var(--color-primary-700);
+  font-weight: 600;
+}
+
+.nav-indicator {
+  width: 16px;
+  height: 2px;
+  background-color: var(--color-primary-600);
+  border-radius: var(--border-radius-full);
+  transform: scaleX(0);
+  transition: transform var(--transition-base);
+}
+
+.nav-link:hover .nav-indicator,
+.nav-link.current .nav-indicator {
+  transform: scaleX(1);
+}
+
+.auth-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.auth-button:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.auth-button:hover::before {
+  opacity: 1;
+}
+
+.auth-button:active {
+  box-shadow: var(--shadow-sm);
 }
 
 .button-icon {
   width: 18px;
   height: 18px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .site-header {
-    padding: 0 var(--spacing-md);
-  }
-
-  .hamburger-button {
-    display: flex;
-  }
-
-  .desktop-nav {
-    display: none;
-  }
-
-  .site-title {
-    gap: var(--spacing-sm);
-  }
-
-  .site-name {
-    font-size: var(--font-size-2xl);
-  }
-
-  .site-subtitle {
-    font-size: var(--font-size-base);
-  }
-
-  .button-label {
-    display: none;
-  }
-
-  .help-button,
-  .login-button {
-    width: 40px;
-    padding: 0;
-  }
-}
-
-/* Tablet Styles */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .header-left,
-  .header-right {
-    width: 280px;
-  }
-
-  .nav-list {
-    gap: var(--spacing-2xs);
-  }
-  
-  .nav-link {
-    padding: var(--spacing-2xs) var(--spacing-xs);
-    font-size: var(--font-size-2xs);
-  }
-}
-
-/* High Contrast Mode */
-@media (forced-colors: active) {
-  .site-header {
-    border-bottom: 2px solid CanvasText;
-  }
-
-  .nav-link.current {
-    border: 2px solid CanvasText;
-  }
-
-  .help-button,
-  .login-button {
-    border: 2px solid CanvasText;
-  }
+.auth-button span {
+  position: relative;
+  z-index: 1;
 }
 </style>
