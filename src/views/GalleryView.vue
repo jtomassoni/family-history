@@ -82,8 +82,8 @@
         }"
         @click="selectRange(range)"
       >
-        <div class="range-label">{{ formatRangeLabel(range) }}</div>
-        <div class="range-count">{{ range.count }} photos</div>
+        <span class="range-label">{{ formatRangeLabel(range) }}</span>
+        <span class="range-count">{{ range.count }} {{ range.count === 1 ? 'photo' : 'photos' }}</span>
       </div>
     </div>
   </div>
@@ -415,8 +415,8 @@ const getAvailableYears = () => {
 
 // Helper function to calculate how many buttons can fit in the timeline
 const calculateButtonCount = () => {
-  // Each button is roughly 250px wide including spacing
-  const buttonWidth = 250;
+  // Each button is roughly 100px wide including spacing
+  const buttonWidth = 100;
   const minButtons = 2; // We always need at least 2 buttons
   const maxButtons = Math.min(4, Math.floor(window.innerWidth / buttonWidth)); // Never more than 4 buttons
   return Math.max(minButtons, maxButtons);
@@ -432,7 +432,7 @@ const createRanges = (start, end, intervalType = 'years') => {
     
     // If we have space for all years and it's 4 or fewer, show individual year buttons
     if (maxButtons >= totalYears && totalYears <= 4) {
-      const spacing = 25;
+      const spacing = 25; // More generous spacing between buttons
       const totalWidth = (totalYears - 1) * spacing;
       const startOffset = (100 - totalWidth) / 2;
       
@@ -454,7 +454,7 @@ const createRanges = (start, end, intervalType = 'years') => {
     // Otherwise, create range buttons that evenly distribute the years
     const yearsPerRange = Math.ceil(totalYears / maxButtons);
     const ranges = [];
-    const spacing = 25;
+    const spacing = 25; // More generous spacing between buttons
     const totalWidth = (maxButtons - 1) * spacing;
     const startOffset = (100 - totalWidth) / 2;
     
@@ -471,7 +471,7 @@ const createRanges = (start, end, intervalType = 'years') => {
           endDate: rangeEnd.toDate(),
           availableYears: rangeYears,
           count,
-          left: `${startOffset + ((ranges.length) * spacing)}%`
+          left: `${startOffset + (ranges.length * spacing)}%`
         });
       }
     }
@@ -483,7 +483,7 @@ const createRanges = (start, end, intervalType = 'years') => {
     
     // If we have space for all years and it's 4 or fewer, show them individually
     if (maxButtons >= years.length && years.length <= 4) {
-      const spacing = 25;
+      const spacing = 25; // More generous spacing between buttons
       const totalWidth = (years.length - 1) * spacing;
       const startOffset = (100 - totalWidth) / 2;
       
@@ -505,7 +505,7 @@ const createRanges = (start, end, intervalType = 'years') => {
     // Otherwise, create sub-ranges
     const yearsPerRange = Math.ceil(years.length / maxButtons);
     const ranges = [];
-    const spacing = 25;
+    const spacing = 25; // More generous spacing between buttons
     const totalWidth = (maxButtons - 1) * spacing;
     const startOffset = (100 - totalWidth) / 2;
     
@@ -522,7 +522,7 @@ const createRanges = (start, end, intervalType = 'years') => {
           endDate: rangeEnd.toDate(),
           availableYears: rangeYears,
           count,
-          left: `${startOffset + ((ranges.length) * spacing)}%`
+          left: `${startOffset + (ranges.length * spacing)}%`
         });
       }
     }
@@ -537,7 +537,7 @@ const createRanges = (start, end, intervalType = 'years') => {
     let ranges = [];
     let currentStart = moment(start);
     
-    const spacing = 25;
+    const spacing = 20; // More generous spacing between buttons
     const totalWidth = (maxButtons - 1) * spacing;
     const startOffset = (100 - totalWidth) / 2;
     
@@ -692,10 +692,23 @@ const timelineTitle = computed(() => {
   }
 });
 
+// Format timeline path based on current layer and selected range
 const formatTimelinePath = computed(() => {
-  return selectedPath.value
-    .map(range => moment(range.startDate).format('YYYY'))
-    .join(' → ');
+  if (!selectedRange.value) return '';
+  
+  const start = moment(selectedRange.value.startDate);
+  const end = moment(selectedRange.value.endDate);
+  
+  switch (timelineLayer.value) {
+    case 'year':
+      return `${start.format('YYYY')} - ${end.format('YYYY')}`;
+    case 'month':
+      return `${start.format('MMMM YYYY')}`;
+    case 'day':
+      return `${start.format('MMMM D, YYYY')}`;
+    default:
+      return '';
+  }
 });
 
 onMounted(() => {
