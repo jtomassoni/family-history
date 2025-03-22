@@ -6,14 +6,14 @@
     top: 0;
     left: 0;
     right: 0;
-    /* Warm header background – adjust as needed */
-    background: #b57b5f;
-    color: #fff;
+    height: var(--header-height);
+    background: var(--header-bg);
+    color: var(--header-text);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 1rem;
-    z-index: 10000;
+    padding: var(--spacing-xs) var(--spacing-md);
+    z-index: var(--z-index-fixed);
   }
   
   /* Main content should get top padding, e.g.:
@@ -26,7 +26,7 @@
   .header-left {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--spacing-md);
   }
   
   .hamburger-button {
@@ -34,13 +34,13 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 4px;
-    border-radius: 6px;
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
   }
   
   .hamburger-icon {
-    width: 1.3rem;
-    height: 1.3rem;
+    width: var(--font-size-lg);
+    height: var(--font-size-lg);
     fill: currentColor;
   }
   
@@ -49,19 +49,19 @@
   }
   
   .nav-list {
+    display: flex;
+    gap: var(--spacing-md);
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    gap: 1rem;
   }
   
   .nav-item a {
     position: relative;
-    color: #fff;
+    color: var(--nav-link-color);
     text-decoration: none;
-    font-size: 1rem;
-    transition: color 0.3s ease;
+    font-size: var(--font-size-base);
+    transition: color var(--transition-fast);
   }
   
   /* Underline effect for current nav link */
@@ -71,17 +71,17 @@
     left: 0;
     right: 0;
     bottom: -3px;
-    height: 2px;
-    background-color: #fff;
+    height: var(--border-width-thick);
+    background-color: var(--nav-link-color);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--transition-fast);
   }
   .nav-item a.current::after {
     opacity: 1;
   }
   
   .nav-item a:hover {
-    color: #ccc;
+    color: var(--nav-link-hover-color);
   }
   
   /* ======================
@@ -96,14 +96,14 @@
   }
   
   .site-name {
-    font-size: 1.2rem;
+    font-size: var(--font-size-lg);
     font-weight: bold;
-    line-height: 1;
+    line-height: var(--line-height-tight);
   }
   
   .site-subtitle {
-    font-size: 0.75rem;
-    line-height: 1;
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-tight);
     opacity: 0.8;
   }
   
@@ -113,85 +113,74 @@
   .header-right {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
   }
   
   /* --- Shared Button Styles for Help & Login --- */
-  /* We “nuclearly” reset these buttons so external styles can’t inflate them */
+  /* We "nuclearly" reset these buttons so external styles can't inflate them */
   .shared-button {
-    all: unset;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-    white-space: nowrap !important;
-  
-    /* Tiny padding & fixed small font-size (in px) */
-    padding: 1px 6px !important;
-    font-size: 10px !important;
-    line-height: 1 !important;
-    font-weight: bold !important;
-    border-radius: 4px !important;
-    color: #fff !important;
-    cursor: pointer !important;
-  
-    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-tight);
+    font-weight: bold;
+    border-radius: var(--border-radius-sm);
+    color: var(--color-text-inverse);
+    cursor: pointer;
+    border: none;
+    transition: all var(--transition-fast);
   }
   
   /* --- Help Button (Blue Gradient) --- */
   .help-button {
-    background: linear-gradient(45deg, #4e9af1, #3678d3) !important;
+    background: var(--gradient-secondary);
   }
   .help-button:hover {
-    background: linear-gradient(45deg, #5aa3f6, #4a90e2) !important;
-    transform: scale(1.05) !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15) !important;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-sm);
   }
   .help-button:active {
-    background: linear-gradient(45deg, #3678d3, #2e65c2) !important;
-    transform: scale(1.0) !important;
-    box-shadow: none !important;
+    transform: scale(1);
+    box-shadow: none;
   }
   
   /* --- Login Button (Warm Gradient) --- */
   /* Adjust these warm colors as needed */
   .login-button {
-    background: linear-gradient(45deg, #c57f4b, #a7612c) !important;
+    background: var(--gradient-primary);
   }
   .login-button:hover:not(.disabled) {
-    background: linear-gradient(45deg, #d08a54, #b06837) !important;
-    transform: scale(1.05) !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15) !important;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-sm);
   }
   .login-button:active:not(.disabled) {
-    background: linear-gradient(45deg, #b06837, #9f562d) !important;
-    transform: scale(1.0) !important;
-    box-shadow: none !important;
+    transform: scale(1);
+    box-shadow: none;
   }
   .login-button.disabled {
-    opacity: 0.5 !important;
-    pointer-events: none !important;
-    background: rgba(255,255,255,0.2) !important;
+    opacity: 0.5;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.2);
   }
   
   /* --- Button Icon & Label --- */
   .button-icon {
-    all: unset;
-    font-size: 10px !important;
-    margin-right: 3px !important;
-    font-weight: bold !important;
-    line-height: 1 !important;
+    font-size: var(--font-size-xs);
+    margin-right: var(--spacing-xs);
+    font-weight: bold;
+    line-height: var(--line-height-tight);
   }
   .button-label {
-    all: unset;
-    display: inline-block !important;
-    max-width: 40px !important;
-    font-size: 10px !important;
-    font-weight: bold !important;
-    line-height: 1 !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
+    display: inline-block;
+    max-width: 40px;
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+    line-height: var(--line-height-tight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
   /* Login container for potential dropdown anchoring */
@@ -202,18 +191,18 @@
   /* ======================
      Responsive (Mobile)
      ====================== */
-  @media (max-width: 768px) {
+  @media (max-width: var(--breakpoint-md)) {
     .hamburger-button {
-      display: block !important;
+      display: block;
     }
     .desktop-nav {
-      display: none !important;
+      display: none;
     }
     .site-name {
-      font-size: 1.1rem !important;
+      font-size: var(--font-size-base);
     }
     .site-subtitle {
-      font-size: 0.7rem !important;
+      font-size: var(--font-size-xs);
     }
   }
   

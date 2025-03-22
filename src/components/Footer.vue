@@ -1,14 +1,16 @@
 <template>
   <footer class="site-footer">
-    <p class="footer-text">
-      <a
-        href="https://github.com/jtomassoni/family-history/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        © 2025 Tomassoni Family History
-      </a>
-    </p>
+    <div class="footer-content">
+      <p class="footer-text">
+        <a
+          href="https://github.com/jtomassoni/family-history/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          © {{ new Date().getFullYear() }} Tomassoni Family History
+        </a>
+      </p>
+    </div>
   </footer>
 </template>
 
