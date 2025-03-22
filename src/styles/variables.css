@@ -7,7 +7,7 @@
   --color-primary-300: #f7a193;
   --color-primary-400: #f27b68;
   --color-primary-500: #e54d34;  /* Base terracotta */
-  --color-primary-600: #d13920;
+  --color-primary-600: #dc2626;  /* Red line color */
   --color-primary-700: #ae2815;
   --color-primary-800: #8f1f14;
   --color-primary-900: #771b13;
@@ -26,7 +26,7 @@
 
   /* Neutral warm grays */
   --color-background: #fffaf7;
-  --color-surface: #fef6f1;
+  --color-surface: #ffffff;
   --color-surface-hover: #fdeee7;
   --color-border: #e8d5cc;
 
@@ -47,12 +47,12 @@
   --font-family-display: 'Playfair Display', serif;
   --font-family-body: 'Source Sans Pro', system-ui, sans-serif;  /* More readable than Inter */
   
-  --font-size-xs: 0.875rem;   /* Increased from 0.75rem for better readability */
-  --font-size-sm: 1rem;       /* Increased from 0.875rem */
-  --font-size-base: 1.125rem; /* Increased from 1rem */
-  --font-size-lg: 1.25rem;    /* Increased from 1.125rem */
-  --font-size-xl: 1.5rem;     /* Increased from 1.25rem */
-  --font-size-2xl: 1.875rem;  /* Increased from 1.5rem */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
   --font-size-3xl: 2.25rem;   /* Increased from 1.875rem */
   --font-size-4xl: 2.5rem;    /* Increased from 2.25rem */
 
@@ -103,9 +103,9 @@
   --line-height-loose: 1.8;
   
   /* Layout */
-  --header-height: 50px;
+  --header-height: 60px;
   --footer-height: 20px;
-  --container-max-width: 1280px;
+  --max-width: 1280px;
   --sidebar-width: 250px;
   --datepicker-height: 120px;
   
@@ -122,6 +122,7 @@
   --z-index-modal: 500;
   --z-index-popover: 600;
   --z-index-tooltip: 700;
+  --z-index-header: 1000;
   
   /* Breakpoints */
   --breakpoint-sm: 576px;

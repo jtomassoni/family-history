@@ -1,10 +1,15 @@
 .gallery-page {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 1rem;
-  font-family: 'Georgia', serif;
-  line-height: 1.6;
-  color: #4a4a4a;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .gallery-page h1 {
@@ -28,4 +33,560 @@
 .gallery-item img {
   width: 100%;
   display: block;
+}
+
+.photo-navigation-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - var(--header-height) - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  margin: 20px 0 140px 0;
+}
+
+.photo-display-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  max-width: calc(900px - 40px);
+}
+
+.photo-wrapper {
+  position: relative;
+  width: 85%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+:deep(.photo-tile) {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+:deep(.photo-tile img) {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  margin: auto;
+  border-radius: 16px;
+}
+
+:deep(.photo-info-overlay) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  max-height: calc(100vh - var(--header-height) - 120px);
+  overflow: auto;
+}
+
+/* Timeline styles */
+.timeline-nav {
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 80px);
+  max-width: 1200px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 16px 16px 20px 16px;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  height: 32px;
+}
+
+.timeline-title {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  min-width: 90px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  z-index: 2;
+}
+
+.timeline-breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  flex: 1;
+}
+
+.timeline-path {
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-weight: 500;
+  height: 20px;
+  font-size: 10px;
+  flex: 1;
+  max-width: fit-content;
+}
+
+.timeline-path span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timeline-path .all-photos {
+  cursor: pointer;
+  transition: color 0.2s ease;
+  max-width: 80px;
+}
+
+.timeline-path .all-photos:hover {
+  color: #60a5fa;
+}
+
+.breadcrumb-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.breadcrumb-icon.home-icon {
+  color: #60a5fa;
+  width: 16px;
+  height: 16px;
+}
+
+.breadcrumb-icon.arrow-icon {
+  color: rgba(255, 255, 255, 0.4);
+  width: 14px;
+  height: 14px;
+  margin: 0 2px;
+}
+
+.timeline-track {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  display: flex;
+  gap: 8px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  z-index: 1;
+}
+
+.timeline-track::-webkit-scrollbar {
+  display: none;
+}
+
+.timeline-range {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 80px;
+  max-width: 160px;
+  height: 48px;
+  padding: 6px 12px;
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  margin: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.range-label {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.range-count {
+  color: #60a5fa;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.timeline-range.selected {
+  background: rgba(37, 99, 235, 0.25);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.timeline-range.selected .range-label {
+  color: white;
+}
+
+.timeline-range.selected .range-count {
+  color: #93c5fd;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .timeline-nav {
+    width: calc(100% - 32px);
+    bottom: 25px;
+    padding: 12px;
+    height: auto;
+    min-height: 120px;
+  }
+
+  .timeline-header {
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    height: 28px;
+  }
+
+  .timeline-title {
+    min-width: auto;
+    padding: 0 8px;
+    font-size: 10px;
+    height: 28px;
+  }
+
+  .timeline-back {
+    min-width: auto;
+    padding: 0 8px;
+    font-size: 10px;
+    height: 28px;
+  }
+
+  .timeline-breadcrumb {
+    font-size: 9px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .timeline-path {
+    padding: 2px 4px;
+    gap: 3px;
+    height: 18px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .timeline-path span:not(.all-photos):not(:last-child) {
+    display: none;
+  }
+
+  .timeline-path .breadcrumb-icon:not(.home-icon):not(:last-of-type) {
+    display: none;
+  }
+
+  .timeline-path span:last-child {
+    max-width: 60px;
+  }
+
+  .timeline-path .all-photos {
+    max-width: 80px;
+  }
+
+  .breadcrumb-icon {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+
+  .breadcrumb-icon.home-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .timeline-track {
+    padding: 0 8px;
+    gap: 6px;
+    height: auto;
+    min-height: 44px;
+    margin-bottom: 4px;
+  }
+
+  .timeline-range {
+    min-width: 60px;
+    padding: 4px 8px;
+    height: auto;
+    min-height: 44px;
+    gap: 2px;
+  }
+
+  .range-label {
+    font-size: 10px;
+    padding: 2px 0;
+  }
+
+  .range-count {
+    font-size: 9px;
+    padding: 2px 0;
+    color: #60a5fa;
+    opacity: 0.8;
+  }
+
+  .photo-navigation-container {
+    height: calc(100vh - var(--header-height) - 200px);
+    padding: 0 16px;
+    margin: 16px 0 120px 0;
+  }
+
+  .photo-wrapper {
+    width: 100%;
+    height: 100%;
+  }
+
+  :deep(.photo-tile) {
+    margin-top: -5px;
+  }
+}
+
+/* Ensure ranges are readable when there are only 2-3 */
+@media (min-width: 769px) {
+  .timeline-track {
+    height: 48px;
+    margin: 0;
+    padding: 0 12px;
+  }
+
+  .timeline-range {
+    min-width: 80px;
+    height: 48px;
+  }
+}
+
+/* Animation for range transitions */
+.timeline-range {
+  animation: range-appear 0.3s ease;
+}
+
+@keyframes range-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cluster styles */
+.timeline-cluster {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(8px * var(--cluster-size, 1));
+  height: calc(8px * var(--cluster-size, 1));
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.timeline-cluster.has-multiple {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.timeline-cluster:hover {
+  background: white;
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+.timeline-cluster .cluster-label {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.timeline-cluster:hover .cluster-label {
+  opacity: 1;
+}
+
+/* Current position indicator */
+.timeline-current {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+}
+
+/* Hover preview */
+.timeline-preview {
+  position: absolute;
+  bottom: calc(100% + 15px);
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  pointer-events: none;
+  min-width: 140px;
+  text-align: center;
+  z-index: 3;
+}
+
+.timeline-preview-date {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.timeline-preview-count {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+
+/* Fade transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Desktop-specific adjustments */
+@media (min-width: 769px) {
+  .photo-navigation-container {
+    padding: 0 40px;
+  }
+
+  .photo-display-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .photo-wrapper {
+    width: 90%;
+  }
+
+  .timeline-track {
+    height: 48px;
+    margin: 0;
+    padding: 0 12px;
+  }
+
+  .timeline-nav:hover .timeline-current {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+
+  .timeline-cluster:hover + .timeline-preview {
+    opacity: 1;
+  }
+
+  :deep(.photo-tile) {
+    padding: 0;
+  }
+
+  :deep(.photo-tile img) {
+    border-radius: 16px;
+  }
+}
+
+.timeline-back {
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  color: #60a5fa;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 32px;
+  min-width: 90px;
+  justify-content: center;
+}
+
+.timeline-back:hover {
+  background: rgba(96, 165, 250, 0.15);
+  border-color: rgba(96, 165, 250, 0.25);
 }
