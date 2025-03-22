@@ -9,15 +9,6 @@
       @dismiss="dismissBoundaryHint"
     />
 
-    <!-- Breadcrumb Buttons -->
-    <div class="breadcrumb-today-container">
-      <DatePickerNav
-        :events="sortedPhotos"
-        :currentIndex="currentIndex"
-        @select="handleSelectEvent"
-      />
-    </div>
-
     <!-- Photo Navigation & Tile -->
     <div class="photo-navigation-container" 
          v-touch:swipe.left="nextPhoto" 
@@ -43,6 +34,57 @@
         label="Next" 
         @boundary="handleBoundary('right')"
       />
+    </div>
+
+    <!-- Timeline Navigation -->
+    <div class="timeline-nav">
+      <div class="timeline-header">
+        <div class="timeline-title">
+          {{ timelineTitle }}
+        </div>
+        
+        <div v-if="timelineLayer !== 'all'" class="timeline-breadcrumb">
+          <button @click="resetTimeline" class="timeline-reset">
+            <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            All Photos
+          </button>
+          <span v-if="selectedRange" class="timeline-path">
+            {{ formatTimelinePath }}
+          </span>
+        </div>
+
+        <button 
+          v-if="timelineLayer !== 'all'"
+          class="timeline-back"
+          @click="goBack"
+        >
+          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Back
+        </button>
+      </div>
+      
+      <!-- Adaptive time ranges -->
+      <div 
+        v-for="range in adaptiveRanges" 
+        :key="range.id"
+        class="timeline-range"
+        :class="{ 
+          'has-photos': range.count > 0,
+          'selected': selectedRange && selectedRange.id === range.id
+        }"
+        :style="{ 
+          left: range.left,
+          width: range.width + '%'
+        }"
+        @click="selectRange(range)"
+      >
+        <div class="range-label">{{ formatRangeLabel(range) }}</div>
+        <div class="range-count">{{ range.count }} photos</div>
+      </div>
     </div>
   </div>
 </template>
@@ -90,9 +132,9 @@ watch(currentIndex, () => {
 
 const boundaryDesktopHint = computed(() => {
   if (showEarliest.value)
-    return "📜 You've reached the earliest photo!<br>Use your arrow keys to browse or press space to select a date.<br>";
+    return "You've reached the earliest photo!<br>Use your arrow keys to browse or press space to select a date.<br>";
   if (showLatest.value)
-    return "🎉 You're at the most recent photo!<br>Use your arrow keys to browse or press space to select a date.<br>Click a pic to see details.";
+    return "You're at the most recent photo!<br>Use your arrow keys to browse or press space to select a date.<br>Click a pic to see details.";
   return "";
 });
 
@@ -169,6 +211,442 @@ const handleKeyDown = (event) => {
   }
 };
 
+// Timeline functionality
+const timelineTrack = ref(null);
+const getCurrentPosition = computed(() => {
+  if (!currentPhoto.value) return 0;
+  const startDate = moment(sortedPhotos.value[sortedPhotos.value.length - 1].eventDate);
+  const endDate = moment(sortedPhotos.value[0].eventDate);
+  const currentDate = moment(currentPhoto.value.eventDate);
+  return ((currentDate - startDate) / (endDate - startDate)) * 100;
+});
+
+const previewData = ref(null);
+const previewPosition = ref(0);
+
+// Remove zoom-related code and replace with smart clustering
+const CLUSTER_THRESHOLD = 30; // days between photos to consider them part of same cluster
+
+const smartClusters = computed(() => {
+  if (!sortedPhotos.value.length) return [];
+  
+  let clusters = [];
+  let currentCluster = null;
+  
+  sortedPhotos.value.forEach((photo, index) => {
+    const photoDate = moment(photo.eventDate);
+    
+    if (!currentCluster) {
+      // Start new cluster
+      currentCluster = {
+        id: index,
+        startDate: photoDate.toDate(),
+        endDate: photoDate.toDate(),
+        count: 1,
+        photos: [photo]
+      };
+    } else {
+      const daysBetween = photoDate.diff(moment(currentCluster.endDate), 'days');
+      
+      if (daysBetween <= CLUSTER_THRESHOLD) {
+        // Add to current cluster
+        currentCluster.endDate = photoDate.toDate();
+        currentCluster.count++;
+        currentCluster.photos.push(photo);
+      } else {
+        // Start new cluster
+        clusters.push(currentCluster);
+        currentCluster = {
+          id: index,
+          startDate: photoDate.toDate(),
+          endDate: photoDate.toDate(),
+          count: 1,
+          photos: [photo]
+        };
+      }
+    }
+  });
+  
+  if (currentCluster) {
+    clusters.push(currentCluster);
+  }
+  
+  return clusters;
+});
+
+// Update position calculation for clusters
+const getClusterPosition = (cluster) => {
+  const startDate = moment(sortedPhotos.value[sortedPhotos.value.length - 1].eventDate);
+  const endDate = moment(sortedPhotos.value[0].eventDate);
+  const clusterDate = moment(cluster.startDate);
+  return ((clusterDate - startDate) / (endDate - startDate)) * 100;
+};
+
+const handleTimelineClick = (event) => {
+  if (!timelineTrack.value) return;
+  
+  const rect = timelineTrack.value.getBoundingClientRect();
+  const clickPosition = (event.clientX - rect.left) / rect.width;
+  
+  // Find the nearest photo to the clicked position
+  const startDate = moment(sortedPhotos.value[sortedPhotos.value.length - 1].eventDate);
+  const endDate = moment(sortedPhotos.value[0].eventDate);
+  const clickedDate = moment(startDate).add(
+    (endDate - startDate) * clickPosition
+  );
+  
+  // Find the nearest photo
+  let nearestIndex = 0;
+  let minDiff = Infinity;
+  
+  sortedPhotos.value.forEach((photo, index) => {
+    const diff = Math.abs(moment(photo.eventDate) - clickedDate);
+    if (diff < minDiff) {
+      minDiff = diff;
+      nearestIndex = index;
+    }
+  });
+  
+  currentIndex.value = nearestIndex;
+};
+
+const handleTimelineHover = (event) => {
+  if (!timelineTrack.value) return;
+  
+  const rect = timelineTrack.value.getBoundingClientRect();
+  const position = event.clientX - rect.left;
+  const percentage = (position / rect.width) * 100;
+  
+  // Find nearest cluster
+  const startDate = moment(sortedPhotos.value[sortedPhotos.value.length - 1].eventDate);
+  const endDate = moment(sortedPhotos.value[0].eventDate);
+  const hoverDate = moment(startDate).add(
+    (endDate - startDate) * (percentage / 100)
+  );
+  
+  // Find closest cluster
+  const closest = smartClusters.value.reduce((prev, curr) => {
+    const prevDiff = Math.abs(moment(prev.startDate) - hoverDate);
+    const currDiff = Math.abs(moment(curr.startDate) - hoverDate);
+    return currDiff < prevDiff ? curr : prev;
+  });
+  
+  previewData.value = closest;
+  previewPosition.value = position;
+};
+
+const hidePreview = () => {
+  previewData.value = null;
+};
+
+const formatPreviewDate = (date) => {
+  return moment(date).format('MMM D, YYYY');
+};
+
+const goToClusterDate = (date) => {
+  const index = sortedPhotos.value.findIndex(photo => 
+    moment(photo.eventDate) >= moment(date)
+  );
+  if (index !== -1) {
+    currentIndex.value = index;
+  }
+};
+
+// Update cluster label formatting
+const formatClusterLabel = (cluster) => {
+  const start = moment(cluster.startDate);
+  const end = moment(cluster.endDate);
+  
+  if (start.year() !== end.year()) {
+    return `${start.format('MMM YYYY')} - ${end.format('MMM YYYY')}`;
+  }
+  if (start.month() !== end.month()) {
+    return `${start.format('MMM')} - ${end.format('MMM YYYY')}`;
+  }
+  if (start.date() !== end.date()) {
+    return `${start.format('MMM D')} - ${end.format('D, YYYY')}`;
+  }
+  return start.format('MMM D, YYYY');
+};
+
+const showClusterPreview = (cluster, event) => {
+  previewData.value = cluster;
+  if (timelineTrack.value) {
+    const rect = timelineTrack.value.getBoundingClientRect();
+    previewPosition.value = event.clientX - rect.left;
+  }
+};
+
+// Timeline state
+const timelineLayer = ref('all'); // 'all', 'year', 'month', 'day'
+const selectedRange = ref(null);
+const selectedPath = ref([]);
+
+// Compute adaptive ranges based on current layer
+const adaptiveRanges = computed(() => {
+  if (!sortedPhotos.value.length) return [];
+  
+  const photos = sortedPhotos.value;
+  const startDate = moment(photos[photos.length - 1].eventDate);
+  const endDate = moment(photos[0].eventDate);
+  
+  switch (timelineLayer.value) {
+    case 'all':
+      return createMajorRanges(startDate, endDate);
+    case 'year':
+      return createYearRanges(selectedRange.value);
+    case 'month':
+      return createMonthRanges(selectedRange.value);
+    case 'day':
+      return createDayRanges(selectedRange.value);
+    default:
+      return [];
+  }
+});
+
+// Helper to create ranges that fit the available space
+const createMajorRanges = (start, end) => {
+  const totalYears = end.diff(start, 'years');
+  const rangeCount = Math.min(4, Math.max(2, Math.floor(window.innerWidth / 250)));
+  const yearsPerRange = Math.ceil(totalYears / rangeCount);
+  
+  let ranges = [];
+  let currentStart = moment(start);
+  
+  while (currentStart.isBefore(end)) {
+    const rangeEnd = moment.min(
+      moment(currentStart).add(yearsPerRange, 'years'),
+      moment(end)
+    );
+    
+    const count = countPhotosInRange(currentStart, rangeEnd);
+    
+    ranges.push({
+      id: currentStart.format('YYYY'),
+      startDate: currentStart.toDate(),
+      endDate: rangeEnd.toDate(),
+      count,
+      position: ((currentStart - start) / (end - start)) * 100,
+      width: Math.min(((rangeEnd - currentStart) / (end - start)) * 100 * 0.7, 95),
+      left: ((currentStart - start) / (end - start)) * 100 + '%'
+    });
+    
+    currentStart = moment(rangeEnd);
+  }
+  
+  return ranges;
+};
+
+// Similar helpers for year, month, and day ranges
+const createYearRanges = (parentRange) => {
+  const start = moment(parentRange.startDate);
+  const end = moment(parentRange.endDate);
+  const rangeCount = Math.min(4, Math.max(2, Math.floor(window.innerWidth / 250)));
+  const yearsPerRange = Math.ceil(end.diff(start, 'years') / rangeCount);
+  
+  let ranges = [];
+  let currentStart = moment(start);
+  
+  while (currentStart.isBefore(end)) {
+    const rangeEnd = moment.min(
+      moment(currentStart).add(yearsPerRange, 'years'),
+      moment(end)
+    );
+    
+    const count = countPhotosInRange(currentStart, rangeEnd);
+    
+    ranges.push({
+      id: currentStart.format('YYYY'),
+      startDate: currentStart.toDate(),
+      endDate: rangeEnd.toDate(),
+      count,
+      position: ((currentStart - start) / (end - start)) * 100,
+      width: Math.min(((rangeEnd - currentStart) / (end - start)) * 100 * 0.7, 95),
+      left: ((currentStart - start) / (end - start)) * 100 + '%'
+    });
+    
+    currentStart = moment(rangeEnd);
+  }
+  
+  return ranges;
+};
+
+const createMonthRanges = (parentRange) => {
+  const start = moment(parentRange.startDate);
+  const end = moment(parentRange.endDate);
+  const totalMonths = end.diff(start, 'months');
+  const rangeCount = Math.min(4, Math.max(2, Math.floor(window.innerWidth / 200)));
+  const monthsPerRange = Math.ceil(totalMonths / rangeCount);
+  
+  let ranges = [];
+  let currentStart = moment(start);
+  
+  while (currentStart.isBefore(end)) {
+    const rangeEnd = moment.min(
+      moment(currentStart).add(monthsPerRange, 'months'),
+      moment(end)
+    );
+    
+    const count = countPhotosInRange(currentStart, rangeEnd);
+    
+    if (count > 0) {
+      ranges.push({
+        id: currentStart.format('YYYY-MM'),
+        startDate: currentStart.toDate(),
+        endDate: rangeEnd.toDate(),
+        count,
+        position: ((currentStart - start) / (end - start)) * 100,
+        width: ((rangeEnd - currentStart) / (end - start)) * 100
+      });
+    }
+    
+    currentStart = moment(rangeEnd);
+  }
+  
+  return ranges;
+};
+
+const createDayRanges = (parentRange) => {
+  const start = moment(parentRange.startDate);
+  const end = moment(parentRange.endDate);
+  const totalDays = end.diff(start, 'days');
+  const rangeCount = Math.min(4, Math.max(2, Math.floor(window.innerWidth / 200)));
+  const daysPerRange = Math.ceil(totalDays / rangeCount);
+  
+  let ranges = [];
+  let currentStart = moment(start);
+  
+  while (currentStart.isBefore(end)) {
+    const rangeEnd = moment.min(
+      moment(currentStart).add(daysPerRange, 'days'),
+      moment(end)
+    );
+    
+    const count = countPhotosInRange(currentStart, rangeEnd);
+    
+    if (count > 0) {
+      ranges.push({
+        id: currentStart.format('YYYY-MM-DD'),
+        startDate: currentStart.toDate(),
+        endDate: rangeEnd.toDate(),
+        count,
+        position: ((currentStart - start) / (end - start)) * 100,
+        width: ((rangeEnd - currentStart) / (end - start)) * 100
+      });
+    }
+    
+    currentStart = moment(rangeEnd);
+  }
+  
+  return ranges;
+};
+
+// Helper to count photos in a date range
+const countPhotosInRange = (start, end) => {
+  return sortedPhotos.value.filter(photo => 
+    moment(photo.eventDate).isBetween(start, end, null, '[]')
+  ).length;
+};
+
+// Maximum photo count in current ranges for density calculation
+const maxCount = computed(() => {
+  return Math.max(...adaptiveRanges.value.map(r => r.count));
+});
+
+// Format range label based on current layer
+const formatRangeLabel = (range) => {
+  const start = moment(range.startDate);
+  const end = moment(range.endDate);
+  
+  switch (timelineLayer.value) {
+    case 'all':
+      return `${start.format('YYYY')} - ${end.format('YYYY')}`;
+    case 'year':
+      return start.format('YYYY');
+    case 'month':
+      return start.format('MMM YYYY');
+    case 'day':
+      return start.format('MMM D');
+    default:
+      return '';
+  }
+};
+
+// Timeline navigation
+const selectRange = (range) => {
+  selectedRange.value = range;
+  selectedPath.value.push(range);
+  
+  switch (timelineLayer.value) {
+    case 'all':
+      timelineLayer.value = 'year';
+      break;
+    case 'year':
+      timelineLayer.value = 'month';
+      break;
+    case 'month':
+      timelineLayer.value = 'day';
+      break;
+    case 'day':
+      // Navigate to first photo in range
+      const firstPhoto = sortedPhotos.value.find(photo => 
+        moment(photo.eventDate).isBetween(range.startDate, range.endDate, null, '[]')
+      );
+      if (firstPhoto) {
+        const index = sortedPhotos.value.indexOf(firstPhoto);
+        currentIndex.value = index;
+      }
+      break;
+  }
+};
+
+const goBack = () => {
+  selectedPath.value.pop();
+  selectedRange.value = selectedPath.value[selectedPath.value.length - 1] || null;
+  
+  switch (timelineLayer.value) {
+    case 'year':
+      timelineLayer.value = 'all';
+      break;
+    case 'month':
+      timelineLayer.value = 'year';
+      break;
+    case 'day':
+      timelineLayer.value = 'month';
+      break;
+  }
+};
+
+const resetTimeline = () => {
+  timelineLayer.value = 'all';
+  selectedRange.value = null;
+  selectedPath.value = [];
+};
+
+// Computed properties for UI
+const timelineTitle = computed(() => {
+  if (!sortedPhotos.value.length) return 'No Photos';
+  
+  switch (timelineLayer.value) {
+    case 'all':
+      return 'Select Time Period';
+    case 'year':
+      return `Select Year (${moment(selectedRange.value.startDate).format('YYYY')} - ${moment(selectedRange.value.endDate).format('YYYY')})`;
+    case 'month':
+      return `Select Month (${moment(selectedRange.value.startDate).format('YYYY')})`;
+    case 'day':
+      return `Select Day (${moment(selectedRange.value.startDate).format('MMM YYYY')})`;
+    default:
+      return 'Select Time Period';
+  }
+});
+
+const formatTimelinePath = computed(() => {
+  return selectedPath.value
+    .map(range => moment(range.startDate).format('YYYY'))
+    .join(' → ');
+});
+
 onMounted(() => {
   currentIndex.value = 0;
   window.addEventListener("keydown", handleKeyDown);
@@ -177,3 +655,25 @@ onUnmounted(() => {
   window.removeEventListener("keydown", handleKeyDown);
 });
 </script>
+
+<style scoped>
+.button-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.timeline-range.selected {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.4), rgba(147, 197, 253, 0.3));
+  border-color: rgba(96, 165, 250, 0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.timeline-range.selected .range-label {
+  color: #bfdbfe;
+}
+
+.timeline-range.selected .range-count {
+  color: rgba(255, 255, 255, 0.8);
+}
+</style>

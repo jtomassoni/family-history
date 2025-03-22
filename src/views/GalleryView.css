@@ -38,11 +38,12 @@
 .photo-navigation-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - var(--header-height) - 100px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px 100px; /* Increased top padding back to 40px */
+  padding: 0 20px;
+  margin: 0;
 }
 
 .photo-display-container {
@@ -54,16 +55,52 @@
   justify-content: center;
   padding: 0;
   margin: 0;
-  transform: none; /* Remove the transform, let natural centering work */
 }
 
 .photo-wrapper {
   position: relative;
   max-width: 90%;
-  max-height: 75vh;
+  max-height: calc(100vh - var(--header-height) - 120px);
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0;
+  height: 100%;
+}
+
+:deep(.photo-tile) {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:deep(.photo-tile img) {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  margin: auto;
+}
+
+:deep(.photo-info-overlay) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  max-height: calc(100vh - var(--header-height) - 120px);
+  overflow: auto;
 }
 
 /* Timeline styles */
@@ -80,186 +117,223 @@
   padding: 8px;
   background: rgba(20, 20, 20, 0.85);
   backdrop-filter: blur(10px);
-  border-radius: 8px;
+  border-radius: 12px;
   z-index: 100;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 75px;
+  gap: 8px;
 }
 
 .timeline-header {
   display: flex;
-  flex-direction: column;
-  gap: 6px; /* Reduced from 10px */
-  margin-bottom: 8px; /* Reduced from 15px */
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0 12px;
+  gap: 12px;
+}
+
+.timeline-title {
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  min-width: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  line-height: 1;
 }
 
 .timeline-breadcrumb {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.7);
-  padding: 0 10px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  margin: 0;
+  flex-grow: 1;
+  justify-content: center;
+  height: 100%;
+  min-width: 0;
 }
 
-.timeline-reset {
+.timeline-back {
   background: none;
   border: none;
-  color: white;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
+  color: #60a5fa;
   font-size: 14px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(96, 165, 250, 0.1);
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 100%;
 }
 
 .timeline-reset:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(96, 165, 250, 0.1);
+  color: #93c5fd;
 }
 
 .timeline-path {
   color: rgba(255, 255, 255, 0.6);
-}
-
-.timeline-title {
-  color: white;
-  font-size: 12px; /* Reduced from 14px */
-  font-weight: 500;
-  text-align: center;
-  padding: 2px 6px; /* Reduced padding */
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px; /* Reduced from 6px */
-  margin: 0 auto;
-  min-width: 100px; /* Reduced from 120px */
-  margin-bottom: 4px; /* Reduced from 6px */
-}
-
-.timeline-track {
-  position: relative;
-  width: 100%;
-  height: 35px; /* More compact height */
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  margin: 0;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeline-path::before {
+  content: "→";
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* Range styles */
 .timeline-range {
   position: absolute;
-  height: calc(100% - 6px); /* Slightly more compact */
-  background: rgba(255, 255, 255, calc(0.1 + var(--photo-density) * 0.2));
-  border-radius: 4px;
+  bottom: 8px;
+  height: 26px;
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(147, 197, 253, 0.1));
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
+  gap: 6px;
+  padding: 0 8px;
   transition: all 0.2s ease;
-  min-width: 70px; /* Reduced from 80px */
-  margin: 3px;
+  min-width: 90px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  margin: 0;
+  width: auto;
 }
 
 .timeline-range:hover {
-  background: rgba(255, 255, 255, calc(0.15 + var(--photo-density) * 0.25));
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(147, 197, 253, 0.2));
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .timeline-range.has-photos {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(96, 165, 250, 0.4);
 }
 
 .range-label {
-  color: white;
+  color: #93c5fd;
   font-size: 12px;
   font-weight: 500;
-  text-align: center;
+  text-align: right;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
+  overflow: visible;
+  padding: 0;
 }
 
 .range-count {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 10px;
-  margin-top: 1px;
-}
-
-.timeline-back {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
-}
-
-.timeline-back:hover {
-  background: rgba(255, 255, 255, 0.2);
+  font-size: 11px;
+  margin: 0;
 }
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .photo-navigation-container {
-    padding: 60px 20px 20px; /* Reduced for mobile */
+    height: calc(100vh - var(--header-height) - 120px);
+    padding: 0 20px;
+  }
+
+  .photo-wrapper {
+    max-height: calc(100vh - var(--header-height) - 140px);
   }
 
   .timeline-nav {
-    width: 94%;
-    bottom: 60px; /* Match mobile top spacing */
-    padding: 12px;
+    height: 85px;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .timeline-header {
+    height: 36px;
   }
 
   .timeline-track {
-    height: 60px; /* Taller on mobile for better touch targets */
+    height: 36px;
   }
 
-  .timeline-range {
-    padding: 6px 10px;
-    min-width: 70px;
+  .timeline-controls {
+    padding: 0 8px;
   }
 
-  .range-label {
-    font-size: 13px;
-    line-height: 1.2;
+  .timeline-title {
+    padding: 0 10px;
   }
 
-  .range-count {
-    font-size: 11px;
-    margin-top: 1px;
+  .timeline-breadcrumb {
+    padding: 0 10px;
   }
 
   .timeline-back {
     font-size: 16px;
-    padding: 6px 10px;
+    padding: 6px 12px;
+  }
+
+  :deep(.photo-tile img),
+  :deep(.photo-info-overlay) {
+    max-height: calc(100vh - var(--header-height) - 140px);
+  }
+
+  .timeline-controls {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
   }
 
   .timeline-title {
-    font-size: 12px; /* Consistent with desktop */
-    padding: 2px 8px;
+    text-align: center;
+    margin: 0 auto;
   }
 
-  .photo-display-container {
-    margin-bottom: 60px; /* Match mobile spacing */
+  .timeline-breadcrumb {
+    margin: 4px 0;
+  }
+
+  .timeline-back {
+    margin: 0 auto;
+  }
+
+  :deep(.photo-info-overlay) {
+    padding: 1.5rem;
   }
 }
 
 /* Ensure ranges are readable when there are only 2-3 */
 @media (min-width: 769px) {
   .timeline-track {
-    min-height: 50px;
+    height: 32px;
+    margin: 0 12px;
   }
 
   .timeline-range {
-    min-width: 80px;
+    min-width: 95px;
   }
 }
 
@@ -374,18 +448,10 @@
   opacity: 0;
 }
 
-/* Ensure photos maintain aspect ratio and fill more space */
-:deep(.photo-tile img) {
-  max-width: 100%;
-  max-height: 70vh;
-  object-fit: contain;
-  margin: auto;
-}
-
 /* Desktop-specific adjustments */
 @media (min-width: 769px) {
   .photo-navigation-container {
-    padding: 40px 40px 100px; /* Consistent padding */
+    padding: 0 40px;
   }
 
   .photo-display-container {
@@ -395,15 +461,10 @@
 
   .photo-wrapper {
     max-width: 90%;
-    max-height: 75vh;
-  }
-
-  :deep(.photo-tile img) {
-    max-height: 70vh;
   }
 
   .timeline-track {
-    height: 35px;
+    height: 40px;
     margin: 0 15px;
   }
 
