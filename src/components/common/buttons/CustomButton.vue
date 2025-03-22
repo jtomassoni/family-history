@@ -84,12 +84,11 @@ defineEmits(['click']);
 
 .custom-button--primary:hover:not(:disabled) {
   background-color: var(--color-primary-dark);
-  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
 .custom-button--primary:active:not(:disabled) {
-  transform: translateY(0);
+  background-color: var(--color-primary-dark);
   box-shadow: var(--shadow-sm);
 }
 
@@ -101,12 +100,11 @@ defineEmits(['click']);
 
 .custom-button--secondary:hover:not(:disabled) {
   background-color: var(--color-secondary-dark);
-  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
 .custom-button--secondary:active:not(:disabled) {
-  transform: translateY(0);
+  background-color: var(--color-secondary-dark);
   box-shadow: var(--shadow-sm);
 }
 

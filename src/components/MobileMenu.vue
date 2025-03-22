@@ -507,7 +507,7 @@ const handleSignupSubmit = () => {
 }
 
 .mobile-auth-button:active {
-  transform: translateY(1px);
+  background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-800));
   box-shadow: var(--shadow-sm);
 }
 

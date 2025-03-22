@@ -142,15 +142,15 @@ const handleClick = (event) => {
 /* Interactive States */
 .card--hoverable {
   cursor: pointer;
+  transition: box-shadow var(--transition-base);
 }
 
 .card--hoverable:hover:not(.card--loading) {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-xl);
 }
 
 .card--hoverable:active:not(.card--loading) {
-  transform: translateY(0);
+  box-shadow: var(--shadow-lg);
 }
 
 .card--selected {
@@ -214,12 +214,11 @@ const handleClick = (event) => {
 /* Touch Device Optimization */
 @media (hover: none) {
   .card--hoverable:hover:not(.card--loading) {
-    transform: none;
     box-shadow: var(--card-shadow);
   }
 
   .card--hoverable:active:not(.card--loading) {
-    transform: scale(0.98);
+    box-shadow: var(--shadow-lg);
   }
 }
 

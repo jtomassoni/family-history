@@ -4,6 +4,7 @@
     <div class="app" :class="{ 'no-scroll': isAuthOpen && isMobile }">
       <!-- Persistent header -->
       <Header 
+        :isHelpActive="showHintModal"
         @help="toggleHintModal" 
         @toggle-mobile-menu="handleToggleMobileMenu"
         @auth="handleAuth"
@@ -24,8 +25,8 @@
       <transition name="fade">
         <HintModal 
           v-if="showHintModal"
-          :desktopHint="helpDesktopHint"
-          :mobileHint="helpMobileHint"
+          :desktopHint="helpContent.desktopHint"
+          :mobileHint="helpContent.mobileHint"
           @dismiss="dismissHintModal"
         />
       </transition>
@@ -55,6 +56,7 @@ import HintModal from './components/HintModal.vue';
 import MobileMenu from './components/MobileMenu.vue';
 import AuthFlyout from './components/auth/AuthFlyout.vue';
 import "./styles/main.css";
+import { useHelpContent } from './composables/useHelpContent';
 
 // Mobile detection
 const isMobile = ref(false);
@@ -72,6 +74,9 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile);
 });
 
+// Help content
+const { helpContent } = useHelpContent();
+
 // Hint modal state
 const showHintModal = ref(false);
 const toggleHintModal = () => {
@@ -80,10 +85,6 @@ const toggleHintModal = () => {
 const dismissHintModal = () => {
   showHintModal.value = false;
 };
-
-// Hint texts
-const helpDesktopHint = "LOST ❓<br> Click a pic 🖼️ to see details.<br>Use your ⬅️/➡️ arrow keys to navigate.<br>Press space ⌨️ for the date selection.";
-const helpMobileHint = "LOST ❓<br> Click a pic 🖼️ to see details.<br>Swipe (👈 and 👉) to navigate.<br>Tap the 📅 for date selection.";
 
 // Mobile menu state
 const isMobileMenuOpen = ref(false);

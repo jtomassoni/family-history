@@ -8,9 +8,9 @@
           <p class="hint-text hint-desktop" v-html="desktopHint"></p>
           <p class="hint-text hint-mobile" v-html="mobileHint"></p>
           <div class="close-message">
-            <span class="close-text">👆Tap anywhere to close!👆👆</span>
+            <span class="close-text"><br><br>👆 Tap anywhere to close! 👆</span>
             <span class="countdown-text">
-              ⏱️Auto-closing in {{ countdownSeconds }} second<span v-if="countdownSeconds !== 1">s</span>
+              ⏱️ Auto-closing in {{ countdownSeconds }} second<span v-if="countdownSeconds !== 1">s</span> ⏱️
             </span>
           </div>
         </div>
@@ -31,11 +31,11 @@ const props = defineProps({
   },
   desktopHint: {
     type: String,
-    default: "Use your ⬅️ arrow keys ➡️ to glide through photos.<br>For a quick jump to the oldest or newest, hold ⬆️ Shift ⬆️ with your arrows!<br>⌨️ Press space to open the 🗓️ date selector."
+    default: "Use your ⬅️ arrow keys ➡️ to glide through photos.<br>For a quick jump to the oldest or newest, hold ⬆️ Shift ⬆️ with your arrows!<br>"
   },
   mobileHint: {
     type: String,
-    default: "📱 Swipe left/right to cruise through family memories.<br>👆Tap the 🗓️ icon to pick a special date!"
+    default: "📱 Swipe left/right to cruise through family memories.<br>👆Tap the timeline ↔️ below to pick a special date!"
   },
   theme: {
     type: String,
