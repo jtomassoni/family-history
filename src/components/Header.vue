@@ -1,6 +1,15 @@
 <template>
   <header class="header">
     <div class="header-content">
+      <!-- Help Button (Mobile) -->
+      <button class="help-button mobile-help" :class="{ active: isHelpActive }" @click="$emit('help')" aria-label="Help">
+        <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 17v.01" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
       <!-- Logo/Site Title -->
       <router-link to="/" class="site-title">
         <h1 class="title">
@@ -25,21 +34,33 @@
         </ul>
       </nav>
 
-      <!-- Desktop Auth Button -->
-      <button class="auth-button" @click="$emit('auth')" aria-label="Login">
-        <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M15 12H3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+      <!-- Header Right Section -->
+      <div class="header-right">
+        <!-- Help Button (Desktop) -->
+        <button class="help-button" :class="{ active: isHelpActive }" @click="$emit('help')" aria-label="Help">
+          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 17v.01" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <!-- Desktop Auth Button -->
+        <button class="auth-button" @click="$emit('auth')" aria-label="Login">
+          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 12H3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
 
       <!-- Mobile Menu Toggle -->
       <button class="mobile-menu-toggle" @click="$emit('toggle-mobile-menu')" aria-label="Toggle menu">
-        <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/>
+          <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/>
+          <line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/>
         </svg>
       </button>
     </div>
@@ -54,7 +75,14 @@ const route = useRoute();
 const { navItems, isCurrentRoute } = useNavigation();
 const siteTitle = 'TOMASSONI';
 
-defineEmits(['toggle-mobile-menu', 'auth']);
+defineProps({
+  isHelpActive: {
+    type: Boolean,
+    default: false
+  }
+});
+
+defineEmits(['toggle-mobile-menu', 'auth', 'help']);
 </script>
 
 <style scoped>
@@ -76,8 +104,8 @@ defineEmits(['toggle-mobile-menu', 'auth']);
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: var(--spacing-lg);
-  padding: 0 var(--spacing-lg);
+  gap: var(--spacing-sm);
+  padding: 0 var(--spacing-md);
   max-width: var(--max-width);
   margin: 0 auto;
 }
@@ -192,61 +220,48 @@ defineEmits(['toggle-mobile-menu', 'auth']);
   transform: scaleX(1);
 }
 
+/* Common button styles */
+.help-button,
+.auth-button,
 .mobile-menu-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 6px;
   background: transparent;
   border: none;
   cursor: pointer;
-  position: relative;
   margin: 0;
-}
-
-.menu-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.menu-icon line {
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-.auth-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 4px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  margin: 0;
-  color: var(--color-text-primary);
-  transition: color var(--transition-base);
-}
-
-.auth-button:hover {
-  color: var(--color-primary-600);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-base);
 }
 
 .button-icon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
 }
 
-.button-icon path {
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.help-button:hover,
+.auth-button:hover,
+.mobile-menu-toggle:hover {
+  color: var(--color-text-primary);
+}
+
+.help-button.active,
+.mobile-help.active {
+  color: var(--color-primary-500) !important;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: var(--border-radius-md);
+}
+
+.help-button.active .button-icon,
+.mobile-help.active .button-icon {
+  fill: none !important;
+  stroke: var(--color-primary-500) !important;
 }
 
 /* Mobile styles */
@@ -257,23 +272,38 @@ defineEmits(['toggle-mobile-menu', 'auth']);
   }
 
   .header-content {
-    padding: 0 var(--spacing-md);
-    gap: var(--spacing-md);
-    grid-template-columns: 1fr auto;
-    position: relative;
+    padding: 0 var(--spacing-sm);
+    grid-template-columns: 40px 1fr 40px;
+    gap: 0;
   }
 
   .site-title {
     justify-self: center;
+    grid-column: 2;
+    text-align: center;
+  }
+
+  .title {
+    align-items: center;
+  }
+
+  .mobile-help {
+    grid-column: 1;
+    color: var(--color-text-secondary);
+    margin-left: 4px;
   }
 
   .mobile-menu-toggle {
-    display: flex;
-    color: #fff;
+    grid-column: 3;
+    color: var(--color-text-secondary);
     position: absolute;
-    right: calc(var(--spacing-md) + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    top: calc((var(--header-height) - 48px) / 2 + 6px);
+    right: calc(var(--spacing-md) + 2px);
+  }
+
+  .mobile-help:hover,
+  .mobile-menu-toggle:hover {
+    color: var(--color-text-primary);
   }
 
   .site-name {
@@ -289,20 +319,15 @@ defineEmits(['toggle-mobile-menu', 'auth']);
   }
 
   .desktop-nav,
-  .auth-button {
+  .header-right {
     display: none;
   }
 }
 
 /* Desktop styles */
 @media (min-width: 768px) {
-  .header {
-    height: var(--header-height);
-  }
-
   .header-content {
     grid-template-columns: auto 1fr auto;
-    padding-right: var(--spacing-md);
   }
 
   .desktop-nav {
@@ -313,27 +338,30 @@ defineEmits(['toggle-mobile-menu', 'auth']);
     align-items: center;
   }
 
-  .auth-button {
+  .header-right {
     grid-column: 3;
     display: flex;
-    color: var(--color-text-primary);
-    margin-left: var(--spacing-md);
-  }
-
-  .nav-list {
-    height: 100%;
     align-items: center;
-    justify-content: flex-end;
-    padding-left: 0;
+    gap: var(--spacing-sm);
   }
 
-  .nav-link {
-    padding: 0;
-    font-size: var(--font-size-sm);
-  }
-
-  .mobile-menu-toggle {
+  .mobile-menu-toggle,
+  .mobile-help {
     display: none;
+  }
+
+  .help-button {
+    color: var(--color-text-secondary);
+  }
+
+  .help-button:hover {
+    color: var(--color-text-primary);
+  }
+
+  .help-button.active {
+    color: var(--color-primary-500) !important;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius-md);
   }
 }
 </style>
