@@ -38,12 +38,12 @@
 .photo-navigation-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - var(--header-height) - 100px);
+  height: calc(100vh - var(--header-height) - 200px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 20px;
-  margin: 0;
+  margin: 20px 0 140px 0;
 }
 
 .photo-display-container {
@@ -55,26 +55,26 @@
   justify-content: center;
   padding: 0;
   margin: 0;
-  max-width: calc(900px - 80px);
+  max-width: calc(900px - 40px);
 }
 
 .photo-wrapper {
   position: relative;
-  max-width: 55%;
-  max-height: calc(100vh - var(--header-height) - 120px);
+  width: 85%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0;
-  height: 100%;
 }
 
 :deep(.photo-tile) {
   height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  margin: 0;
 }
 
 :deep(.photo-tile img) {
@@ -82,6 +82,7 @@
   max-height: 100%;
   object-fit: contain;
   margin: auto;
+  border-radius: 16px;
 }
 
 :deep(.photo-info-overlay) {
@@ -108,32 +109,26 @@
 /* Timeline styles */
 .timeline-nav {
   position: fixed;
-  bottom: 25px;
+  bottom: 50px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(55% - 80px);
-  max-width: calc(900px - 80px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px 24px 16px;
-  background: rgba(20, 20, 20, 0.85);
+  width: calc(100% - 80px);
+  max-width: 1200px;
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(10px);
   border-radius: 12px;
-  z-index: 100;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  height: 75px;
+  padding: 16px 16px 20px 16px;
+  box-sizing: border-box;
+  z-index: 10;
 }
 
 .timeline-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  height: 24px;
-  margin-bottom: 12px;
-  padding: 0;
   gap: 12px;
+  margin-bottom: 12px;
+  height: 32px;
 }
 
 .timeline-title {
@@ -147,7 +142,7 @@
   min-width: 90px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   flex-shrink: 0;
-  height: 24px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,39 +154,49 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  font-size: 11px;
+  gap: 8px;
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.7);
   padding: 0;
   margin: 0;
-  flex-grow: 1;
   height: 100%;
-}
-
-.breadcrumb-spacer {
-  flex-grow: 1;
+  overflow: hidden;
+  flex: 1;
 }
 
 .timeline-path {
   color: rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 4px 10px;
+  padding: 2px 6px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   font-weight: 500;
-  height: 24px;
+  height: 20px;
+  font-size: 10px;
+  flex: 1;
+  max-width: fit-content;
+}
+
+.timeline-path span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .timeline-path .all-photos {
+  cursor: pointer;
+  transition: color 0.2s ease;
+  max-width: 80px;
+}
+
+.timeline-path .all-photos:hover {
   color: #60a5fa;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .breadcrumb-icon {
@@ -213,70 +218,66 @@
   margin: 0 2px;
 }
 
-/* Remove the old arrow style */
-.timeline-path::before {
-  display: none;
-}
-
-.timeline-path:first-child::before {
-  display: none;
-}
-
-/* Range button styles */
 .timeline-track {
   position: relative;
   width: 100%;
-  height: 40px;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min-content;
-  gap: 12px;
-  padding: 0 24px;
+  height: 48px;
+  display: flex;
+  gap: 8px;
+  padding: 0 12px;
   box-sizing: border-box;
   justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  z-index: 1;
+}
+
+.timeline-track::-webkit-scrollbar {
+  display: none;
 }
 
 .timeline-range {
   position: relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
+  flex: 1;
   min-width: 80px;
   max-width: 160px;
-  height: 24px;
-  padding: 0 10px;
+  height: 48px;
+  padding: 6px 12px;
   background: rgba(37, 99, 235, 0.15);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #94a3b8;
-  font-size: 11px;
   font-weight: 500;
   line-height: 1;
   text-align: center;
   margin: 0;
   box-sizing: border-box;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.timeline-range:hover {
-  background: rgba(37, 99, 235, 0.25);
-  border-color: rgba(59, 130, 246, 0.3);
+.range-label {
+  color: #94a3b8;
+  font-size: 11px;
 }
 
-.timeline-range.has-photos {
-  background: rgba(37, 99, 235, 0.15);
-  border-color: rgba(59, 130, 246, 0.2);
+.range-count {
+  color: #60a5fa;
+  font-size: 10px;
+  opacity: 0.9;
 }
 
 .timeline-range.selected {
-  background: rgba(37, 99, 235, 0.3);
-  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(37, 99, 235, 0.25);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 .timeline-range.selected .range-label {
@@ -284,157 +285,136 @@
 }
 
 .timeline-range.selected .range-count {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.range-label {
-  color: white;
-  font-size: 11px;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  overflow: visible;
-  padding: 0;
-  min-width: 32px;
-}
-
-.range-count {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 50px;
-  text-align: right;
-}
-
-.timeline-breadcrumb .timeline-range {
-  position: static;
-  transform: none;
-  min-width: auto;
-  max-width: none;
-}
-
-/* Common button styles */
-.timeline-reset,
-.timeline-back {
-  background: rgba(96, 165, 250, 0.1);
-  border: 1px solid rgba(96, 165, 250, 0.2);
-  color: #60a5fa;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 10px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  height: 26px;
-}
-
-.timeline-reset:hover,
-.timeline-back:hover {
-  background: rgba(96, 165, 250, 0.2);
-  border-color: rgba(96, 165, 250, 0.3);
   color: #93c5fd;
 }
 
-.timeline-reset .button-icon,
-.timeline-back .button-icon {
-  width: 16px;
-  height: 16px;
-  opacity: 0.9;
-  stroke-width: 2;
-  transition: opacity 0.2s ease;
-}
-
-.timeline-reset:hover .button-icon,
-.timeline-back:hover .button-icon {
-  opacity: 1;
-}
-
-/* Mobile adjustments */
+/* Mobile Styles */
 @media (max-width: 768px) {
-  .photo-navigation-container {
-    height: calc(100vh - var(--header-height) - 120px);
-    padding: 0 20px;
-  }
-
-  .photo-wrapper {
-    max-height: calc(100vh - var(--header-height) - 140px);
-  }
-
   .timeline-nav {
-    height: 85px;
-    padding: 8px;
-    gap: 8px;
+    width: calc(100% - 32px);
+    bottom: 25px;
+    padding: 12px;
+    height: auto;
+    min-height: 120px;
   }
 
   .timeline-header {
-    height: 36px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    height: 28px;
+  }
+
+  .timeline-title {
+    min-width: auto;
+    padding: 0 8px;
+    font-size: 10px;
+    height: 28px;
+  }
+
+  .timeline-back {
+    min-width: auto;
+    padding: 0 8px;
+    font-size: 10px;
+    height: 28px;
+  }
+
+  .timeline-breadcrumb {
+    font-size: 9px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .timeline-path {
+    padding: 2px 4px;
+    gap: 3px;
+    height: 18px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .timeline-path span:not(.all-photos):not(:last-child) {
+    display: none;
+  }
+
+  .timeline-path .breadcrumb-icon:not(.home-icon):not(:last-of-type) {
+    display: none;
+  }
+
+  .timeline-path span:last-child {
+    max-width: 60px;
+  }
+
+  .timeline-path .all-photos {
+    max-width: 80px;
+  }
+
+  .breadcrumb-icon {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+
+  .breadcrumb-icon.home-icon {
+    width: 12px;
+    height: 12px;
   }
 
   .timeline-track {
-    height: 36px;
-  }
-
-  .timeline-controls {
     padding: 0 8px;
+    gap: 6px;
+    height: auto;
+    min-height: 44px;
+    margin-bottom: 4px;
   }
 
-  .timeline-title {
-    padding: 0 10px;
+  .timeline-range {
+    min-width: 60px;
+    padding: 4px 8px;
+    height: auto;
+    min-height: 44px;
+    gap: 2px;
   }
 
-  .timeline-breadcrumb {
-    padding: 0 10px;
+  .range-label {
+    font-size: 10px;
+    padding: 2px 0;
   }
 
-  .timeline-back {
-    font-size: 16px;
-    padding: 6px 12px;
+  .range-count {
+    font-size: 9px;
+    padding: 2px 0;
+    color: #60a5fa;
+    opacity: 0.8;
   }
 
-  :deep(.photo-tile img),
-  :deep(.photo-info-overlay) {
-    max-height: calc(100vh - var(--header-height) - 140px);
+  .photo-navigation-container {
+    height: calc(100vh - var(--header-height) - 200px);
+    padding: 0 16px;
+    margin: 16px 0 120px 0;
   }
 
-  .timeline-controls {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
+  .photo-wrapper {
+    width: 100%;
+    height: 100%;
   }
 
-  .timeline-title {
-    text-align: center;
-    margin: 0 auto;
-  }
-
-  .timeline-breadcrumb {
-    margin: 4px 0;
-  }
-
-  .timeline-back {
-    margin: 0 auto;
-  }
-
-  :deep(.photo-info-overlay) {
-    padding: 1.5rem;
+  :deep(.photo-tile) {
+    margin-top: -5px;
   }
 }
 
 /* Ensure ranges are readable when there are only 2-3 */
 @media (min-width: 769px) {
   .timeline-track {
-    height: 32px;
-    margin: 0 12px;
+    height: 48px;
+    margin: 0;
+    padding: 0 12px;
   }
 
   .timeline-range {
-    min-width: 70px;
+    min-width: 80px;
+    height: 48px;
   }
 }
 
@@ -561,16 +541,13 @@
   }
 
   .photo-wrapper {
-    max-width: 90%;
+    width: 90%;
   }
 
   .timeline-track {
-    height: 40px;
-    margin: 0 15px;
-  }
-
-  .timeline-nav {
-    bottom: 25px;
+    height: 48px;
+    margin: 0;
+    padding: 0 12px;
   }
 
   .timeline-nav:hover .timeline-current {
@@ -580,6 +557,14 @@
 
   .timeline-cluster:hover + .timeline-preview {
     opacity: 1;
+  }
+
+  :deep(.photo-tile) {
+    padding: 0;
+  }
+
+  :deep(.photo-tile img) {
+    border-radius: 16px;
   }
 }
 
@@ -596,7 +581,7 @@
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
-  height: 24px;
+  height: 32px;
   min-width: 90px;
   justify-content: center;
 }

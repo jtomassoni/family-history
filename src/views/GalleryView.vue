@@ -49,7 +49,7 @@
             <svg class="breadcrumb-icon home-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            <span class="all-photos">All Photos</span>
+            <span class="all-photos" @click="resetTimeline">All Photos</span>
             <svg v-if="selectedPath.length > 0" class="breadcrumb-icon arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -77,7 +77,10 @@
           class="timeline-range"
           :class="{ 
             'has-photos': range.count > 0,
-            'selected': selectedRange && selectedRange.id === range.id
+            'selected': selectedRange?.id === range.id && (
+              (timelineLayer === 'month' && selectedPath.length > 1) || 
+              (timelineLayer === 'day' && selectedPath.length > 2)
+            )
           }"
           @click="selectRange(range)"
         >
@@ -504,7 +507,7 @@ const createRanges = (start, end, intervalType = 'years') => {
     }
     
     return months;
-  } else {
+  } else if (timelineLayer.value === 'day') {
     // For days, show only days with photos in the selected month
     const monthStart = moment(selectedRange.value.startDate).startOf('month');
     const monthEnd = moment(selectedRange.value.endDate).endOf('month');
@@ -530,6 +533,8 @@ const createRanges = (start, end, intervalType = 'years') => {
     
     return days;
   }
+  
+  return [];
 };
 
 // Use the unified range creation for all layers
@@ -605,12 +610,13 @@ const selectRange = (range) => {
       timelineLayer.value = 'day';
       break;
     case 'day':
-      // Navigate to first photo in range
-      const firstPhoto = sortedPhotos.value.find(photo => 
+      // Navigate to newest photo in range
+      const photosInRange = sortedPhotos.value.filter(photo => 
         moment(photo.eventDate).isBetween(range.startDate, range.endDate, null, '[]')
       );
-      if (firstPhoto) {
-        const index = sortedPhotos.value.indexOf(firstPhoto);
+      if (photosInRange.length > 0) {
+        // Get the newest photo (first in the sorted array since we sort by newest first)
+        const index = sortedPhotos.value.indexOf(photosInRange[0]);
         currentIndex.value = index;
       }
       // Reset timeline to initial state
