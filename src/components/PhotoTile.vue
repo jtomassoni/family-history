@@ -13,20 +13,21 @@
             />
           </transition>
           <!-- Info Overlay -->
-          <transition name="fade">
-            <div v-if="showInfoOverlay" class="photo-info-overlay">
-              <h3 class="photo-title">{{ photo.externalName }}</h3>
-              <p v-if="photo.description && photo.description.trim() !== ''">
-                {{ photo.description }}
-              </p>
-              <p v-if="photo.eventDate">
-                <strong>Event Date:</strong> {{ formatDate(photo.eventDate) }}
-              </p>
-              <p v-if="photo.uploadedAt">
-                <strong>Uploaded:</strong> {{ formatDate(photo.uploadedAt) }}
-              </p>
-            </div>
-          </transition>
+          <div 
+            class="photo-info-overlay"
+            :class="{ 'visible': showInfoOverlay }"
+          >
+            <h3 class="photo-title">{{ photo.externalName }}</h3>
+            <p v-if="photo.description && photo.description.trim() !== ''">
+              {{ photo.description }}
+            </p>
+            <p v-if="photo.eventDate">
+              <strong>Event Date:</strong> {{ formatDate(photo.eventDate) }}
+            </p>
+            <p v-if="photo.uploadedAt">
+              <strong>Uploaded:</strong> {{ formatDate(photo.uploadedAt) }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -47,13 +48,20 @@ const props = defineProps({
 const showInfoOverlay = ref(false);
 
 const toggleInfoOverlay = () => {
-  showInfoOverlay.value = !showInfoOverlay.value;
+  // Only toggle on mobile
+  if (window.innerWidth <= 768) {
+    showInfoOverlay.value = !showInfoOverlay.value;
+  }
 };
 
 const formatDate = (dateString) => {
   if (!dateString) return "Unknown Date";
   const date = new Date(dateString);
-  return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+  return date.toLocaleDateString(undefined, { 
+    year: "numeric", 
+    month: "long", 
+    day: "numeric" 
+  });
 };
 
 onMounted(() => {
