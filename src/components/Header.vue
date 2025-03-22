@@ -133,7 +133,11 @@ const openAuth = () => {
 }
 
 .desktop-nav {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  height: 100%;
+  margin-right: 0;
 }
 
 .auth-button {
@@ -183,24 +187,28 @@ const openAuth = () => {
   }
 
   .header-content {
-    grid-template-columns: auto minmax(auto, 1fr) auto;
-    padding-right: var(--spacing-lg);
+    grid-template-columns: auto 1fr auto;
+    padding-right: var(--spacing-md);
   }
 
   .desktop-nav {
     display: flex;
     align-items: center;
-    justify-self: flex-end;
+    justify-self: end;
     height: 100%;
-    margin-right: var(--spacing-md);
+    margin-right: 0;
   }
 
   .nav-list {
-    gap: calc(var(--spacing-md) * 0.5);
     height: 100%;
     align-items: center;
     justify-content: flex-end;
-    padding-left: var(--spacing-2xl);
+    padding-left: 0;
+  }
+
+  .nav-link {
+    padding: 0;
+    font-size: var(--font-size-sm);
   }
 
   .auth-button {
@@ -248,20 +256,21 @@ const openAuth = () => {
   }
 }
 
+.nav-item {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-left: var(--spacing-sm);
+}
+
 .nav-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  gap: calc(var(--spacing-md) * 0.5);
   height: 100%;
   align-items: center;
-}
-
-.nav-item {
-  height: 100%;
-  display: flex;
-  align-items: center;
+  justify-content: flex-end;
 }
 
 .nav-link {
@@ -269,9 +278,9 @@ const openAuth = () => {
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-2xs);
-  padding: 0 var(--spacing-md);
+  padding: 0 var(--spacing-2xs);
   color: var(--color-text-secondary);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   text-decoration: none;
   transition: color var(--transition-base);
