@@ -140,9 +140,9 @@ const boundaryDesktopHint = computed(() => {
 
 const boundaryMobileHint = computed(() => {
   if (showEarliest.value)
-    return "📜 Earliest photo reached!<br>Swipe to explore or tap the calendar for dates.<br>Tap on a photo to see details.";
+    return "Earliest photo reached!<br>Swipe to explore or tap the calendar for dates.<br>Tap on a photo to see details.";
   if (showLatest.value)
-    return "🎉 Most recent photo!<br>Swipe to explore or tap the calendar for dates.<br>Tap on a photo to see details.";
+    return "Most recent photo!<br>Swipe to explore or tap the calendar for dates.<br>Tap on a photo to see details.";
   return "";
 });
 
@@ -404,141 +404,189 @@ const adaptiveRanges = computed(() => {
   }
 });
 
-// Helper to create ranges that fit the available space
-const createMajorRanges = (start, end) => {
-  const totalYears = end.diff(start, 'years');
-  const rangeCount = Math.min(4, Math.max(2, Math.floor(window.innerWidth / 250)));
-  const yearsPerRange = Math.ceil(totalYears / rangeCount);
-  
-  let ranges = [];
-  let currentStart = moment(start);
-  
-  while (currentStart.isBefore(end)) {
-    const rangeEnd = moment.min(
-      moment(currentStart).add(yearsPerRange, 'years'),
-      moment(end)
-    );
-    
-    const count = countPhotosInRange(currentStart, rangeEnd);
-    
-    ranges.push({
-      id: currentStart.format('YYYY'),
-      startDate: currentStart.toDate(),
-      endDate: rangeEnd.toDate(),
-      count,
-      position: ((currentStart - start) / (end - start)) * 100,
-      width: Math.min(((rangeEnd - currentStart) / (end - start)) * 100 * 0.7, 95),
-      left: ((currentStart - start) / (end - start)) * 100 + '%'
-    });
-    
-    currentStart = moment(rangeEnd);
-  }
-  
-  return ranges;
+// Helper function to get all years that have photos
+const getAvailableYears = () => {
+  const years = new Set();
+  sortedPhotos.value.forEach(photo => {
+    years.add(moment(photo.eventDate).year());
+  });
+  return Array.from(years).sort((a, b) => a - b);
 };
 
-// Similar helpers for year, month, and day ranges
+// Helper function to calculate how many buttons can fit in the timeline
+const calculateButtonCount = () => {
+  // Each button is roughly 250px wide including spacing
+  const buttonWidth = 250;
+  const minButtons = 2; // We always need at least 2 buttons
+  const maxButtons = Math.min(4, Math.floor(window.innerWidth / buttonWidth)); // Never more than 4 buttons
+  return Math.max(minButtons, maxButtons);
+};
+
+// Helper function for consistent range positioning across all layers
+const createRanges = (start, end, intervalType = 'years') => {
+  if (intervalType === 'years' && timelineLayer.value === 'all') {
+    // For the initial year ranges, use all available years
+    const availableYears = getAvailableYears();
+    const totalYears = availableYears.length;
+    const maxButtons = calculateButtonCount();
+    
+    // If we have space for all years and it's 4 or fewer, show individual year buttons
+    if (maxButtons >= totalYears && totalYears <= 4) {
+      const spacing = 25;
+      const totalWidth = (totalYears - 1) * spacing;
+      const startOffset = (100 - totalWidth) / 2;
+      
+      return availableYears.map((year, index) => {
+        const yearStart = moment().year(year).startOf('year');
+        const yearEnd = moment().year(year).endOf('year');
+        const count = countPhotosInRange(yearStart, yearEnd);
+        
+        return {
+          id: year.toString(),
+          startDate: yearStart.toDate(),
+          endDate: yearEnd.toDate(),
+          count,
+          left: `${startOffset + (index * spacing)}%`
+        };
+      });
+    }
+    
+    // Otherwise, create range buttons that evenly distribute the years
+    const yearsPerRange = Math.ceil(totalYears / maxButtons);
+    const ranges = [];
+    const spacing = 25;
+    const totalWidth = (maxButtons - 1) * spacing;
+    const startOffset = (100 - totalWidth) / 2;
+    
+    for (let i = 0; i < totalYears; i += yearsPerRange) {
+      const rangeYears = availableYears.slice(i, Math.min(i + yearsPerRange, totalYears));
+      if (rangeYears.length > 0) {
+        const rangeStart = moment().year(rangeYears[0]).startOf('year');
+        const rangeEnd = moment().year(rangeYears[rangeYears.length - 1]).endOf('year');
+        const count = countPhotosInRange(rangeStart, rangeEnd);
+        
+        ranges.push({
+          id: rangeStart.format('YYYY'),
+          startDate: rangeStart.toDate(),
+          endDate: rangeEnd.toDate(),
+          availableYears: rangeYears,
+          count,
+          left: `${startOffset + ((ranges.length) * spacing)}%`
+        });
+      }
+    }
+    
+    return ranges;
+  } else if (timelineLayer.value === 'year' && selectedRange.value?.availableYears) {
+    const years = selectedRange.value.availableYears;
+    const maxButtons = calculateButtonCount();
+    
+    // If we have space for all years and it's 4 or fewer, show them individually
+    if (maxButtons >= years.length && years.length <= 4) {
+      const spacing = 25;
+      const totalWidth = (years.length - 1) * spacing;
+      const startOffset = (100 - totalWidth) / 2;
+      
+      return years.map((year, index) => {
+        const yearStart = moment().year(year).startOf('year');
+        const yearEnd = moment().year(year).endOf('year');
+        const count = countPhotosInRange(yearStart, yearEnd);
+        
+        return {
+          id: year.toString(),
+          startDate: yearStart.toDate(),
+          endDate: yearEnd.toDate(),
+          count,
+          left: `${startOffset + (index * spacing)}%`
+        };
+      });
+    }
+    
+    // Otherwise, create sub-ranges
+    const yearsPerRange = Math.ceil(years.length / maxButtons);
+    const ranges = [];
+    const spacing = 25;
+    const totalWidth = (maxButtons - 1) * spacing;
+    const startOffset = (100 - totalWidth) / 2;
+    
+    for (let i = 0; i < years.length; i += yearsPerRange) {
+      const rangeYears = years.slice(i, Math.min(i + yearsPerRange, years.length));
+      if (rangeYears.length > 0) {
+        const rangeStart = moment().year(rangeYears[0]).startOf('year');
+        const rangeEnd = moment().year(rangeYears[rangeYears.length - 1]).endOf('year');
+        const count = countPhotosInRange(rangeStart, rangeEnd);
+        
+        ranges.push({
+          id: rangeStart.format('YYYY'),
+          startDate: rangeStart.toDate(),
+          endDate: rangeEnd.toDate(),
+          availableYears: rangeYears,
+          count,
+          left: `${startOffset + ((ranges.length) * spacing)}%`
+        });
+      }
+    }
+    
+    return ranges;
+  } else {
+    // For months and days, use similar logic
+    const totalInterval = end.diff(start, intervalType);
+    const maxButtons = calculateButtonCount();
+    const intervalsPerRange = Math.ceil(totalInterval / maxButtons);
+    
+    let ranges = [];
+    let currentStart = moment(start);
+    
+    const spacing = 25;
+    const totalWidth = (maxButtons - 1) * spacing;
+    const startOffset = (100 - totalWidth) / 2;
+    
+    while (currentStart.isBefore(end)) {
+      const rangeEnd = moment.min(
+        moment(currentStart).add(intervalsPerRange - 1, intervalType),
+        moment(end)
+      );
+      
+      const count = countPhotosInRange(currentStart, rangeEnd);
+      
+      ranges.push({
+        id: currentStart.format('YYYY'),
+        startDate: currentStart.toDate(),
+        endDate: rangeEnd.toDate(),
+        count,
+        left: `${startOffset + (ranges.length * spacing)}%`
+      });
+      
+      currentStart = moment(rangeEnd).add(1, intervalType);
+      
+      if (currentStart.isAfter(end) || ranges.length >= maxButtons) break;
+    }
+    
+    return ranges;
+  }
+};
+
+// Use the unified range creation for all layers
+const createMajorRanges = (start, end) => {
+  return createRanges(start, end, 'years');
+};
+
 const createYearRanges = (parentRange) => {
   const start = moment(parentRange.startDate);
   const end = moment(parentRange.endDate);
-  const rangeCount = Math.min(4, Math.max(2, Math.floor(window.innerWidth / 250)));
-  const yearsPerRange = Math.ceil(end.diff(start, 'years') / rangeCount);
-  
-  let ranges = [];
-  let currentStart = moment(start);
-  
-  while (currentStart.isBefore(end)) {
-    const rangeEnd = moment.min(
-      moment(currentStart).add(yearsPerRange, 'years'),
-      moment(end)
-    );
-    
-    const count = countPhotosInRange(currentStart, rangeEnd);
-    
-    ranges.push({
-      id: currentStart.format('YYYY'),
-      startDate: currentStart.toDate(),
-      endDate: rangeEnd.toDate(),
-      count,
-      position: ((currentStart - start) / (end - start)) * 100,
-      width: Math.min(((rangeEnd - currentStart) / (end - start)) * 100 * 0.7, 95),
-      left: ((currentStart - start) / (end - start)) * 100 + '%'
-    });
-    
-    currentStart = moment(rangeEnd);
-  }
-  
-  return ranges;
+  return createRanges(start, end, 'years');
 };
 
 const createMonthRanges = (parentRange) => {
   const start = moment(parentRange.startDate);
   const end = moment(parentRange.endDate);
-  const totalMonths = end.diff(start, 'months');
-  const rangeCount = Math.min(4, Math.max(2, Math.floor(window.innerWidth / 200)));
-  const monthsPerRange = Math.ceil(totalMonths / rangeCount);
-  
-  let ranges = [];
-  let currentStart = moment(start);
-  
-  while (currentStart.isBefore(end)) {
-    const rangeEnd = moment.min(
-      moment(currentStart).add(monthsPerRange, 'months'),
-      moment(end)
-    );
-    
-    const count = countPhotosInRange(currentStart, rangeEnd);
-    
-    if (count > 0) {
-      ranges.push({
-        id: currentStart.format('YYYY-MM'),
-        startDate: currentStart.toDate(),
-        endDate: rangeEnd.toDate(),
-        count,
-        position: ((currentStart - start) / (end - start)) * 100,
-        width: ((rangeEnd - currentStart) / (end - start)) * 100
-      });
-    }
-    
-    currentStart = moment(rangeEnd);
-  }
-  
-  return ranges;
+  return createRanges(start, end, 'months');
 };
 
 const createDayRanges = (parentRange) => {
   const start = moment(parentRange.startDate);
   const end = moment(parentRange.endDate);
-  const totalDays = end.diff(start, 'days');
-  const rangeCount = Math.min(4, Math.max(2, Math.floor(window.innerWidth / 200)));
-  const daysPerRange = Math.ceil(totalDays / rangeCount);
-  
-  let ranges = [];
-  let currentStart = moment(start);
-  
-  while (currentStart.isBefore(end)) {
-    const rangeEnd = moment.min(
-      moment(currentStart).add(daysPerRange, 'days'),
-      moment(end)
-    );
-    
-    const count = countPhotosInRange(currentStart, rangeEnd);
-    
-    if (count > 0) {
-      ranges.push({
-        id: currentStart.format('YYYY-MM-DD'),
-        startDate: currentStart.toDate(),
-        endDate: rangeEnd.toDate(),
-        count,
-        position: ((currentStart - start) / (end - start)) * 100,
-        width: ((rangeEnd - currentStart) / (end - start)) * 100
-      });
-    }
-    
-    currentStart = moment(rangeEnd);
-  }
-  
-  return ranges;
+  return createRanges(start, end, 'days');
 };
 
 // Helper to count photos in a date range
@@ -560,6 +608,9 @@ const formatRangeLabel = (range) => {
   
   switch (timelineLayer.value) {
     case 'all':
+      if (start.year() === end.year()) {
+        return start.format('YYYY');
+      }
       return `${start.format('YYYY')} - ${end.format('YYYY')}`;
     case 'year':
       return start.format('YYYY');
