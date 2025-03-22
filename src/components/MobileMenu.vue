@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade">
+  <transition name="slide-down">
     <div v-if="isOpen" class="mobile-menu">
       <!-- Close button in same position as hamburger -->
       <button class="close-button" @click="closeMenu" aria-label="Close menu">
@@ -269,6 +269,7 @@ const handleSignupSubmit = () => {
   border: none;
   overflow-y: auto;
   overflow-x: hidden;
+  transform: translateY(0);
 }
 
 /* Fade animation */
@@ -280,6 +281,17 @@ const handleSignupSubmit = () => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Add slide down animation */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateY(-100%);
 }
 
 .close-button {
