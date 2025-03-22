@@ -137,36 +137,183 @@
 }
 
 .timeline-title {
-  color: white;
-  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
   font-weight: 500;
-  text-align: left;
+  text-align: center;
   padding: 0 8px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
-  min-width: 120px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 90px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   flex-shrink: 0;
-  height: 26px;
+  height: 24px;
   display: flex;
   align-items: center;
+  justify-content: center;
   line-height: 1;
+  z-index: 2;
 }
 
 .timeline-breadcrumb {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  font-size: 14px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.7);
-  padding: 0 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
+  padding: 0;
   margin: 0;
   flex-grow: 1;
-  justify-content: center;
   height: 100%;
-  min-width: 0;
+}
+
+.breadcrumb-spacer {
+  flex-grow: 1;
+}
+
+.timeline-path {
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-weight: 500;
+  height: 24px;
+}
+
+.timeline-path .all-photos {
+  color: #60a5fa;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breadcrumb-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.breadcrumb-icon.home-icon {
+  color: #60a5fa;
+  width: 16px;
+  height: 16px;
+}
+
+.breadcrumb-icon.arrow-icon {
+  color: rgba(255, 255, 255, 0.4);
+  width: 14px;
+  height: 14px;
+  margin: 0 2px;
+}
+
+/* Remove the old arrow style */
+.timeline-path::before {
+  display: none;
+}
+
+.timeline-path:first-child::before {
+  display: none;
+}
+
+/* Range button styles */
+.timeline-track {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min-content;
+  gap: 12px;
+  padding: 0 24px;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+.timeline-range {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 80px;
+  max-width: 160px;
+  height: 24px;
+  padding: 0 10px;
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  margin: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeline-range:hover {
+  background: rgba(37, 99, 235, 0.25);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.timeline-range.has-photos {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.timeline-range.selected {
+  background: rgba(37, 99, 235, 0.3);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.timeline-range.selected .range-label {
+  color: white;
+}
+
+.timeline-range.selected .range-count {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.range-label {
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+  padding: 0;
+  min-width: 32px;
+}
+
+.range-count {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 50px;
+  text-align: right;
+}
+
+.timeline-breadcrumb .timeline-range {
+  position: static;
+  transform: none;
+  min-width: auto;
+  max-width: none;
 }
 
 /* Common button styles */
@@ -206,92 +353,6 @@
 .timeline-reset:hover .button-icon,
 .timeline-back:hover .button-icon {
   opacity: 1;
-}
-
-.timeline-path {
-  color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  font-weight: 500;
-}
-
-.timeline-path::before {
-  content: "→";
-  color: rgba(255, 255, 255, 0.4);
-}
-
-/* Range button styles */
-.timeline-range {
-  position: absolute;
-  bottom: 12px;
-  left: var(--range-position, 50%);
-  height: 24px;
-  background: rgba(37, 99, 235, 0.15);
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 0 8px;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  min-width: 70px;
-  max-width: 130px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  box-sizing: border-box;
-  transform: translateX(-50%);
-}
-
-.timeline-range:hover {
-  background: rgba(37, 99, 235, 0.25);
-  border-color: rgba(59, 130, 246, 0.3);
-}
-
-.timeline-range.has-photos {
-  border-color: rgba(59, 130, 246, 0.3);
-}
-
-.timeline-range.selected {
-  background: rgba(37, 99, 235, 0.3);
-  border-color: rgba(59, 130, 246, 0.4);
-}
-
-.timeline-range.selected .range-label {
-  color: white;
-}
-
-.timeline-range.selected .range-count {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.range-label {
-  color: white;
-  font-size: 11px;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-  overflow: visible;
-  padding: 0;
-  min-width: 32px;
-}
-
-.range-count {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 10px;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 35px;
-  text-align: right;
 }
 
 /* Mobile adjustments */
@@ -373,7 +434,7 @@
   }
 
   .timeline-range {
-    min-width: 95px;
+    min-width: 70px;
   }
 }
 
@@ -520,4 +581,27 @@
   .timeline-cluster:hover + .timeline-preview {
     opacity: 1;
   }
+}
+
+.timeline-back {
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  color: #60a5fa;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 24px;
+  min-width: 90px;
+  justify-content: center;
+}
+
+.timeline-back:hover {
+  background: rgba(96, 165, 250, 0.15);
+  border-color: rgba(96, 165, 250, 0.25);
 }

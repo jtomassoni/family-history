@@ -40,50 +40,50 @@
     <div class="timeline-nav">
       <div class="timeline-header">
         <div class="timeline-title">
-          {{ timelineTitle }}
+          {{ timelineLayer === 'all' ? 'Select Time Period' : 
+             timelineLayer === 'year' ? 'Select Year' : 
+             timelineLayer === 'month' ? 'Select Month' : 'Select Day' }}
         </div>
-        
-        <div v-if="timelineLayer !== 'all'" class="timeline-breadcrumb">
-          <button @click="resetTimeline" class="timeline-reset">
-            <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+        <div class="timeline-breadcrumb">
+          <div v-if="timelineLayer !== 'all'" class="timeline-path">
+            <svg class="breadcrumb-icon home-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            All Photos
-          </button>
-          <span v-if="selectedRange" class="timeline-path">
-            {{ formatTimelinePath }}
-          </span>
+            <span class="all-photos">All Photos</span>
+            <svg v-if="selectedPath.length > 0" class="breadcrumb-icon arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span v-if="selectedPath.length > 0">{{ formatTimelinePath[0] }}</span>
+            <svg v-if="selectedPath.length > 1" class="breadcrumb-icon arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span v-if="selectedPath.length > 1">{{ formatTimelinePath[1] }}</span>
+            <svg v-if="selectedPath.length > 2" class="breadcrumb-icon arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span v-if="selectedPath.length > 2">{{ formatTimelinePath[2] }}</span>
+          </div>
         </div>
-
-        <button 
-          v-if="timelineLayer !== 'all'"
-          class="timeline-back"
-          @click="goBack"
-        >
-          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <div v-if="timelineLayer !== 'all'" class="timeline-back" @click="goBack">
           Back
-        </button>
+        </div>
       </div>
       
       <!-- Adaptive time ranges -->
-      <div 
-        v-for="range in adaptiveRanges" 
-        :key="range.id"
-        class="timeline-range"
-        :class="{ 
-          'has-photos': range.count > 0,
-          'selected': selectedRange && selectedRange.id === range.id
-        }"
-        :style="{ 
-          left: range.left,
-          width: range.width + '%'
-        }"
-        @click="selectRange(range)"
-      >
-        <span class="range-label">{{ formatRangeLabel(range) }}</span>
-        <span class="range-count">{{ range.count }} {{ range.count === 1 ? 'photo' : 'photos' }}</span>
+      <div class="timeline-track">
+        <div 
+          v-for="range in adaptiveRanges" 
+          :key="range.id"
+          class="timeline-range"
+          :class="{ 
+            'has-photos': range.count > 0,
+            'selected': selectedRange && selectedRange.id === range.id
+          }"
+          @click="selectRange(range)"
+        >
+          <span class="range-label">{{ formatRangeLabel(range) }}</span>
+          <span class="range-count">{{ range.count }} {{ range.count === 1 ? 'photo' : 'photos' }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -432,11 +432,7 @@ const createRanges = (start, end, intervalType = 'years') => {
     
     // If we have space for all years and it's 4 or fewer, show individual year buttons
     if (maxButtons >= totalYears && totalYears <= 4) {
-      const spacing = 25; // More generous spacing between buttons
-      const totalWidth = (totalYears - 1) * spacing;
-      const startOffset = (100 - totalWidth) / 2;
-      
-      return availableYears.map((year, index) => {
+      return availableYears.map(year => {
         const yearStart = moment().year(year).startOf('year');
         const yearEnd = moment().year(year).endOf('year');
         const count = countPhotosInRange(yearStart, yearEnd);
@@ -445,8 +441,7 @@ const createRanges = (start, end, intervalType = 'years') => {
           id: year.toString(),
           startDate: yearStart.toDate(),
           endDate: yearEnd.toDate(),
-          count,
-          left: `${startOffset + (index * spacing)}%`
+          count
         };
       });
     }
@@ -454,9 +449,6 @@ const createRanges = (start, end, intervalType = 'years') => {
     // Otherwise, create range buttons that evenly distribute the years
     const yearsPerRange = Math.ceil(totalYears / maxButtons);
     const ranges = [];
-    const spacing = 25; // More generous spacing between buttons
-    const totalWidth = (maxButtons - 1) * spacing;
-    const startOffset = (100 - totalWidth) / 2;
     
     for (let i = 0; i < totalYears; i += yearsPerRange) {
       const rangeYears = availableYears.slice(i, Math.min(i + yearsPerRange, totalYears));
@@ -470,99 +462,73 @@ const createRanges = (start, end, intervalType = 'years') => {
           startDate: rangeStart.toDate(),
           endDate: rangeEnd.toDate(),
           availableYears: rangeYears,
-          count,
-          left: `${startOffset + (ranges.length * spacing)}%`
+          count
         });
       }
     }
     
     return ranges;
   } else if (timelineLayer.value === 'year' && selectedRange.value?.availableYears) {
+    // When showing individual years from a range, only show the years from that range
     const years = selectedRange.value.availableYears;
-    const maxButtons = calculateButtonCount();
-    
-    // If we have space for all years and it's 4 or fewer, show them individually
-    if (maxButtons >= years.length && years.length <= 4) {
-      const spacing = 25; // More generous spacing between buttons
-      const totalWidth = (years.length - 1) * spacing;
-      const startOffset = (100 - totalWidth) / 2;
+    return years.map(year => {
+      const yearStart = moment().year(year).startOf('year');
+      const yearEnd = moment().year(year).endOf('year');
+      const count = countPhotosInRange(yearStart, yearEnd);
       
-      return years.map((year, index) => {
-        const yearStart = moment().year(year).startOf('year');
-        const yearEnd = moment().year(year).endOf('year');
-        const count = countPhotosInRange(yearStart, yearEnd);
-        
-        return {
-          id: year.toString(),
-          startDate: yearStart.toDate(),
-          endDate: yearEnd.toDate(),
-          count,
-          left: `${startOffset + (index * spacing)}%`
-        };
-      });
-    }
+      return {
+        id: year.toString(),
+        startDate: yearStart.toDate(),
+        endDate: yearEnd.toDate(),
+        count
+      };
+    });
+  } else if (timelineLayer.value === 'month') {
+    // For months, show all months in the selected year
+    const selectedYear = moment(selectedRange.value.startDate).year();
+    const months = [];
     
-    // Otherwise, create sub-ranges
-    const yearsPerRange = Math.ceil(years.length / maxButtons);
-    const ranges = [];
-    const spacing = 25; // More generous spacing between buttons
-    const totalWidth = (maxButtons - 1) * spacing;
-    const startOffset = (100 - totalWidth) / 2;
-    
-    for (let i = 0; i < years.length; i += yearsPerRange) {
-      const rangeYears = years.slice(i, Math.min(i + yearsPerRange, years.length));
-      if (rangeYears.length > 0) {
-        const rangeStart = moment().year(rangeYears[0]).startOf('year');
-        const rangeEnd = moment().year(rangeYears[rangeYears.length - 1]).endOf('year');
-        const count = countPhotosInRange(rangeStart, rangeEnd);
-        
-        ranges.push({
-          id: rangeStart.format('YYYY'),
-          startDate: rangeStart.toDate(),
-          endDate: rangeEnd.toDate(),
-          availableYears: rangeYears,
-          count,
-          left: `${startOffset + (ranges.length * spacing)}%`
+    for (let month = 0; month < 12; month++) {
+      const monthStart = moment().year(selectedYear).month(month).startOf('month');
+      const monthEnd = moment().year(selectedYear).month(month).endOf('month');
+      const count = countPhotosInRange(monthStart, monthEnd);
+      
+      if (count > 0) {
+        months.push({
+          id: monthStart.format('YYYY-MM'),
+          startDate: monthStart.toDate(),
+          endDate: monthEnd.toDate(),
+          count
         });
       }
     }
     
-    return ranges;
+    return months;
   } else {
-    // For months and days, use similar logic
-    const totalInterval = end.diff(start, intervalType);
-    const maxButtons = calculateButtonCount();
-    const intervalsPerRange = Math.ceil(totalInterval / maxButtons);
+    // For days, show only days with photos in the selected month
+    const monthStart = moment(selectedRange.value.startDate).startOf('month');
+    const monthEnd = moment(selectedRange.value.endDate).endOf('month');
+    const days = [];
     
-    let ranges = [];
-    let currentStart = moment(start);
-    
-    const spacing = 20; // More generous spacing between buttons
-    const totalWidth = (maxButtons - 1) * spacing;
-    const startOffset = (100 - totalWidth) / 2;
-    
-    while (currentStart.isBefore(end)) {
-      const rangeEnd = moment.min(
-        moment(currentStart).add(intervalsPerRange - 1, intervalType),
-        moment(end)
-      );
+    let currentDay = moment(monthStart);
+    while (currentDay.isSameOrBefore(monthEnd)) {
+      const dayStart = moment(currentDay).startOf('day');
+      const dayEnd = moment(currentDay).endOf('day');
+      const count = countPhotosInRange(dayStart, dayEnd);
       
-      const count = countPhotosInRange(currentStart, rangeEnd);
+      if (count > 0) {
+        days.push({
+          id: dayStart.format('YYYY-MM-DD'),
+          startDate: dayStart.toDate(),
+          endDate: dayEnd.toDate(),
+          count
+        });
+      }
       
-      ranges.push({
-        id: currentStart.format('YYYY'),
-        startDate: currentStart.toDate(),
-        endDate: rangeEnd.toDate(),
-        count,
-        left: `${startOffset + (ranges.length * spacing)}%`
-      });
-      
-      currentStart = moment(rangeEnd).add(1, intervalType);
-      
-      if (currentStart.isAfter(end) || ranges.length >= maxButtons) break;
+      currentDay.add(1, 'day');
     }
     
-    return ranges;
+    return days;
   }
 };
 
@@ -615,9 +581,9 @@ const formatRangeLabel = (range) => {
     case 'year':
       return start.format('YYYY');
     case 'month':
-      return start.format('MMM YYYY');
+      return start.format('MMMM');
     case 'day':
-      return start.format('MMM D');
+      return start.format('MMMM D');
     default:
       return '';
   }
@@ -647,23 +613,32 @@ const selectRange = (range) => {
         const index = sortedPhotos.value.indexOf(firstPhoto);
         currentIndex.value = index;
       }
+      // Reset timeline to initial state
+      timelineLayer.value = 'all';
+      selectedRange.value = null;
+      selectedPath.value = [];
       break;
   }
 };
 
 const goBack = () => {
+  // Remove the last selected range
   selectedPath.value.pop();
-  selectedRange.value = selectedPath.value[selectedPath.value.length - 1] || null;
   
+  // Go back one layer
   switch (timelineLayer.value) {
-    case 'year':
-      timelineLayer.value = 'all';
+    case 'day':
+      timelineLayer.value = 'month';
+      selectedRange.value = selectedPath.value[selectedPath.value.length - 1];
       break;
     case 'month':
       timelineLayer.value = 'year';
+      selectedRange.value = selectedPath.value[selectedPath.value.length - 1];
       break;
-    case 'day':
-      timelineLayer.value = 'month';
+    case 'year':
+      timelineLayer.value = 'all';
+      selectedRange.value = null;
+      selectedPath.value = [];
       break;
   }
 };
@@ -674,41 +649,29 @@ const resetTimeline = () => {
   selectedPath.value = [];
 };
 
-// Computed properties for UI
-const timelineTitle = computed(() => {
-  if (!sortedPhotos.value.length) return 'No Photos';
-  
-  switch (timelineLayer.value) {
-    case 'all':
-      return 'Select Time Period';
-    case 'year':
-      return `Select Year (${moment(selectedRange.value.startDate).format('YYYY')} - ${moment(selectedRange.value.endDate).format('YYYY')})`;
-    case 'month':
-      return `Select Month (${moment(selectedRange.value.startDate).format('YYYY')})`;
-    case 'day':
-      return `Select Day (${moment(selectedRange.value.startDate).format('MMM YYYY')})`;
-    default:
-      return 'Select Time Period';
-  }
-});
-
-// Format timeline path based on current layer and selected range
+// Format timeline path based on current layer and selected path
 const formatTimelinePath = computed(() => {
-  if (!selectedRange.value) return '';
+  if (selectedPath.value.length === 0) return [];
   
-  const start = moment(selectedRange.value.startDate);
-  const end = moment(selectedRange.value.endDate);
-  
-  switch (timelineLayer.value) {
-    case 'year':
-      return `${start.format('YYYY')} - ${end.format('YYYY')}`;
-    case 'month':
-      return `${start.format('MMMM YYYY')}`;
-    case 'day':
-      return `${start.format('MMMM D, YYYY')}`;
-    default:
-      return '';
-  }
+  return selectedPath.value.map((range, index) => {
+    const start = moment(range.startDate);
+    const end = moment(range.endDate);
+    
+    // Format based on the layer this range represents
+    switch (index) {
+      case 0: // First selection (from All Photos)
+        if (start.year() === end.year()) {
+          return start.format('YYYY');
+        }
+        return `${start.format('YYYY')} - ${end.format('YYYY')}`;
+      case 1: // Year selection
+        return start.format('YYYY');
+      case 2: // Month selection
+        return start.format('MMMM');
+      default:
+        return '';
+    }
+  }).filter(Boolean);
 });
 
 onMounted(() => {
