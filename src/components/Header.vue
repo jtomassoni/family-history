@@ -189,10 +189,12 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   gap: var(--spacing-2xs);
   padding: 0 var(--spacing-2xs);
   color: var(--color-text-secondary);
+  font-family: 'Satoshi', var(--font-family-sans);
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: 400;
+  letter-spacing: 0.02em;
   text-decoration: none;
-  transition: color var(--transition-base);
+  transition: all var(--transition-base);
   height: 100%;
   justify-content: center;
 }
@@ -203,7 +205,6 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
 
 .nav-link.current {
   color: var(--color-primary-700);
-  font-weight: 600;
 }
 
 .nav-indicator {
@@ -229,7 +230,7 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   justify-content: center;
   width: 40px;
   height: 40px;
-  padding: 6px;
+  padding: 0;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -243,6 +244,7 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   height: 24px;
   fill: none;
   stroke: currentColor;
+  margin: auto;
 }
 
 .help-button:hover,
@@ -363,5 +365,24 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
     background-color: rgba(255, 255, 255, 0.15);
     border-radius: var(--border-radius-md);
   }
+}
+
+/* Add Satoshi font face declarations */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Regular.woff2') format('woff2'),
+       url('/fonts/Satoshi-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Medium.woff2') format('woff2'),
+       url('/fonts/Satoshi-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
 }
 </style>
