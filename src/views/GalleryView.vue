@@ -100,6 +100,10 @@ import DatePickerNav from '../components/DatePickerNav.vue';
 import BigNavArrow from '../components/BigNavArrow.vue';
 import PhotoTile from '../components/PhotoTile.vue';
 import HintModal from '../components/HintModal.vue';
+import { 
+  ChevronLeftIcon, 
+  ChevronRightIcon
+} from '@heroicons/vue/24/solid';
 import "./GalleryView.css";
 
 // Prepare and sort photos using Moment.js without UTC conversion.
@@ -135,17 +139,17 @@ watch(currentIndex, () => {
 
 const boundaryDesktopHint = computed(() => {
   if (showEarliest.value)
-    return "You've reached the earliest photo!<br>Use your arrow keys to browse or press space to select a date.<br>";
+    return "🏁 You've reached the earliest photo!<br>Use your ⬅️/➡️ arrow keys to browse or check the timeline ↔️ below.<br>";
   if (showLatest.value)
-    return "You're at the most recent photo!<br>Use your arrow keys to browse or press space to select a date.<br>Click a pic to see details.";
+    return "🎯 You're at the most recent photo!<br>Use your ⬅️/➡️ arrow keys to browse or check the timeline ↔️ below.<br>";
   return "";
 });
 
 const boundaryMobileHint = computed(() => {
   if (showEarliest.value)
-    return "Earliest photo reached!<br>Swipe to explore or tap the calendar for dates.<br>Tap on a photo to see details.";
+    return "🏁 Earliest photo reached!<br>Swipe to explore or check the timeline ↔️ below.<br>";
   if (showLatest.value)
-    return "Most recent photo!<br>Swipe to explore or tap the calendar for dates.<br>Tap on a photo to see details.";
+    return "🎯 Most recent photo!<br>Swipe to explore or check the timeline ↔️ below.<br>";
   return "";
 });
 
