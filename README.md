@@ -13,9 +13,7 @@ View the app at [www.thetomassonis.com](www.thetomassonis.com)(add host info her
 TODO
 ----
 
-add belp button to gallery ans other pages
 *   make sure hover,disable, etc status effects work for all buttons
-*   upload all the content
 *   parse it for stories
 *   link family tree to stories
 *   link stories to gallery
