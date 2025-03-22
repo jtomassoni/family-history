@@ -99,8 +99,7 @@ const quickLinks = [
   { path: '/family-tree', label: 'Family Tree' },
   { path: '/gallery', label: 'Gallery' },
   { path: '/stories', label: 'Stories' },
-  { path: '/about', label: 'About' },
-  { path: '/contact', label: 'Contact' }
+  { path: '/about', label: 'About' }
 ];
 
 const socialLinks = [
