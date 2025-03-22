@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { useNavigation } from '../composables/useNavigation';
+import { useNavigation } from '@/composables/useNavigation';
 
 const { navItems, isCurrentRoute } = useNavigation();
 const siteTitle = 'TOMASSONI';
