@@ -55,11 +55,12 @@
   justify-content: center;
   padding: 0;
   margin: 0;
+  max-width: calc(900px - 80px);
 }
 
 .photo-wrapper {
   position: relative;
-  max-width: 90%;
+  max-width: 55%;
   max-height: calc(100vh - var(--header-height) - 120px);
   display: flex;
   align-items: center;
@@ -73,6 +74,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
 
 :deep(.photo-tile img) {
@@ -109,19 +111,18 @@
   bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
-  width: 70%;
-  max-width: 1000px;
+  width: calc(55% - 80px);
+  max-width: calc(900px - 80px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px;
+  padding: 8px 24px 16px;
   background: rgba(20, 20, 20, 0.85);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   z-index: 100;
   border: 1px solid rgba(255, 255, 255, 0.1);
   height: 75px;
-  gap: 8px;
 }
 
 .timeline-header {
@@ -130,8 +131,8 @@
   justify-content: space-between;
   width: 100%;
   height: 24px;
-  margin: 0;
-  padding: 0 12px;
+  margin-bottom: 12px;
+  padding: 0;
   gap: 12px;
 }
 
@@ -208,50 +209,62 @@
 /* Range styles */
 .timeline-range {
   position: absolute;
-  bottom: 8px;
+  bottom: 12px;
+  left: var(--range-position, 50%);
   height: 26px;
-  background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(147, 197, 253, 0.1));
-  border-radius: 6px;
+  background: rgba(37, 99, 235, 0.15);
+  border-radius: 4px;
   cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   padding: 0 8px;
-  transition: all 0.2s ease;
-  min-width: 90px;
-  border: 1px solid rgba(96, 165, 250, 0.2);
+  transition: background-color 0.2s ease;
+  min-width: 80px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
   box-sizing: border-box;
   transform: translateX(-50%);
-  margin: 0;
-  width: auto;
 }
 
 .timeline-range:hover {
-  background: linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(147, 197, 253, 0.2));
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: rgba(37, 99, 235, 0.25);
 }
 
 .timeline-range.has-photos {
-  border: 1px solid rgba(96, 165, 250, 0.4);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.timeline-range.selected {
+  background: rgba(37, 99, 235, 0.3);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.timeline-range.selected .range-label {
+  color: white;
+}
+
+.timeline-range.selected .range-count {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .range-label {
-  color: #93c5fd;
+  color: white;
   font-size: 12px;
   font-weight: 500;
   text-align: right;
   white-space: nowrap;
-  overflow: visible;
+  overflow: hidden;
   padding: 0;
 }
 
 .range-count {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /* Mobile adjustments */
