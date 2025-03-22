@@ -73,18 +73,17 @@
   font-size: 1rem;
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease;
   margin-top: 0.5rem;
   width: 100%;
 }
 
 .submit-button:hover {
   background: var(--primary-hover, #8b4513);
-  transform: scale(1.03);
 }
 
 .submit-button:active {
-  transform: scale(0.98);
+  background: var(--primary-active, #723a0f);
 }
 
 /* SSO Section */
@@ -108,11 +107,11 @@
   font-size: 1rem;
   cursor: pointer;
   margin-bottom: 0.75rem;
-  transition: transform 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .sso-button:hover {
-  transform: scale(1.02);
+  background: var(--sso-hover-bg);
 }
 
 .spid-button {

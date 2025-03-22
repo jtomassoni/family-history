@@ -1,96 +1,22 @@
 <template>
-  <div class="stories-page">
-    <header class="stories-header">
-      <h1>Family Stories</h1>
-      <p class="stories-intro">
-        Explore our family's history through stories, memories, and shared experiences. Browse by timeline, generations, themes, or locations.
-      </p>
-    </header>
-
-    <div class="stories-controls">
-      <div class="search-box">
-        <input 
-          type="text" 
-          v-model="searchQuery" 
-          placeholder="Search stories..."
-          class="search-input"
-        >
-      </div>
-      <div class="filter-controls">
-        <select v-model="selectedTheme" class="filter-select">
-          <option value="">All Themes</option>
-          <option v-for="theme in themes" :key="theme.id" :value="theme.id">
-            {{ theme.name }} ({{ theme.count }})
-          </option>
-        </select>
-        <select v-model="selectedLocation" class="filter-select">
-          <option value="">All Locations</option>
-          <option v-for="location in locations" :key="location.id" :value="location.id">
-            {{ location.name }} ({{ location.count }})
-          </option>
-        </select>
-      </div>
-    </div>
-
-    <div class="stories-grid">
-      <div v-for="story in filteredStories" :key="story.id" class="story-card">
-        <div class="story-image">
-          <img :src="story.coverImage" :alt="story.title">
-          <div class="story-meta">
-            <span class="story-date">{{ formatDate(story.date) }}</span>
-            <span class="story-theme">{{ story.theme }}</span>
-          </div>
-        </div>
-        <div class="story-content">
-          <h2>{{ story.title }}</h2>
-          <p class="story-description">{{ story.description }}</p>
-          <div class="story-details">
-            <span class="story-location">📍 {{ story.location }}</span>
-            <span class="story-people">👥 {{ story.people.length }} people</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="stories-view">
+    <UnderConstruction 
+      title="Stories Coming Soon"
+      message="We're currently curating and writing our family stories. Check back soon to explore our rich history and heritage. In the meantime, explore our gallery and stories!"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { stories, themes, locations } from '../data/sampleStories';
-
-// Filter state
-const searchQuery = ref('');
-const selectedTheme = ref('');
-const selectedLocation = ref('');
-
-// Filter stories based on search and filters
-const filteredStories = computed(() => {
-  return stories.filter(story => {
-    const matchesSearch = !searchQuery.value || 
-      story.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      story.description.toLowerCase().includes(searchQuery.value.toLowerCase());
-    
-    const matchesTheme = !selectedTheme.value || 
-      story.theme.toLowerCase() === selectedTheme.value.toLowerCase();
-    
-    const matchesLocation = !selectedLocation.value || 
-      story.location.toLowerCase().includes(selectedLocation.value.toLowerCase());
-    
-    return matchesSearch && matchesTheme && matchesLocation;
-  });
-});
-
-// Format date for display
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
+import UnderConstruction from '../components/common/UnderConstruction.vue';
 </script>
 
 <style scoped>
+.stories-view {
+  position: relative;
+  min-height: calc(100vh - var(--header-height));
+}
+
 .stories-page {
   min-height: 100vh;
   background-color: var(--color-gray-50);
@@ -161,11 +87,10 @@ const formatDate = (dateString) => {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s;
+  transition: box-shadow 0.2s ease;
 }
 
 .story-card:hover {
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 

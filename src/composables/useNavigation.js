@@ -9,8 +9,7 @@ export const useNavigation = () => {
     { path: '/gallery', label: 'Gallery' },
     { path: '/stories', label: 'Stories' },
     { path: '/family-tree', label: 'Family Tree' },
-    { path: '/about', label: 'About' },
-    { path: '/contact', label: 'Contact' }
+    { path: '/about', label: 'About' }
   ];
 
   const isCurrentRoute = (path) => route.path === path;

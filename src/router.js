@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from './views/HomeView.vue';
 import AboutView from './views/AboutView.vue';
-import ContactView from './views/ContactView.vue';
 import GalleryView from './views/GalleryView.vue';
 import FamilyTreeView from './views/FamilyTreeView.vue';
 import StoriesView from './views/StoriesView.vue';
@@ -11,7 +10,6 @@ import NotFound from './views/NotFound.vue'; // Your 404 page component
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
   { path: '/about', name: 'About', component: AboutView, meta: { hideBreadcrumbs: true } },
-  { path: '/contact', name: 'Contact', component: ContactView, meta: { hideBreadcrumbs: true } },
   { path: '/gallery', name: 'Gallery', component: GalleryView },
   { path: '/family-tree', name: 'FamilyTree', component: FamilyTreeView, meta: { hideBreadcrumbs: true } },
   { path: '/stories', name: 'Stories', component: StoriesView, meta: { hideBreadcrumbs: true } },

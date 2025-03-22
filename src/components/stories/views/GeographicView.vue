@@ -187,12 +187,11 @@ const getMorePeopleNames = (story) => {
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .story-card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 
 .story-media {
