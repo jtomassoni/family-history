@@ -249,11 +249,11 @@
   max-width: 160px;
   height: 48px;
   padding: 6px 12px;
-  background: rgba(37, 99, 235, 0.15);
+  background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   font-weight: 500;
   line-height: 1;
   text-align: center;
@@ -262,6 +262,24 @@
   white-space: nowrap;
   z-index: 2;
   -webkit-tap-highlight-color: transparent;
+}
+
+.timeline-range:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.timeline-range.selected {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.timeline-range.selected .range-label {
+  color: #bfdbfe;
+}
+
+.timeline-range.selected .range-count {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .range-label {
@@ -273,19 +291,6 @@
   color: #60a5fa;
   font-size: 10px;
   opacity: 0.9;
-}
-
-.timeline-range.selected {
-  background: rgba(37, 99, 235, 0.25);
-  border-color: rgba(59, 130, 246, 0.3);
-}
-
-.timeline-range.selected .range-label {
-  color: white;
-}
-
-.timeline-range.selected .range-count {
-  color: #93c5fd;
 }
 
 /* Mobile Styles */
@@ -453,7 +458,6 @@
 
 .timeline-cluster:hover {
   background: white;
-  transform: translate(-50%, -50%) scale(1.2);
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
@@ -551,7 +555,6 @@
   }
 
   .timeline-nav:hover .timeline-current {
-    transform: translate(-50%, -50%) scale(1.2);
     box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
   }
 

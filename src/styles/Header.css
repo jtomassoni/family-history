@@ -138,11 +138,11 @@
     background: var(--gradient-secondary);
   }
   .help-button:hover {
-    transform: scale(1.05);
+    background: var(--gradient-secondary-hover);
     box-shadow: var(--shadow-sm);
   }
   .help-button:active {
-    transform: scale(1);
+    background: var(--gradient-secondary-active);
     box-shadow: none;
   }
   
@@ -152,11 +152,11 @@
     background: var(--gradient-primary);
   }
   .login-button:hover:not(.disabled) {
-    transform: scale(1.05);
+    background: var(--gradient-primary-hover);
     box-shadow: var(--shadow-sm);
   }
   .login-button:active:not(.disabled) {
-    transform: scale(1);
+    background: var(--gradient-primary-active);
     box-shadow: none;
   }
   .login-button.disabled {

@@ -9,25 +9,21 @@
       <p class="hero-description">
         Explore our rich family heritage through stories, photos, and memories. Discover the journey of generations that shaped who we are today.
       </p>
+      <p class="construction-note">
+        Many sections of our site are currently under construction. For now, please enjoy browsing through our photo gallery!
+      </p>
       <div class="cta-container">
-        <router-link to="/gallery" class="cta-button primary">
-          <span>Explore Gallery</span>
-          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </router-link>
-        <router-link to="/stories" class="cta-button secondary">
-          <span>Read Stories</span>
-          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </router-link>
+        <CTAButton to="/gallery" text="Explore Gallery" variant="primary">
+          <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </CTAButton>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import CTAButton from '../components/common/buttons/CTAButton.vue';
+
 // Using scoped styles instead of external CSS file
 </script>
 
@@ -113,42 +109,18 @@
   color: var(--color-text-secondary);
 }
 
+.construction-note {
+  font-size: var(--font-size-base);
+  color: var(--color-accent-200);
+  font-style: italic;
+  max-width: 500px;
+  margin-bottom: var(--spacing-md);
+}
+
 .cta-container {
   display: flex;
   gap: var(--spacing-md);
   margin-top: var(--spacing-lg);
-}
-
-.cta-button {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--border-radius-full);
-  font-weight: 600;
-  text-decoration: none;
-  transition: all var(--transition-base);
-}
-
-.cta-button.primary {
-  background: var(--color-primary-600);
-  color: var(--color-surface);
-}
-
-.cta-button.secondary {
-  background: transparent;
-  color: var(--color-primary-600);
-  border: 2px solid var(--color-primary-600);
-}
-
-.cta-button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.button-icon {
-  width: 20px;
-  height: 20px;
 }
 
 /* Mobile styles */
@@ -166,6 +138,11 @@
 
   .hero-description {
     font-size: var(--font-size-base);
+    padding: 0 var(--spacing-md);
+  }
+
+  .construction-note {
+    font-size: var(--font-size-sm);
     padding: 0 var(--spacing-md);
   }
 
@@ -220,6 +197,13 @@
     grid-area: description;
     padding: 0;
     font-size: var(--font-size-sm);
+  }
+
+  .construction-note {
+    grid-area: description;
+    font-size: var(--font-size-xs);
+    padding: 0;
+    margin-bottom: 0;
   }
 
   .cta-container {
