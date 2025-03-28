@@ -37,7 +37,7 @@ import CTAButton from '../components/common/buttons/CTAButton.vue';
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg");
+  background: url("/images/background.jpeg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
