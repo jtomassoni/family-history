@@ -1,14 +1,11 @@
 <template>
   <div class="stories-view">
-    <UnderConstruction 
-      title="Stories Coming Soon"
-      message="We're currently curating and writing our family stories. Check back soon to explore our rich history and heritage. In the meantime, explore our gallery and stories!"
-    />
+    <StoriesPage />
   </div>
 </template>
 
 <script setup>
-import UnderConstruction from '../components/common/UnderConstruction.vue';
+import StoriesPage from '../pages/StoriesPage.vue';
 </script>
 
 <style scoped>
