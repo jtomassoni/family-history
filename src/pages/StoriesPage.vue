@@ -10,24 +10,47 @@
     <main class="stories-content">
       <h1 class="page-title">Family Stories</h1>
       
-      <div class="stories-timeline">
-        <div 
-          v-for="story in storiesData" 
-          :key="story.id" 
-          class="story-section"
-          @click="readStory(story.id)"
-        >
-          <div class="story-container">
-            <div class="story-header">
-              <h2 class="story-title">{{ story.title }}</h2>
-              <span class="story-date">{{ story.date }}</span>
-            </div>
-            <div class="story-content-preview">
-              {{ story.content.slice(0, 800) }}...
+      <!-- Summary Section -->
+      <section class="summary-section">
+        <h2 class="section-title">Family History Summary</h2>
+        <div class="summary-content">
+          <p>The Tomassoni family's journey began in the picturesque village of Costaciaro, Italy, where Guido Tomassoni was born in 1890. The family's story is one of resilience, adaptation, and the pursuit of the American dream. From their humble beginnings in Italy, where they lived in a traditional two-story home with their livestock, to their eventual establishment in Hibbing, Minnesota, the Tomassoni family has left an indelible mark on their community.</p>
+          
+          <p>Guido's early life was marked by his musical talent, learning the clarinet at age 7, and his limited formal education through the 3rd grade. In 1906, at the age of 16, he and his brothers embarked on a journey to America, following their older brother Egisto to Hibbing, Minnesota. There, they found work in the underground mines, using calcium carbide lamps for light and manual tools for digging.</p>
+          
+          <p>The family's transition from mining to business ownership began in 1930 when Guido and his brother-in-law Charlie Gambucci purchased a grocery store. This marked a significant shift in the family's fortunes, as they became pillars of their community, providing essential services and extending credit to those in need during difficult times.</p>
+          
+          <p>The family's legacy continues through their descendants, with many pursuing careers in engineering, education, and various other fields. Their story is one of perseverance, community spirit, and the enduring bonds of family.</p>
+        </div>
+      </section>
+
+      <!-- Original Stories Section -->
+      <section class="original-stories-section">
+        <h2 class="section-title">In Their Own Words</h2>
+        <p class="section-subtitle">The following stories are the direct accounts of Marian Tomassoni, preserving the authentic voice and memories of our family history.</p>
+        
+        <div class="stories-grid">
+          <div 
+            v-for="story in stories" 
+            :key="story.id" 
+            class="story-section"
+            @click="readStory(story.id)"
+          >
+            <div class="story-container">
+              <div class="story-header">
+                <h2 class="story-title">{{ story.title }}</h2>
+                <span class="story-date">{{ story.date }}</span>
+              </div>
+              <div class="story-summary">
+                {{ story.summary || story.content.slice(0, 200) }}...
+              </div>
+              <div class="story-tags">
+                <span v-for="tag in story.tags" :key="tag" class="story-tag">{{ tag }}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </main>
 
     <!-- Story Modal -->
@@ -53,21 +76,18 @@
 <script setup>
 import Header from '../components/Header.vue'
 import { ref, computed } from 'vue'
-import { stories } from '../data/storiesData'
+import { storiesData } from '../data/storiesData.js'
 
-const storiesData = ref(stories)
+const stories = ref(storiesData)
 const selectedStory = ref(null)
 
 const formattedContent = computed(() => {
   if (!selectedStory.value) return ''
-  return selectedStory.value.content
-    .split('\n\n')
-    .map(paragraph => `<p>${paragraph}</p>`)
-    .join('')
+  return selectedStory.value.content.replace(/\n/g, '<br>')
 })
 
 function readStory(id) {
-  selectedStory.value = storiesData.value.find(story => story.id === id)
+  selectedStory.value = stories.value.find(story => story.id === id)
   document.body.style.overflow = 'hidden'
 }
 
@@ -146,31 +166,69 @@ function onToggleMobileMenu() {
   display: none;
 }
 
-.stories-timeline {
-  display: flex;
-  flex-direction: column;
+.summary-section {
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.section-title {
+  font-family: var(--font-family-display);
+  font-size: 2rem;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: #666666;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.summary-content {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333333;
+}
+
+.summary-content p {
+  margin-bottom: 1.5rem;
+}
+
+.summary-content p:last-child {
+  margin-bottom: 0;
+}
+
+.original-stories-section {
+  margin-top: 3rem;
+}
+
+.stories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 2rem;
   padding: 1rem 0;
-  text-align: left;
 }
 
 .story-section {
   display: block;
   cursor: pointer;
+  height: 100%;
 }
 
 .story-container {
+  height: 100%;
   position: relative;
-  padding: 0.75rem 1.5rem;
+  padding: 1.5rem;
   background: rgba(255, 255, 255, 0.97);
   border-radius: 12px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.story-section:hover .story-container {
-  background: #2C1810;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
 }
 
 .story-header {
@@ -203,17 +261,32 @@ function onToggleMobileMenu() {
   top: 0.75rem;
 }
 
-.story-content-preview {
+.story-summary {
   font-size: 1rem;
   line-height: 1.4;
   color: #333333;
-  white-space: pre-line;
-  transition: all 0.3s ease;
+  margin-bottom: 1rem;
   display: -webkit-box;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.story-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.story-tag {
+  font-size: 0.875rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(44, 24, 16, 0.1);
+  color: #2C1810;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
 }
 
 .story-section:hover .story-title {
@@ -224,8 +297,13 @@ function onToggleMobileMenu() {
   color: #A67C52;
 }
 
-.story-section:hover .story-content-preview {
+.story-section:hover .story-summary {
   color: rgba(255, 255, 255, 0.9);
+}
+
+.story-section:hover .story-tag {
+  background: rgba(232, 195, 158, 0.2);
+  color: #A67C52;
 }
 
 .story-link {
@@ -280,6 +358,8 @@ function onToggleMobileMenu() {
   font-size: 1.125rem;
   line-height: 1.8;
   color: #333333;
+  white-space: pre-line;
+  text-align: left;
 }
 
 .story-content p {
@@ -336,7 +416,7 @@ function onToggleMobileMenu() {
     font-size: 1.25rem;
   }
 
-  .story-content-preview {
+  .story-summary {
     font-size: 0.9375rem;
     line-height: 1.4;
     -webkit-line-clamp: 5;
@@ -349,6 +429,22 @@ function onToggleMobileMenu() {
   .story-date {
     position: static;
     margin-top: 0.5rem;
+  }
+
+  .stories-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-section {
+    padding: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .summary-content {
+    font-size: 1rem;
   }
 }
 </style> 
