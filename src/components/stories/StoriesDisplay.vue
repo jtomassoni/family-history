@@ -2,8 +2,10 @@
   <div class="stories-display">
     <!-- Header Section -->
     <header class="stories-header">
-      <h1 class="stories-title">Family Stories</h1>
-      <p class="stories-intro">A collection of family stories and memories, preserved for future generations.</p>
+      <div class="header-content">
+        <h1 class="stories-title">Family Stories</h1>
+        <p class="stories-intro">A collection of family stories and memories, preserved for future generations.</p>
+      </div>
     </header>
 
     <!-- Stories Grid -->
@@ -155,6 +157,13 @@ const closeStory = () => {
   margin-bottom: 0.5rem;
   padding: 0.25rem;
   border-radius: var(--border-radius-lg, 0.5rem);
+}
+
+.header-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .stories-title {
