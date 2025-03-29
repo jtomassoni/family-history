@@ -40,7 +40,7 @@ export const storiesData = {
         "Duluth, Minnesota",
         "Sigillo, Italy"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 2,
@@ -56,7 +56,7 @@ export const storiesData = {
       locations: [
         "North Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 3,
@@ -78,7 +78,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 4,
@@ -109,7 +109,7 @@ export const storiesData = {
         "Italy",
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 5,
@@ -139,7 +139,7 @@ export const storiesData = {
         "Hibbing, Minnesota",
         "North Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 6,
@@ -162,7 +162,7 @@ export const storiesData = {
         "Hibbing, Minnesota",
         "Park Addition, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 7,
@@ -180,7 +180,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 8,
@@ -202,7 +202,7 @@ export const storiesData = {
         "Los Angeles, California",
         "Pacific Theater"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 9,
@@ -221,7 +221,7 @@ export const storiesData = {
         "Japan",
         "Pacific Theater"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 10,
@@ -250,7 +250,7 @@ export const storiesData = {
         "Minneapolis, Minnesota",
         "Dundee, Florida"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 11,
@@ -269,7 +269,7 @@ export const storiesData = {
       locations: [
         "Brooklyn, Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 12,
@@ -288,7 +288,7 @@ export const storiesData = {
       locations: [
         "Park Addition, Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 13,
@@ -304,7 +304,7 @@ export const storiesData = {
       locations: [
         "Park Addition, Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 14,
@@ -320,7 +320,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 15,
@@ -336,7 +336,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 16,
@@ -353,7 +353,7 @@ export const storiesData = {
         "Hibbing, Minnesota",
         "Minneapolis, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 17,
@@ -370,7 +370,7 @@ export const storiesData = {
         "Minneapolis, Minnesota",
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 18,
@@ -387,7 +387,7 @@ export const storiesData = {
         "United States",
         "Pacific Theater"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 19,
@@ -403,7 +403,7 @@ export const storiesData = {
       locations: [
         "United States"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 20,
@@ -424,7 +424,7 @@ export const storiesData = {
         "Minneapolis, Minnesota",
         "United States"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 21,
@@ -446,7 +446,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 22,
@@ -462,7 +462,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 23,
@@ -502,7 +502,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 24,
@@ -547,7 +547,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 25,
@@ -582,7 +582,7 @@ export const storiesData = {
         "Ellis Island, New York",
         "Philadelphia, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 26,
@@ -609,7 +609,7 @@ export const storiesData = {
         "Italy",
         "South Philadelphia, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 27,
@@ -634,7 +634,7 @@ export const storiesData = {
       locations: [
         "South Philadelphia, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 28,
@@ -654,7 +654,7 @@ export const storiesData = {
       locations: [
         "West Philadelphia, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 29,
@@ -672,7 +672,7 @@ export const storiesData = {
       locations: [
         "West Philadelphia, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 30,
@@ -692,7 +692,7 @@ export const storiesData = {
         "West Philadelphia, Pennsylvania",
         "Chester, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 31,
@@ -709,7 +709,7 @@ export const storiesData = {
         "West Philadelphia, Pennsylvania",
         "Newport News, Virginia"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 32,
@@ -732,7 +732,7 @@ export const storiesData = {
         "Philadelphia, Pennsylvania",
         "Newport News, Virginia"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 33,
@@ -752,7 +752,7 @@ export const storiesData = {
       locations: [
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 34,
@@ -777,7 +777,7 @@ export const storiesData = {
         "Williamsburg, Virginia",
         "Virginia Beach, Virginia"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 35,
@@ -797,7 +797,7 @@ export const storiesData = {
         "Pennsylvania",
         "Hibbing, Minnesota"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 36,
@@ -816,7 +816,7 @@ export const storiesData = {
         "Downey, California",
         "Chester, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 37,
@@ -837,7 +837,7 @@ export const storiesData = {
         "Youngstown, Ohio",
         "Newport News, Virginia"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 38,
@@ -855,7 +855,7 @@ export const storiesData = {
       locations: [
         "Chester, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 39,
@@ -876,7 +876,7 @@ export const storiesData = {
         "Downey, California",
         "Oklahoma"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 40,
@@ -897,7 +897,7 @@ export const storiesData = {
         "Lutherville, Maryland",
         "Valley Forge, Pennsylvania"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 41,
@@ -922,7 +922,7 @@ export const storiesData = {
         "Severna Park, Maryland",
         "Ocean City, Maryland"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 42,
@@ -946,7 +946,7 @@ export const storiesData = {
         "Severna Park, Maryland",
         "Cumberland, Maryland"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 43,
@@ -968,7 +968,7 @@ export const storiesData = {
         "Severna Park, Maryland",
         "Ocean Pines"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 44,
@@ -997,7 +997,7 @@ export const storiesData = {
         "Ft. Washington, Maryland",
         "Cumberland, Maryland"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 45,
@@ -1014,7 +1014,7 @@ export const storiesData = {
         "Laurel, Maryland",
         "Ocean Pines"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 46,
@@ -1046,7 +1046,7 @@ export const storiesData = {
         "Holly Grove (Maryland)",
         "United States"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     },
     {
       pageNumber: 47,
@@ -1062,7 +1062,7 @@ export const storiesData = {
       locations: [
         "United States"
       ],
-      photoUrl: ""
+      photoUrl: "/photos/page_photo_place_holder.jpeg"
     }
   ]
 };
