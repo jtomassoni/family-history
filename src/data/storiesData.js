@@ -1,6 +1,4 @@
 export const storiesData = {
-  title: "THE TOMASSONI FAMILY HISTORY",
-  lastModified: "2011",
   pages: [
     {
       pageNumber: 1,
@@ -52,7 +50,7 @@ export const storiesData = {
         start: "1856-01-01",
         end: "1943-02-05"
       },
-      familyMembers: [],
+      familyMembers: ["Nono", "Nona", "Paul", "Chet", "Joachino", "Joseppi", "Dad"],
       locations: [
         "North Hibbing, Minnesota"
       ],
