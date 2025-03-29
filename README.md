@@ -14,7 +14,7 @@ TODO
 ----
 
 *   make sure hover,disable, etc status effects work for all buttons
-*   parse it for stories
+*   ADD BUTTON FOR VIEW ALL STORIES IN SINGLE PAGE
 *   link family tree to stories
 *   link stories to gallery
 *   link gallery to stories
