@@ -8,7 +8,7 @@
   padding: var(--header-height) 1rem var(--footer-height);
   background: 
     linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
-    url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg") 
+    url("/images/background.jpeg") 
     no-repeat center center;
   background-size: cover;
   background-position: center;

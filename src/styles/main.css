@@ -17,7 +17,7 @@ body {
       rgba(255, 248, 240, 0.6),
       rgba(255, 248, 240, 0.6)
     ),
-    url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
+    url("/images/background.jpeg")
     no-repeat center center fixed;
   background-size: cover;
   min-height: 100%;
@@ -71,7 +71,7 @@ body {
   /* Semi-transparent warm overlay plus background image */
   background:
     linear-gradient(rgba(255, 248, 240, 0.6), rgba(255, 248, 240, 0.6)),
-    url("https://i2.pickpik.com/photos/614/325/207/tuscany-villa-italian-nature-preview.jpg")
+    url("/images/background.jpeg")
     no-repeat center center fixed;
   background-size: cover;
 }
