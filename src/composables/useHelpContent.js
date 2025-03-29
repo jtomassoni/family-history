@@ -89,6 +89,11 @@ export function useHelpContent() {
           desktopHint: "🖼️ Gallery Help:<br><br>Use your ⬅️ arrow keys ➡️ to glide through photos.<br>For a quick jump to the oldest or newest, hold ⬆️ Shift ⬆️ with your arrows!",
           mobileHint: "🖼️ Gallery Help:<br><br>📱 Swipe left/right to cruise through family memories.<br>👆Tap the timeline ↔️ below to pick a special date!"
         };
+      case '/stories':
+        return {
+          desktopHint: "📖 Stories Help:<br><br>Browse through our family's historical stories and memories.<br>Each story includes dates, locations, and family members mentioned.<br>View original photos and documents when available.<br>Stories are organized chronologically by date.<br>Use the icons to quickly identify stories with photos, family members, or locations.",
+          mobileHint: "📖 Stories Help:<br><br>Browse through our family's historical stories and memories.<br>Each story includes dates, locations, and family members mentioned.<br>View original photos and documents when available.<br>Stories are organized chronologically by date.<br>Use the icons to quickly identify stories with photos, family members, or locations."
+        };
       case '/about':
         return {
           desktopHint: "ℹ️ About Help:<br><br>Welcome to our About page! Here you can learn about our project and get in touch with us through the contact form.",
