@@ -42,9 +42,19 @@
 
           <!-- Bottom Section Wrapper -->
           <div class="mobile-menu-bottom">
-            <!-- Login Button -->
+            <!-- Login/Profile Button -->
             <div class="mobile-auth-section">
-              <button class="mobile-auth-button" @click="toggleAuth">
+              <router-link v-if="isLoggedIn" to="/profile" class="mobile-profile-button" @click="closeMenu">
+                <div v-if="user?.avatar" class="avatar-mini">
+                  <img :src="user.avatar" alt="Profile" />
+                </div>
+                <div v-else class="avatar-mini" :class="{ 'admin-avatar': isAdmin }">
+                  <span class="avatar-initials">{{ isAdmin ? 'A' : userInitials }}</span>
+                  <span v-if="isAdmin" class="admin-indicator"></span>
+                </div>
+                <span>{{ isAdmin ? 'Admin Dashboard' : 'My Profile' }}</span>
+              </router-link>
+              <button v-else class="mobile-auth-button" @click="toggleAuth">
                 <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -204,19 +214,45 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useNavigation } from '../composables/useNavigation';
+import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
   isOpen: Boolean
 });
 
 const emit = defineEmits(['close', 'auth']);
+const authStore = useAuthStore();
+const router = useRouter();
 
 const { navItems, isCurrentRoute } = useNavigation();
 const showAuth = ref(false);
 const showEmailAuth = ref(false);
 const showSignup = ref(false);
+
+// Auth-related refs
+const email = ref('');
+const password = ref('');
+const signupName = ref('');
+const signupEmail = ref('');
+const signupPassword = ref('');
+
+// Auth state
+const isLoggedIn = computed(() => !!authStore.user);
+const user = computed(() => authStore.user || {});
+const isAdmin = computed(() => authStore.isAdmin);
+
+// Get user initials for avatar
+const userInitials = computed(() => {
+  if (!user.value?.full_name) return '?';
+  return user.value.full_name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase();
+});
 
 const closeMenu = () => {
   showAuth.value = false;
@@ -232,7 +268,9 @@ const toggleAuth = () => {
 };
 
 const handleSSOLogin = (provider) => {
-  emit('auth', { type: 'sso', provider });
+  if (provider === 'google') {
+    authStore.loginWithGoogle();
+  }
   closeMenu();
 };
 
@@ -246,12 +284,40 @@ const showSignupForm = () => {
   showEmailAuth.value = false;
 };
 
-const handleEmailSubmit = () => {
-  // Handle email submission
+const handleEmailSubmit = async () => {
+  try {
+    const result = await authStore.login(email.value, password.value);
+    if (result.success) {
+      closeMenu();
+      router.push('/profile');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+  }
 };
 
-const handleSignupSubmit = () => {
-  // Handle signup submission
+const handleSignupSubmit = async () => {
+  try {
+    const names = signupName.value.split(' ');
+    const firstName = names[0];
+    const lastName = names.length > 1 ? names.slice(1).join(' ') : '';
+    
+    const userData = {
+      email: signupEmail.value,
+      password: signupPassword.value,
+      first_name: firstName,
+      last_name: lastName
+    };
+    
+    const result = await authStore.register(userData);
+    if (result.success) {
+      // Show success and switch to login
+      showSignup.value = false;
+      showEmailAuth.value = true;
+    }
+  } catch (error) {
+    console.error('Signup error:', error);
+  }
 };
 </script>
 
@@ -823,5 +889,61 @@ const handleSignupSubmit = () => {
 
 .forgot-password:hover {
   text-decoration: underline;
+}
+
+/* Mobile profile button */
+.mobile-profile-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  background-color: var(--color-wine);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.avatar-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--color-wine-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.admin-avatar {
+  background: linear-gradient(135deg, var(--color-wine), #ff6b00);
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.5);
+}
+
+.admin-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: #ffcc00;
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-initials {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
 }
 </style>
