@@ -42,11 +42,20 @@ router.beforeEach((to, from, next) => {
   authStore.initializeFromStorage();
   authStore.setAuthHeaders();
   
-  if (to.meta.requiresAuth && !authStore.user) {
-    next('/login');
-  } else {
-    next();
+  // If user is logged in and tries to access login page, redirect to profile
+  if (to.path === '/login' && authStore.isAuthenticated) {
+    next('/profile');
+    return;
   }
+  
+  // If user is not logged in and tries to access profile, redirect to login
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login');
+    return;
+  }
+  
+  // Otherwise proceed with navigation
+  next();
 });
 
 export default router;

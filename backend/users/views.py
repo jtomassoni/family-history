@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 import datetime
 import uuid
 import json
+import requests
 
 from .models import User, UserActivity
 from .serializers import UserSerializer
@@ -287,3 +288,102 @@ def send_verification_email(user, verification_url):
     #     [user.email],
     #     fail_silently=False,
     # )
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def google_callback(request):
+    """
+    Handle Google OAuth callback
+    """
+    try:
+        code = request.data.get('code')
+        redirect_uri = request.data.get('redirect_uri')
+        
+        if not code or not redirect_uri:
+            return Response(
+                {'error': 'Missing required parameters'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Exchange code for tokens
+        token_url = 'https://oauth2.googleapis.com/token'
+        token_data = {
+            'code': code,
+            'client_id': settings.GOOGLE_CLIENT_ID,
+            'client_secret': settings.GOOGLE_CLIENT_SECRET,
+            'redirect_uri': redirect_uri,
+            'grant_type': 'authorization_code'
+        }
+        
+        token_response = requests.post(token_url, data=token_data)
+        token_response.raise_for_status()
+        tokens = token_response.json()
+        
+        # Get user info from Google
+        userinfo_url = 'https://www.googleapis.com/oauth2/v2/userinfo'
+        headers = {'Authorization': f'Bearer {tokens["access_token"]}'}
+        userinfo_response = requests.get(userinfo_url, headers=headers)
+        userinfo_response.raise_for_status()
+        userinfo = userinfo_response.json()
+        
+        print("Google userinfo:", userinfo)  # Debug log
+        print("Original picture URL:", userinfo.get('picture'))  # Debug log
+        
+        # Find or create user
+        user, created = User.objects.get_or_create(
+            email=userinfo['email'],
+            defaults={
+                'username': userinfo['email'],
+                'first_name': userinfo.get('given_name', ''),
+                'last_name': userinfo.get('family_name', ''),
+                'is_active': True
+            }
+        )
+        
+        # Update user data from Google
+        user.provider = 'google'
+        user.provider_id = userinfo['id']
+        if userinfo.get('picture'):
+            # Store the full picture URL
+            user.picture = userinfo['picture']
+            print(f"Setting user picture to: {user.picture}")  # Debug log
+        user.email_verified = True
+        user.save()
+        
+        # Create or get token
+        token, _ = Token.objects.get_or_create(user=user)
+        
+        # Log activity
+        UserActivity.objects.create(
+            user=user,
+            action='google_login',
+            details={'provider': 'google'}
+        )
+        
+        # Return user info and token
+        user_data = UserSerializer(user).data
+        user_data['is_staff'] = user.is_staff
+        user_data['is_superuser'] = user.is_superuser
+        
+        print("Returning user data:", user_data)  # Debug log
+        print("User picture in response:", user_data.get('picture'))  # Debug log
+        
+        return Response({
+            'token': token.key,
+            'user': user_data,
+            'is_superuser': user.is_superuser,
+            'is_staff': user.is_staff
+        })
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Google OAuth error: {str(e)}")
+        return Response(
+            {'error': 'Failed to authenticate with Google'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    except Exception as e:
+        print(f"Unexpected error in Google callback: {str(e)}")
+        return Response(
+            {'error': 'An unexpected error occurred'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

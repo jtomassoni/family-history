@@ -3,8 +3,14 @@
     <div class="profile-container">
       <div class="profile-header">
         <div class="user-avatar">
-          <span v-if="!user.avatar" class="avatar-initials">{{ userInitials }}</span>
-          <img v-else :src="user.avatar" :alt="user.full_name" class="avatar-image">
+          <span v-if="showInitials" class="avatar-initials">{{ userInitials }}</span>
+          <img 
+            v-else 
+            :src="getProfilePictureUrl(user.picture)" 
+            :alt="user.full_name" 
+            class="avatar-image" 
+            @error="handleImageError"
+          >
         </div>
         <div class="user-info">
           <h1>{{ user.full_name || 'User' }}</h1>
@@ -15,9 +21,6 @@
           Logout
         </button>
       </div>
-
-      <!-- God Mode Banner - Always visible for admin users -->
-      <!-- Banner removed as requested -->
 
       <!-- Admin Section -->
       <div v-if="isAdmin" class="admin-section">
@@ -79,7 +82,6 @@
         <div class="profile-actions">
           <button @click="showUploadModal = true" class="action-btn">Upload Profile Image</button>
           <button @click="showEditModal = true" class="action-btn">Edit Profile</button>
-          <button @click="enableGodMode" class="god-mode-btn">Enable God Mode</button>
         </div>
       </div>
 
@@ -135,6 +137,7 @@ const showUploadModal = ref(false);
 const showEditModal = ref(false);
 const selectedFile = ref(null);
 const users = ref([]);
+const showInitials = ref(!user.value?.picture);
 
 const editForm = ref({
   full_name: '',
@@ -160,45 +163,46 @@ const userInitials = computed(() => {
     .toUpperCase();
 });
 
+function getProfilePictureUrl(url) {
+  if (!url) return '';
+  
+  // If it's a Google profile picture URL, add the size parameter
+  if (url.includes('googleusercontent.com')) {
+    // Ensure we're not adding size parameters multiple times
+    const baseUrl = url.split('=')[0];
+    // Use a moderate size parameter to ensure we get a good quality image
+    return `${baseUrl}=s200-c`;
+  }
+  
+  return url;
+}
+
+function handleImageError(event) {
+  console.log('Image failed to load:', {
+    url: event.target.src,
+    error: event,
+    user: authStore.user,
+    picture: authStore.user?.picture,
+    avatar: authStore.user?.avatar
+  });
+  
+  // Try to use avatar as fallback if picture fails
+  if (authStore.user?.avatar && authStore.user.avatar !== authStore.user.picture) {
+    event.target.src = authStore.user.avatar;
+  } else {
+    showInitials.value = true;
+  }
+}
+
 onMounted(async () => {
   // Initialize auth store
   authStore.initializeFromStorage();
   authStore.setAuthHeaders();
   
-  console.log('User data:', authStore.user);
-  console.log('Is admin computed:', authStore.isAdmin);
-  console.log('User is_staff:', authStore.user?.is_staff);
-  console.log('User is_superuser:', authStore.user?.is_superuser);
-  console.log('Full user object:', JSON.stringify(authStore.user, null, 2));
-  
-  // Force admin check - for debugging
-  const hasAdminRights = authStore.user?.is_staff || authStore.user?.is_superuser;
-  console.log('Manual admin check:', hasAdminRights);
-  
-  // Force enable god mode for this user
-  forceEnableGodMode();
-  
   if (isAdmin.value) {
-    console.log('Loading admin data because user is admin');
     await loadUsers();
-  } else {
-    console.log('Not loading admin data because user is not admin');
   }
 });
-
-// Force enable god mode for this user
-function forceEnableGodMode() {
-  if (user.value && user.value.email === 'jtomassoni@gmail.com') {
-    // Modify the user object to include admin privileges
-    user.value.is_staff = true;
-    user.value.is_superuser = true;
-    
-    // Update localStorage to persist these changes
-    localStorage.setItem('user', JSON.stringify(user.value));
-    
-    console.log('🚀 GOD MODE FORCE ENABLED 🚀');
-  }
-}
 
 async function loadUsers() {
   try {
@@ -263,13 +267,6 @@ function logout() {
   authStore.logout();
   router.push('/');
 }
-
-// Toggle god mode manually
-function enableGodMode() {
-  forceEnableGodMode();
-  // Force refresh the page to apply changes
-  window.location.reload();
-}
 </script>
 
 <style scoped>
@@ -318,18 +315,6 @@ function enableGodMode() {
   font-weight: bold;
 }
 
-.avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-wine);
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
-}
-
 .user-info {
   flex: 1;
   margin-left: 2rem;
@@ -346,45 +331,7 @@ function enableGodMode() {
 }
 
 .god-mode-banner {
-  background: linear-gradient(45deg, #ff0000, #ff8c00);
-  color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  font-weight: bold;
-  margin: 1rem 0;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  text-align: center;
-}
-
-.god-mode-banner h2 {
-  margin: 0;
-  font-size: 1.8rem;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.god-mode-icon {
-  font-size: 2rem;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-  }
+  display: none; /* Hide the god mode banner completely */
 }
 
 .admin-section {
@@ -599,24 +546,5 @@ button[type="submit"]:hover {
 
 .logout-icon {
   font-size: 1.2rem;
-}
-
-.god-mode-btn {
-  padding: 0.5rem 1rem;
-  background: linear-gradient(45deg, #ff0000, #ff8c00);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 1rem;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-}
-
-.god-mode-btn:hover {
-  background: linear-gradient(45deg, #ff8c00, #ff0000);
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
 }
 </style> 

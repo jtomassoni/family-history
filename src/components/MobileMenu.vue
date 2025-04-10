@@ -45,8 +45,8 @@
             <!-- Login/Profile Button -->
             <div class="mobile-auth-section">
               <router-link v-if="isAuthenticated" to="/profile" class="mobile-profile-button" @click="closeMenu">
-                <div v-if="user?.avatar" class="avatar-mini">
-                  <img :src="user.avatar" alt="Profile" />
+                <div v-if="user?.picture" class="avatar-mini">
+                  <img :src="getProfilePictureUrl(user.picture)" alt="Profile" @error="handleImageError" />
                 </div>
                 <div v-else class="avatar-mini" :class="{ 'admin-avatar': isAdmin }">
                   <span class="avatar-initials">{{ isAdmin ? 'A' : userInitials }}</span>
@@ -80,7 +80,7 @@
 
           <!-- SSO Options -->
           <div class="sso-options">
-            <button class="sso-button google-sso" @click="handleGoogleLogin" disabled title="Coming soon">
+            <button class="sso-button google-sso" @click="handleSSOLogin('google')">
               <svg class="sso-icon" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -212,39 +212,35 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
 import { useNavigation } from '../composables/useNavigation';
 import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    required: true
-  }
+  isOpen: Boolean
 });
 
 const emit = defineEmits(['close', 'auth']);
-
-const route = useRoute();
-const { navItems, isCurrentRoute } = useNavigation();
 const authStore = useAuthStore();
+const router = useRouter();
 
-// Auth state
-const isAuthenticated = computed(() => authStore.isAuthenticated);
-const user = computed(() => authStore.user || {});
-const isAdmin = computed(() => authStore.isAdmin);
-
-// Form state
+const { navItems, isCurrentRoute } = useNavigation();
 const showAuth = ref(false);
 const showEmailAuth = ref(false);
 const showSignup = ref(false);
 
-// Form data
+// Auth-related refs
 const email = ref('');
 const password = ref('');
 const signupName = ref('');
 const signupEmail = ref('');
 const signupPassword = ref('');
+
+// Auth state
+const isAuthenticated = computed(() => !!authStore.user);
+const user = computed(() => authStore.user || {});
+const isAdmin = computed(() => authStore.isAdmin);
+const showInitials = ref(false);
 
 // Get user initials for avatar
 const userInitials = computed(() => {
@@ -256,40 +252,57 @@ const userInitials = computed(() => {
     .toUpperCase();
 });
 
+function getProfilePictureUrl(url) {
+  if (!url) return '';
+  
+  // If it's a Google profile picture URL, add the size parameter
+  if (url.includes('googleusercontent.com')) {
+    // Ensure we're not adding size parameters multiple times
+    const baseUrl = url.split('=')[0];
+    // Use a smaller size parameter for the mini avatar
+    return `${baseUrl}=s96-c`;
+  }
+  
+  return url;
+}
+
+function handleImageError(event) {
+  console.log('Mobile menu avatar failed to load:', {
+    url: event.target.src,
+    user: authStore.user
+  });
+  
+  showInitials.value = true;
+}
+
 const closeMenu = () => {
-  emit('close');
-  // Reset form states
   showAuth.value = false;
   showEmailAuth.value = false;
   showSignup.value = false;
-  // Clear form data
-  email.value = '';
-  password.value = '';
-  signupName.value = '';
-  signupEmail.value = '';
-  signupPassword.value = '';
+  emit('close');
 };
 
 const toggleAuth = () => {
-  emit('auth');
   showAuth.value = true;
+  showEmailAuth.value = false;
+  showSignup.value = false;
 };
 
-const handleGoogleLogin = () => {
-  // TODO: Implement Google login
-  console.log('Google login clicked');
+const handleSSOLogin = (provider) => {
+  if (provider === 'google') {
+    authStore.loginWithGoogle();
+  }
+  closeMenu();
 };
 
 const showEmailForm = () => {
-  emit('auth');
-  showAuth.value = false;
   showEmailAuth.value = true;
+  showSignup.value = false;
 };
 
 const showSignupForm = () => {
-  emit('auth');
-  showAuth.value = false;
   showSignup.value = true;
+  showEmailAuth.value = false;
 };
 
 const handleEmailSubmit = async () => {
@@ -297,6 +310,7 @@ const handleEmailSubmit = async () => {
     const result = await authStore.login(email.value, password.value);
     if (result.success) {
       closeMenu();
+      router.push('/profile');
     }
   } catch (error) {
     console.error('Login error:', error);
@@ -331,211 +345,391 @@ const handleSignupSubmit = async () => {
 <style scoped>
 .mobile-menu {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
+  inset: 0;
   background-color: var(--color-surface);
-  z-index: var(--z-index-modal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 9999;
+  padding: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border: none;
   overflow-y: auto;
+  overflow-x: hidden;
+  transform: translateY(0);
+}
+
+/* Fade animation */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Add slide down animation */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateY(-100%);
 }
 
 .close-button {
   position: absolute;
-  top: var(--spacing-md);
-  right: var(--spacing-md);
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+  background: transparent;
   border: none;
   cursor: pointer;
+  transition: color var(--transition-base);
+  width: 48px;
+  height: 48px;
   padding: var(--spacing-sm);
-  z-index: 1;
+  top: calc((var(--header-height) - 48px) / 2);
+  right: var(--spacing-md);
+  z-index: 10000;
+  border-radius: var(--border-radius-lg);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.close-button:active {
+  background-color: var(--color-surface-hover);
 }
 
 .close-icon {
   width: 24px;
   height: 24px;
-  stroke: var(--color-text-primary);
+}
+
+.mobile-title {
+  text-decoration: none;
+  margin: 0;
+  position: absolute;
+  top: calc((var(--header-height) - 60px) / 2);
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  z-index: 10000;
+}
+
+.site-title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.site-name {
+  display: inline-block;
+  font-family: var(--font-family-display);
+  font-size: calc(var(--font-size-xl) * 1.5);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  position: relative;
+  text-transform: uppercase;
+  padding-bottom: var(--spacing-xs);
+}
+
+.site-name::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary-600);
+  border-radius: var(--border-radius-full);
+}
+
+.site-subtitle {
+  display: block;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  margin-top: var(--spacing-xs);
+}
+
+.mobile-nav {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+}
+
+.menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.menu-item {
+  width: 100%;
+  text-align: center;
+}
+
+.menu-link {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  padding: var(--spacing-xs) var(--spacing-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xl);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--transition-base);
+  text-align: center;
+  position: relative;
+}
+
+.menu-link:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-hover);
+}
+
+.menu-link.current {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  position: relative;
+}
+
+.menu-link.current::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 60px;
+  background: radial-gradient(
+    circle at center,
+    #b32d00 0%,
+    rgba(179, 45, 0, 0.4) 30%,
+    rgba(179, 45, 0, 0.1) 60%,
+    transparent 80%
+  );
+  filter: blur(15px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Background effect behind text */
+.menu-link.current::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--color-primary-rgb), 0.15) 0%,
+    rgba(var(--color-primary-rgb), 0.08) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* Create a wrapper for the bottom content */
+.mobile-menu-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: 0;
+  padding: 0;
+  background: none;
+  width: 100%;
+  max-width: 320px;
+}
+
+.mobile-auth-section {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: none;
+}
+
+.mobile-auth-button {
+  margin: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+  color: var(--color-surface);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-auth-button:hover {
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  box-shadow: var(--shadow-md);
+}
+
+.mobile-auth-button:active {
+  background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-800));
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-auth-button .button-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.mobile-footer {
+  margin: 0;
+  padding: var(--spacing-xs) 0 0;
+  width: 100%;
+  background: none;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+.footer-text {
+  color: var(--color-text-secondary);
+  margin: 0;
+  white-space: nowrap;
+  font-size: 8px;
 }
 
 .mobile-menu-content {
-  height: 100%;
   position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 100%;
+  margin: 0 auto;
   transform-style: preserve-3d;
-  transition: transform 0.6s;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .menu-side {
   position: absolute;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden;
-  padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
+  align-items: center;
+  backface-visibility: hidden;
+  background-color: var(--color-surface);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: calc(var(--header-height) + var(--spacing-lg)) 0 var(--spacing-lg);
 }
 
+/* Step 1: Main Menu (Front) */
 .menu-front {
   transform: rotateY(0deg);
 }
 
+/* Step 2: Auth Options (Back) */
 .menu-auth {
   transform: rotateY(180deg);
 }
 
-.flipped .menu-front {
+/* Step 3a: Email Login */
+.menu-email {
+  transform: rotateY(360deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Step 3b: Sign Up */
+.menu-signup {
+  transform: rotateY(360deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Flipped States */
+.mobile-menu-content.flipped {
   transform: rotateY(180deg);
 }
 
-.flipped .menu-auth {
+/* Email Form Active */
+.mobile-menu-content.flipped-email {
   transform: rotateY(360deg);
 }
 
-.mobile-title {
-  text-decoration: none;
-  margin-bottom: var(--spacing-xl);
+.mobile-menu-content.flipped-email .menu-auth {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.site-title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-2xl);
-  color: var(--color-text-primary);
-  margin: 0;
-  text-align: center;
+.mobile-menu-content.flipped-email .menu-email {
+  opacity: 1;
+  pointer-events: auto;
+  transform: rotateY(360deg);
 }
 
-.site-name {
-  display: block;
-  font-weight: 700;
+/* Signup Form Active */
+.mobile-menu-content.flipped-signup {
+  transform: rotateY(360deg);
 }
 
-.site-subtitle {
-  display: block;
-  font-size: var(--font-size-base);
-  color: var(--color-text-secondary);
-  margin-top: var(--spacing-xs);
+.mobile-menu-content.flipped-signup .menu-auth {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.mobile-nav {
-  flex: 1;
-}
-
-.menu-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu-item {
-  margin-bottom: var(--spacing-md);
-}
-
-.menu-link {
-  display: block;
-  padding: var(--spacing-sm) var(--spacing-md);
-  color: var(--color-text-primary);
-  text-decoration: none;
-  font-size: var(--font-size-lg);
-  border-radius: var(--border-radius-md);
-  transition: background-color var(--transition-base);
-}
-
-.menu-link:hover,
-.menu-link.current {
-  background-color: var(--color-surface-hover);
-}
-
-.mobile-menu-bottom {
-  margin-top: auto;
-  padding-top: var(--spacing-xl);
-}
-
-.mobile-auth-section {
-  margin-bottom: var(--spacing-lg);
-}
-
-.mobile-profile-button,
-.mobile-auth-button {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  color: var(--color-text-primary);
-  font-size: var(--font-size-base);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.mobile-profile-button:hover,
-.mobile-auth-button:hover {
-  background: var(--color-surface-hover);
-}
-
-.button-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.avatar-mini {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: var(--color-primary-600);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  position: relative;
-}
-
-.avatar-mini img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.admin-avatar {
-  background-color: var(--color-wine);
-}
-
-.admin-indicator {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 12px;
-  height: 12px;
-  background-color: var(--color-wine);
-  border: 2px solid var(--color-surface);
-  border-radius: 50%;
-}
-
-.mobile-footer {
-  text-align: center;
-  padding: var(--spacing-md) 0;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+.mobile-menu-content.flipped-signup .menu-signup {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .auth-title {
   font-family: var(--font-family-display);
   font-size: var(--font-size-2xl);
+  font-weight: 700;
   color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-sm);
+  margin: 0;
   text-align: center;
 }
 
 .auth-subtitle {
+  font-size: var(--font-size-base);
   color: var(--color-text-secondary);
   text-align: center;
-  margin-bottom: var(--spacing-xl);
+  margin: var(--spacing-sm) 0 var(--spacing-xl);
 }
 
 .sso-options {
+  width: 100%;
+  max-width: 320px;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
@@ -544,16 +738,20 @@ const handleSignupSubmit = async () => {
 .sso-button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-sm);
   width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--color-surface);
+  height: 48px;
+  padding: 0 var(--spacing-md);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
+  background: var(--color-surface);
   color: var(--color-text-primary);
   font-size: var(--font-size-base);
+  font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-base);
+  position: relative;
 }
 
 .sso-button:disabled {
@@ -561,37 +759,16 @@ const handleSignupSubmit = async () => {
   cursor: not-allowed;
 }
 
-.sso-icon {
-  width: 24px;
-  height: 24px;
+.sso-button:disabled .sso-button-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 
-.google-sso {
-  background: #f7f7f7;
-  border-color: #dddddd;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.google-sso:hover {
-  background: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-}
-
-.google-sso:active {
-  background: #f1f1f1;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.google-sso::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(to bottom, #4285F4, #34A853, #FBBC05, #EA4335);
+.coming-soon-badge {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
 }
 
 .google-sso:disabled {
@@ -605,25 +782,189 @@ const handleSignupSubmit = async () => {
   color: var(--color-text-secondary);
 }
 
-/* Transitions */
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+.sso-icon {
+  width: 24px;
+  height: 24px;
 }
 
-.slide-down-enter-from,
-.slide-down-leave-to {
-  transform: translateY(-100%);
-  opacity: 0;
+.email-sso {
+  background: var(--color-primary-600);
+  color: var(--color-surface);
+  border: none;
 }
 
-@media (max-width: 768px) {
-  .mobile-menu {
-    padding-top: var(--header-height);
-  }
-  
-  .close-button {
-    top: calc(var(--header-height) + var(--spacing-md));
-  }
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin: var(--spacing-sm) 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.divider span {
+  margin: 0 var(--spacing-sm);
+}
+
+.auth-footer {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xl);
+}
+
+.text-button {
+  background: none;
+  border: none;
+  color: var(--color-primary-600);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+.text-button:hover {
+  text-decoration: underline;
+}
+
+.back-button,
+.back-button:active,
+.back-icon {
+  display: none;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.form-group {
+  width: 100%;
+  max-width: 320px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-primary);
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+}
+
+.form-input {
+  width: 100%;
+  height: 48px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  transition: all var(--transition-base);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 2px var(--color-primary-100);
+}
+
+.submit-button {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: var(--color-primary-600);
+  color: var(--color-surface);
+  border: none;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  transition: all var(--transition-base);
+}
+
+.submit-button:hover {
+  background: var(--color-primary-500);
+}
+
+.forgot-password {
+  background: none;
+  border: none;
+  color: var(--color-primary-600);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* Mobile profile button */
+.mobile-profile-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  background-color: var(--color-wine);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.avatar-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--color-wine-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.admin-avatar {
+  background: linear-gradient(135deg, var(--color-wine), #ff6b00);
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.5);
+}
+
+.admin-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: #ffcc00;
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-initials {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
 }
 </style>

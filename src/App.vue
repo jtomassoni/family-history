@@ -40,8 +40,8 @@
 
       <!-- Mobile Menu (visible when isMobileMenuOpen is true) -->
       <MobileMenu 
-        :is-open="mobileMenu.isOpen.value" 
-        @close="mobileMenu.close"
+        :is-open="isMobileMenuOpen" 
+        @close="handleCloseMobileMenu"
         @auth="handleAuth"
       />
 
@@ -126,11 +126,17 @@ const dismissHintModal = () => {
 const isMobileMenuOpen = ref(false);
 
 const handleToggleMobileMenu = () => {
-  mobileMenu.toggle();
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+  if (isMobileMenuOpen.value) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
 };
 
 const handleCloseMobileMenu = () => {
-  mobileMenu.close();
+  isMobileMenuOpen.value = false;
+  document.body.style.overflow = '';
 };
 
 // Auth state

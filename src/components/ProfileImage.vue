@@ -2,9 +2,10 @@
   <div class="profile-image" :class="[size, { 'has-image': hasImage }]">
     <img
       v-if="hasImage"
-      :src="imageUrl"
+      :src="getProfilePictureUrl(user?.picture)"
       :alt="altText"
       class="profile-photo"
+      @error="handleImageError"
     />
     <div v-else class="initials">
       {{ initials }}
@@ -13,7 +14,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 
 const props = defineProps({
@@ -26,20 +27,44 @@ const props = defineProps({
 
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)
+const showInitials = ref(false)
 
-const hasImage = computed(() => user.value?.picture)
-const imageUrl = computed(() => user.value?.picture)
-const altText = computed(() => user.value?.name || 'Profile')
+const hasImage = computed(() => user.value?.picture && !showInitials.value)
+const altText = computed(() => user.value?.full_name || 'Profile')
 
 const initials = computed(() => {
-  if (!user.value?.name) return '?'
-  return user.value.name
+  if (!user.value?.full_name) return '?'
+  return user.value.full_name
     .split(' ')
     .map(name => name[0])
     .join('')
     .toUpperCase()
     .slice(0, 2)
 })
+
+function getProfilePictureUrl(url) {
+  if (!url) return '';
+  
+  // If it's a Google profile picture URL, add the size parameter
+  if (url.includes('googleusercontent.com')) {
+    // Ensure we're not adding size parameters multiple times
+    const baseUrl = url.split('=')[0];
+    
+    // Select size based on component size prop
+    let sizeParam = 's96-c'; // Default for medium
+    if (props.size === 'small') sizeParam = 's64-c';
+    if (props.size === 'large') sizeParam = 's200-c';
+    
+    return `${baseUrl}=${sizeParam}`;
+  }
+  
+  return url;
+}
+
+function handleImageError() {
+  console.log('ProfileImage component: Image failed to load', { user: user.value });
+  showInitials.value = true;
+}
 </script>
 
 <style scoped>

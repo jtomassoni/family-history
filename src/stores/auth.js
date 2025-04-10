@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import axios from 'axios';
-import { getApiUrl } from '../utils/apiConfig';
+import { getApiUrl, getAdjustedRedirectUri } from '../utils/apiConfig';
 
 export const useAuthStore = defineStore('auth', () => {
   // Get the dynamic API URL
@@ -25,11 +25,11 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdmin = computed(() => {
     const isStaff = !!user.value?.is_staff;
     const isSuperuser = !!user.value?.is_superuser;
-    // Special case: Make jtomassoni@gmail.com always an admin
-    const isSpecialAdmin = user.value?.email === 'jtomassoni@gmail.com';
-    const result = isStaff || isSuperuser || isSpecialAdmin;
-    console.log('isAdmin check:', { isStaff, isSuperuser, isSpecialAdmin, result });
-    return result;
+    return isStaff || isSuperuser;
+  });
+
+  const isAuthenticated = computed(() => {
+    return !!token.value && !!user.value;
   });
 
   // Initialize from localStorage
@@ -56,10 +56,13 @@ export const useAuthStore = defineStore('auth', () => {
   // Login with Google
   async function loginWithGoogle() {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
+    // Use the adjusted redirect URI that works on both desktop and mobile
+    const adjustedRedirectUri = getAdjustedRedirectUri();
     const scope = 'email profile';
     
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
+    console.log('Using redirect URI for Google OAuth:', adjustedRedirectUri);
+    
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(adjustedRedirectUri)}&response_type=code&scope=${scope}`;
     window.location.href = authUrl;
   }
 
@@ -69,15 +72,36 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = true;
       error.value = null;
       console.log('Starting Google callback with code:', code);
+      
+      // Use the same adjusted redirect URI that was used for the initial request
+      const adjustedRedirectUri = getAdjustedRedirectUri();
+      console.log('Using adjusted redirect URI for callback:', adjustedRedirectUri);
 
-      const response = await axios.post(`${apiUrl}/auth/google/callback/`, {
+      const response = await axios.post(`${apiUrl}/api/auth/google/callback/`, {
         code,
-        redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URI
+        redirect_uri: adjustedRedirectUri
       });
 
       console.log('Google callback response:', response.data);
       const { user: userData, token: authToken } = response.data;
       
+      // Debug log the user data
+      console.log('User data from Google callback:', {
+        picture: userData.picture,
+        avatar: userData.avatar,
+        full_user_data: userData
+      });
+      
+      // Process and store the Google profile picture URL
+      if (userData.picture) {
+        // Remove any size parameters to avoid issues with repeated params
+        const baseUrl = userData.picture.split('=')[0];
+        // Store the base URL without size parameter - components will add the appropriate size
+        userData.picture = baseUrl;
+        console.log('Fixed picture URL:', userData.picture);
+      }
+      
+      // Store the user data and token
       user.value = userData;
       token.value = authToken;
       
@@ -231,6 +255,7 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     adminStats,
     isAdmin,
+    isAuthenticated,
     initializeFromStorage,
     setAuthHeaders,
     login,

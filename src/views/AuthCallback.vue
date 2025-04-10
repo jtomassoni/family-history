@@ -55,7 +55,7 @@ onMounted(async () => {
   if (!code) {
     console.error('No authorization code received in callback');
     isLoading.value = false;
-    errorMessage.value = 'No authentication code received';
+    errorMessage.value = 'No authentication code received. Please try again.';
     return;
   }
   
@@ -94,9 +94,13 @@ onMounted(async () => {
       isLoading.value = false;
     }
   } catch (err) {
-    console.error('Error in callback processing:', err);
-    errorMessage.value = err.message || 'Authentication failed';
+    console.error('Error during authentication callback:', err);
     isLoading.value = false;
+    if (err.message?.includes('redirect_uri_mismatch')) {
+      errorMessage.value = 'Redirect URI mismatch. Please ensure you are accessing the app from the same device/network where you started the login process.';
+    } else {
+      errorMessage.value = err.message || 'An unexpected error occurred during authentication.';
+    }
   }
 });
 </script>

@@ -7,6 +7,8 @@
 
 // Get the base API URL from environment variables
 const configuredApiUrl = import.meta.env.VITE_API_URL;
+const configuredAppUrl = import.meta.env.VITE_APP_URL;
+const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 
 // Function to get the API URL
 export function getApiUrl() {
@@ -27,7 +29,32 @@ export function getApiUrl() {
   }
 }
 
+// Function to get the Google redirect URI adjusted for the current device
+export function getAdjustedRedirectUri() {
+  // On localhost, use the configured redirect URI as is
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return redirectUri;
+  }
+  
+  // On other devices, create a redirect URI using the device's current origin
+  const path = new URL(redirectUri).pathname;
+  return `${window.location.origin}${path}`;
+}
+
+// Function to get the base app URL for constructing links
+export function getAppUrl() {
+  // If we're accessing from the same machine (localhost), use the configured app URL
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return configuredAppUrl;
+  }
+  
+  // If we're accessing from another device, use the current origin
+  return window.location.origin;
+}
+
 // Default export for convenience
 export default {
-  getApiUrl
+  getApiUrl,
+  getAdjustedRedirectUri,
+  getAppUrl
 }; 
