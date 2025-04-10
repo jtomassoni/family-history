@@ -1,7 +1,7 @@
 .site-footer {
   background: var(--color-surface);
   color: var(--color-text-secondary);
-  padding: calc(var(--spacing-md) * 0.5);
+  padding: 0;
   text-align: center;
   width: 100%;
   position: fixed;

@@ -42,9 +42,16 @@
 
           <!-- Bottom Section Wrapper -->
           <div class="mobile-menu-bottom">
-            <!-- Login Button -->
+            <!-- Login/Profile Button -->
             <div class="mobile-auth-section">
-              <button class="mobile-auth-button" @click="toggleAuth">
+              <router-link v-if="isAuthenticated" to="/profile" class="mobile-profile-button" @click="closeMenu">
+                <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>My Profile</span>
+              </router-link>
+              <button v-else class="mobile-auth-button" @click="toggleAuth">
                 <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -70,17 +77,14 @@
 
           <!-- SSO Options -->
           <div class="sso-options">
-            <button class="sso-button google-sso" disabled title="Coming soon">
+            <button class="sso-button google-sso" @click="handleGoogleLogin">
               <svg class="sso-icon" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
-              <div class="sso-button-content">
-                <span>Continue with Google</span>
-                <span class="coming-soon-badge">Coming Soon</span>
-              </div>
+              <span>Continue with Google</span>
             </button>
 
             <button class="sso-button apple-sso" disabled title="Coming soon">
@@ -204,8 +208,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useNavigation } from '../composables/useNavigation';
+import { useAuthStore } from '../stores/auth';
 
 const props = defineProps({
   isOpen: Boolean
@@ -217,6 +222,9 @@ const { navItems, isCurrentRoute } = useNavigation();
 const showAuth = ref(false);
 const showEmailAuth = ref(false);
 const showSignup = ref(false);
+
+const authStore = useAuthStore();
+const isAuthenticated = computed(() => authStore.isAuthenticated);
 
 const closeMenu = () => {
   showAuth.value = false;
@@ -231,9 +239,15 @@ const toggleAuth = () => {
   showSignup.value = false;
 };
 
-const handleSSOLogin = (provider) => {
-  emit('auth', { type: 'sso', provider });
-  closeMenu();
+const handleGoogleLogin = async () => {
+  try {
+    if (authStore) {
+      await authStore.loginWithGoogle();
+    }
+    closeMenu();
+  } catch (error) {
+    console.error('Google login failed:', error);
+  }
 };
 
 const showEmailForm = () => {
@@ -667,26 +681,37 @@ const handleSignupSubmit = () => {
   position: relative;
 }
 
-.sso-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.google-sso {
+  background: #f7f7f7;
+  border-color: #dddddd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
-.sso-button:disabled .sso-button-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
+.google-sso:hover {
+  background: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.coming-soon-badge {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
+.google-sso:active {
+  background: #f1f1f1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.google-sso::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #4285F4, #34A853, #FBBC05, #EA4335);
 }
 
 .google-sso:disabled {
-  border-color: var(--color-border);
-  background-color: var(--color-surface-hover);
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .apple-sso:disabled {
@@ -701,9 +726,13 @@ const handleSignupSubmit = () => {
 }
 
 .email-sso {
-  background: var(--color-primary-600);
+  background: var(--accent-color, #8b4513);
   color: var(--color-surface);
   border: none;
+}
+
+.email-sso:hover {
+  background: #6d2e0b; /* Darker wine color */
 }
 
 .divider {
@@ -823,5 +852,27 @@ const handleSignupSubmit = () => {
 
 .forgot-password:hover {
   text-decoration: underline;
+}
+
+.mobile-profile-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  background-color: var(--accent-color, #8b4513);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mobile-profile-button:hover {
+  background-color: #6d2e0b; /* Darker wine color */
 }
 </style>

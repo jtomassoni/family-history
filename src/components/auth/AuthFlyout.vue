@@ -16,7 +16,7 @@
 
               <!-- SSO Options -->
               <div class="sso-options">
-                <button class="sso-button google-sso" disabled title="Coming soon">
+                <button class="sso-button google-sso" @click="handleGoogleLogin">
                   <svg class="sso-icon" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -25,17 +25,6 @@
                   </svg>
                   <div class="sso-button-content">
                     <span>Continue with Google</span>
-                    <span class="coming-soon-badge">Coming Soon</span>
-                  </div>
-                </button>
-
-                <button class="sso-button apple-sso" disabled title="Coming soon">
-                  <svg class="sso-icon" viewBox="0 0 24 24">
-                    <path d="M17.05 20.28c-.98.95-2.05.94-3.08.47-1.08-.48-2.07-.48-3.23 0-1.45.64-2.21.55-3.08-.47C2.79 14.6 3.51 6.12 9.05 5.81c1.35.07 2.29.74 3.08.74.75 0 2.21-.91 3.73-.78 1.35.11 2.57.73 3.23 1.84-3.03 1.77-2.52 5.88.47 6.86-.47 1.48-1.06 2.96-2.51 4.81M12.94 5.67C12.7 3.96 14.12 2.5 15.84 2c.35 1.63-.59 3.29-2.9 3.67" fill="currentColor"/>
-                  </svg>
-                  <div class="sso-button-content">
-                    <span>Continue with Apple</span>
-                    <span class="coming-soon-badge">Coming Soon</span>
                   </div>
                 </button>
 
@@ -43,19 +32,18 @@
                   <span>or</span>
                 </div>
 
-                <button class="sso-button email-sso" disabled title="Coming soon">
+                <button class="sso-button email-sso" @click="showEmailForm">
                   <svg class="sso-icon" viewBox="0 0 24 24">
                     <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/>
                   </svg>
                   <div class="sso-button-content">
                     <span>Continue with Email</span>
-                    <span class="coming-soon-badge">Coming Soon</span>
                   </div>
                 </button>
 
                 <p class="auth-footer">
                   Don't have an account? 
-                  <button class="text-button" disabled>Sign up</button>
+                  <button class="text-button" @click="showSignupForm">Sign up</button>
                 </p>
               </div>
             </div>
@@ -68,6 +56,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useAuthStore } from '../../stores/auth';
 
 const props = defineProps({
   isOpen: Boolean
@@ -75,8 +64,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'submit']);
 
-const email = ref('');
-const password = ref('');
+const authStore = useAuthStore();
 const isMobile = ref(false);
 
 const checkMobile = () => {
@@ -96,11 +84,21 @@ const close = () => {
   emit('close');
 };
 
-const handleSubmit = () => {
-  emit('submit', {
-    email: email.value,
-    password: password.value
-  });
+const handleGoogleLogin = async () => {
+  try {
+    await authStore.loginWithGoogle();
+    close();
+  } catch (error) {
+    console.error('Google login failed:', error);
+  }
+};
+
+const showEmailForm = () => {
+  emit('submit', { type: 'email' });
+};
+
+const showSignupForm = () => {
+  emit('submit', { type: 'signup' });
 };
 </script>
 

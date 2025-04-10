@@ -14,8 +14,8 @@ body {
   /* Semi-transparent warm overlay plus background image */
   background:
     linear-gradient(
-      rgba(255, 248, 240, 0.6),
-      rgba(255, 248, 240, 0.6)
+      rgba(42, 18, 10, 0.8),  /* Dark wine background with transparency */
+      rgba(42, 18, 10, 0.8)
     ),
     url("/images/background.jpeg")
     no-repeat center center fixed;
@@ -23,6 +23,8 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  color: #f5f0ec; /* Light text color for dark background */
+  overflow-y: auto; /* Allow vertical scrolling */
 }
 
 /* Layout */
@@ -32,6 +34,9 @@ main {
   max-width: var(--container-max-width);
   margin: 0 auto;
   padding: var(--spacing-md);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  padding-top: 0; /* Let components handle their own top padding */
+  padding-bottom: calc(var(--footer-height) + 2rem); /* Add space for footer */
 }
 
 /* Ensure footer stays at bottom */
@@ -41,7 +46,7 @@ footer {
 
 /* Global Focus Styles */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--accent-color, #8b4513); /* Use wine color for focus */
   outline-offset: 2px;
 }
 
@@ -63,14 +68,14 @@ html, body {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  font-family: sans-serif;
+  font-family: var(--font-family-base, sans-serif);
 }
 
 /* 2) GLOBAL BACKGROUND */
 body {
   /* Semi-transparent warm overlay plus background image */
   background:
-    linear-gradient(rgba(255, 248, 240, 0.6), rgba(255, 248, 240, 0.6)),
+    linear-gradient(rgba(42, 18, 10, 0.8), rgba(42, 18, 10, 0.8)),
     url("/images/background.jpeg")
     no-repeat center center fixed;
   background-size: cover;
@@ -82,25 +87,23 @@ body {
   --footer-height: 20px;
   --global-padding: 1rem;
 
-  /* Warm terracotta theme for header/nav */
-  --header-bg: #A67B5B; /* or your chosen terracotta color */
-  --header-text-color: #fff; /* Contrasts with the warm background */
+  /* Warm wine theme for header/nav */
+  --header-bg: #8b4513; /* Wine color */
+  --header-text-color: #fff;
 
   /* Navigation & button colors */
   --nav-link-color: #fff;
-  --nav-link-hover-color: #b22222; /* slightly lighter to contrast */
+  --nav-link-hover-color: #6d2e0b; /* Darker wine color */
 
   /* Help button gradients */
-  --help-gradient-default: linear-gradient(135deg, #ffd6e0, #6d2a2a);
-  --help-gradient-hover: linear-gradient(135deg, #ffd6e0, #d6a4a4);
-  --help-gradient-active: linear-gradient(135deg, #c4878a, #a3737c);
+  --help-gradient-default: linear-gradient(135deg, #ffd6e0, #8b4513);
+  --help-gradient-hover: linear-gradient(135deg, #ffd6e0, #6d2e0b);
+  --help-gradient-active: linear-gradient(135deg, #c4878a, #8b4513);
 
   /* Login button colors */
   --login-border-color: #fff;
-  --login-hover-bg: rgba(255, 255, 255, 0.2);
+  --login-hover-bg: rgba(139, 69, 19, 0.2); /* Wine color with transparency */
 }
 
 /* 4) OPTIONAL: Hide overflow if you don't want scrolling */
-html, body {
-  overflow: hidden;
-}
+/* DELETE THIS SECTION */

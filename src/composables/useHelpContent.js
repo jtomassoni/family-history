@@ -4,61 +4,62 @@ import { useRoute } from 'vue-router';
 // Organized by categories for better maintenance
 const italianAmericanFacts = {
   culture: [
-    "The term 'Little Italy' first appeared in print in 1885 to describe the Italian neighborhoods in New York City.",
-    "The San Gennaro Festival in New York's Little Italy, started in 1926, is the largest Italian-American street fair in the US.",
-    "Italian immigrants introduced the Christmas Eve tradition of the 'Feast of the Seven Fishes' to America.",
-    "The Italian-American tradition of 'Sunday Sauce' (or gravy) originated as a way for families to use cheaper cuts of meat during hard times.",
-    "The game of bocce, brought by Italian immigrants, became a popular social activity in Italian-American communities.",
-    "The tradition of the Italian-American social clubs began in the late 1800s as mutual aid societies.",
-    "Many Italian-American families maintain the tradition of making homemade wine, a practice brought over by their ancestors.",
-    "The Italian-American custom of the 'cookie table' at weddings originated in Youngstown, Ohio.",
-    "The tradition of giving candy-coated almonds (confetti) at Italian-American weddings symbolizes the bitter and sweet moments in life."
+    "The term 'Little Italy' first appeared in print in 1885 to describe densely populated Italian immigrant neighborhoods, where communities recreated elements of life back in Italy—shared language, customs, and Catholic traditions.",
+    "The San Gennaro Festival in New York's Little Italy, begun in 1926 by Neapolitan immigrants, honors the patron saint of Naples and has grown into the largest Italian-American street festival in the U.S.",
+    "The 'Feast of the Seven Fishes,' observed on Christmas Eve, was brought to America by southern Italian immigrants, reflecting a Catholic tradition of abstaining from meat and celebrating with multiple seafood dishes.",
+    "Italian-American families popularized 'Sunday Sauce' (also called 'gravy'), a slow-cooked tomato sauce with meat, adapted from regional Italian recipes and reflecting a tradition of extended family meals and frugality.",
+    "Bocce, an ancient Italian ball sport, became a cornerstone of social life in Italian-American communities, symbolizing leisure and camaraderie, especially in urban immigrant enclaves.",
+    "Italian-American social clubs, originally founded as mutual aid societies in the late 19th century, provided support, networking, and cultural continuity for immigrants facing poverty and discrimination.",
+    "Many Italian-American families continue the Old World tradition of making homemade wine, often using techniques passed down from ancestors in southern Italy and enjoyed during communal meals.",
+    "The 'cookie table,' featuring dozens of homemade Italian cookies at weddings, is a tradition rooted in Abruzzese immigrant communities in the Midwest, especially around Youngstown, Ohio.",
+    "Candy-coated almonds, known as 'confetti,' are a staple at Italian weddings, symbolizing the bittersweet nature of marriage—a custom preserved and cherished in Italian-American ceremonies."
   ],
   food: [
-    "The first pizzeria in America, Lombardi's, opened in 1905 in New York City's Little Italy.",
-    "Italian-American cuisine created unique dishes like chicken parmesan, which isn't found in traditional Italian cooking.",
-    "The muffuletta sandwich was created by Sicilian immigrants in New Orleans in 1906.",
-    "The first espresso machine in America was installed at Caffè Reggio in New York's Greenwich Village in 1927.",
-    "The Italian-American invention of the 'pizza al taglio' (pizza by the slice) revolutionized how Americans eat pizza.",
-    "The popularity of gelato in America began with Italian immigrants in the early 1900s.",
-    "The Italian beef sandwich was created by Italian immigrants in Chicago during the 1930s.",
-    "The invention of the submarine sandwich is credited to Italian immigrant communities in New England.",
-    "The rainbow cookie, a staple in Italian-American bakeries, was created to honor the Italian flag."
+    "Lombardi’s, the first pizzeria in the U.S., opened in 1905 in Manhattan’s Little Italy, bringing Neapolitan pizza to American soil and laying the foundation for a national obsession.",
+    "Chicken parmesan, an Italian-American invention, adapted elements of southern Italian cooking (like eggplant parmigiana) and American tastes for meat-centric dishes and rich sauces.",
+    "The muffuletta sandwich was created by Sicilian immigrants in New Orleans who combined Italian meats and olive salad with French bread to suit local tastes and ingredients.",
+    "Caffè Reggio in New York City installed America’s first espresso machine in 1927, introducing Italian coffee culture to an American audience and inspiring generations of cafés.",
+    "'Pizza al taglio' (pizza by the slice), popularized by Italian-Americans, reimagined traditional Roman street food into the convenient, fast-food format beloved across the U.S.",
+    "Italian immigrants introduced gelato to America in the early 20th century, with their artisan approach influencing modern ice cream shops and dessert trends.",
+    "The Italian beef sandwich originated in Chicago’s Italian-American community in the 1930s, reflecting a resourceful use of inexpensive cuts of meat stewed with spices and served thin-sliced.",
+    "The submarine sandwich (also called hoagie, grinder, or hero) is widely attributed to Italian immigrants in New England, combining cured meats, cheeses, and Italian bread into a portable meal.",
+    "The rainbow cookie, with layers dyed in the colors of the Italian flag, was invented in Italian-American bakeries to express pride in Italian heritage while appealing to American sweet tooths."
   ],
   history: [
-    "The largest mass lynching in American history targeted 11 Italian-Americans in New Orleans in 1891.",
-    "The first Italian-American congressman, Anthony Michalek, was elected in 1904.",
-    "During WWII, thousands of Italian-Americans were placed under restrictions as 'enemy aliens.'",
-    "The American Mafia emerged from Italian immigrant neighborhoods as a response to discrimination and lack of opportunities.",
-    "The first Italian-American governor was John O. Pastore of Rhode Island, elected in 1945.",
-    "The first Italian-American to serve on the Supreme Court was Antonin Scalia, appointed in 1986.",
-    "The first Italian-American woman elected to Congress was Ella T. Grasso in 1970.",
-    "The Italian-American Civil Rights League was founded in 1970 to combat negative stereotypes.",
-    "The first Columbus Day celebration in America was held by Italian immigrants in San Francisco in 1869."
+    "In 1891, 11 Italian immigrants were lynched in New Orleans, marking the largest mass lynching in U.S. history—an event that highlighted anti-Italian sentiment and led to formal diplomatic protests from Italy.",
+    "Anthony Michalek, elected in 1904, was one of the first Italian-Americans to serve in the U.S. Congress, symbolizing early political representation for a marginalized immigrant group.",
+    "During World War II, thousands of Italian-Americans were labeled 'enemy aliens,' facing curfews and relocation despite many having lived in the U.S. for decades—showing the tension between identity and loyalty.",
+    "The American Mafia, which took root in Italian immigrant neighborhoods, was partly a response to discrimination and the need for community protection and economic survival, though it later became a national criminal enterprise.",
+    "John O. Pastore, elected governor of Rhode Island in 1945, became the first Italian-American to hold such a post, breaking ethnic barriers and advancing Italian-American political visibility.",
+    "Antonin Scalia, appointed to the U.S. Supreme Court in 1986, became the first Italian-American justice, known for his originalist interpretations of the Constitution and strong legal influence.",
+    "Ella T. Grasso, elected to Congress in 1970 and later governor of Connecticut, became the first Italian-American woman to hold high elected office, championing labor and women's rights.",
+    "The Italian-American Civil Rights League was founded in 1970 to fight defamation and stereotypes, particularly against depictions of Italians solely as mobsters or criminals in the media.",
+    "The first Columbus Day celebration in America was held in San Francisco in 1869 by Italian immigrants, honoring an Italian explorer and affirming cultural pride during a time of growing anti-immigrant sentiment."
   ],
   achievements: [
-    "Bank of America was founded as the Bank of Italy by Amadeo Giannini to serve immigrants denied service by other banks.",
-    "The first Italian-American millionaire was Antonio Santi, who made his fortune in California during the Gold Rush.",
-    "Enrico Fermi, an Italian immigrant, led the team that created the first nuclear reactor in 1942.",
-    "Frank Sinatra became the first Italian-American to win an Academy Award for acting in 1953.",
-    "Joe DiMaggio's 56-game hitting streak in 1941 remains one of baseball's most celebrated records.",
-    "Mother Cabrini became the first American saint in 1946, recognized for her work with Italian immigrants.",
-    "Fiorello La Guardia, New York's first Italian-American mayor, served three terms and revolutionized city politics.",
-    "Arturo Toscanini became the first conductor of the NBC Symphony Orchestra in 1937.",
-    "Frank Capra's 'It's a Wonderful Life' (1946) became an American Christmas classic."
+    "Bank of America was originally founded as the Bank of Italy in 1904 by Amadeo Giannini in San Francisco to serve Italian immigrants and others underserved by traditional banks. It eventually became one of the world’s largest financial institutions.",
+    "Antonio Santi, one of the earliest Italian-American millionaires, amassed wealth during the California Gold Rush and invested it back into community-building efforts for fellow immigrants.",
+    "Enrico Fermi, a Nobel Prize-winning Italian physicist who immigrated to the U.S. to escape fascism, led the team that developed the world’s first nuclear reactor, profoundly shaping modern science.",
+    "Frank Sinatra, the son of Sicilian immigrants, broke entertainment barriers as the first Italian-American to win an Academy Award for acting (1953) and became a cultural icon of American music and style.",
+    "Joe DiMaggio, the son of Italian fishermen, achieved one of baseball’s greatest feats—a 56-game hitting streak in 1941—becoming a national hero and symbol of immigrant success.",
+    "Mother Frances Xavier Cabrini, canonized in 1946, became the first American saint, recognized for her missionary work with poor Italian immigrants in the U.S. and founding schools and hospitals.",
+    "Fiorello La Guardia, New York City's first Italian-American mayor, served three transformative terms during the Great Depression and WWII, reshaping city governance and standing against corruption.",
+    "Arturo Toscanini, a renowned Italian conductor, became the first leader of the NBC Symphony Orchestra in 1937, bringing classical music into American living rooms via radio.",
+    "Frank Capra, born in Sicily and raised in California, directed 'It's a Wonderful Life' (1946), now a holiday staple that reflects themes of community and moral resilience."
   ],
   contributions: [
-    "Italian immigrants were crucial in building America's infrastructure, including the New York subway system.",
-    "The Bank of America building in San Francisco was the tallest building on the West Coast when completed in 1969.",
-    "Italian-American architects designed many iconic American buildings, including the Supreme Court building.",
-    "Italian stonemasons were essential in building Washington, D.C.'s monuments and federal buildings.",
-    "Italian-American labor leaders helped establish workers' rights and unions in the early 1900s.",
-    "Italian immigrants brought advanced techniques in wine-making to California's nascent wine industry.",
-    "Italian-American engineers contributed significantly to the development of the American automobile industry.",
-    "Italian-American artists helped establish the American comic book industry in the 1930s and 1940s.",
-    "Italian immigrants introduced advanced farming techniques that revolutionized California agriculture."
+    "Italian immigrants played a vital role in constructing major American infrastructure—especially the New York subway system—bringing with them skilled labor, engineering knowledge, and a legacy of Roman construction techniques.",
+    "The Bank of America building in San Francisco, completed in 1969, was the tallest structure on the West Coast at the time and a symbol of Italian-American founder Amadeo Giannini’s lasting economic vision.",
+    "Italian-American architects contributed to American skylines, including Cass Gilbert, whose designs shaped the U.S. Supreme Court building, blending classical Roman influences with modern ideals.",
+    "Italian stonemasons were central to the creation of Washington D.C.’s monuments and government buildings, drawing on centuries-old techniques rooted in Renaissance and Roman craftsmanship.",
+    "Italian-American labor leaders, like Carlo Tresca and Luigi Antonini, fought for workers’ rights in dangerous industries, helping form unions and better working conditions in the 20th century.",
+    "Sicilian and Tuscan immigrants brought winemaking traditions to California in the 19th century, helping build what is now a global wine powerhouse by introducing Old World viticulture techniques.",
+    "Italian-American engineers and mechanics contributed significantly to the rise of Detroit’s auto industry, working on production lines and pioneering methods of machine design and maintenance.",
+    "Italian-American artists and writers helped shape the early comic book industry, with creators like Joe Orlando and Carmine Infantino defining the look of iconic characters and stories.",
+    "Italian farmers introduced advanced techniques for irrigation and crop rotation in California, transforming arid land into fertile agricultural hubs and influencing the modern American food supply."
   ]
 };
+;
 
 export function useHelpContent() {
   const route = useRoute();

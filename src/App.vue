@@ -12,12 +12,19 @@
 
       <!-- Main content (routed view) -->
       <main class="main-content">
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <keep-alive include="ProfileView">
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       </main>
 
       <!-- Persistent footer -->
       <Footer />
     </div>
+
+    <!-- Wine Loader -->
+    <WineLoader ref="loader" />
 
     <!-- Overlay layer -->
     <div class="overlay-layer" :class="{ 'is-active': isAuthOpen || isMobileMenuOpen || showHintModal }">
@@ -45,18 +52,38 @@
         @submit="handleAuthSubmit"
       />
     </div>
+    
+    <!-- Debug info panel -->
+    <DebugInfo />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, provide } from 'vue';
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import HintModal from './components/HintModal.vue';
 import MobileMenu from './components/MobileMenu.vue';
 import AuthFlyout from './components/auth/AuthFlyout.vue';
+import WineLoader from './components/WineLoader.vue';
+import DebugInfo from './components/DebugInfo.vue';
 import "./styles/main.css";
 import { useHelpContent } from './composables/useHelpContent';
+import { useAuthStore } from './stores/auth';
+import { useRouter } from 'vue-router';
+
+// Utility function for delay
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Reference to the loader
+const loader = ref(null);
+
+// Provide the loader methods globally with guaranteed minimum display time
+provide('showLoader', () => loader.value?.show());
+provide('hideLoader', (delay = 1000) => loader.value?.hide(delay));
+
+// Auth store
+const authStore = useAuthStore();
 
 // Mobile detection
 const isMobile = ref(false);
@@ -100,10 +127,18 @@ const handleCloseMobileMenu = () => {
 // Auth state
 const isAuthOpen = ref(false);
 
+const router = useRouter();
+
 const handleAuth = () => {
-  isAuthOpen.value = true;
-  if (isMobile.value) {
-    document.body.style.overflow = 'hidden';
+  if (authStore.isAuthenticated) {
+    // If the user is already authenticated, redirect to profile
+    router.push('/profile');
+  } else {
+    // Otherwise show the auth dialog
+    isAuthOpen.value = true;
+    if (isMobile.value) {
+      document.body.style.overflow = 'hidden';
+    }
   }
 };
 
@@ -113,9 +148,32 @@ const closeAuth = () => {
 };
 
 const handleAuthSubmit = async (credentials) => {
-  // TODO: Implement authentication
-  console.log('Auth submitted:', credentials);
-  closeAuth();
+  try {
+    // Show the loader
+    loader.value?.show();
+    const startTime = Date.now();
+    
+    // TODO: Implement authentication
+    console.log('Auth submitted:', credentials);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Calculate elapsed time and ensure minimum display time
+    const elapsedTime = Date.now() - startTime;
+    const remainingTime = Math.max(0, 1000 - elapsedTime);
+    if (remainingTime > 0) {
+      await delay(remainingTime);
+    }
+    
+    // Hide the loader
+    loader.value?.hide();
+    closeAuth();
+  } catch (error) {
+    console.error('Auth error:', error);
+    // Ensure loader is shown for at least 1 second even on error
+    loader.value?.hide(1000);
+  }
 };
 </script>
 
@@ -134,6 +192,7 @@ const handleAuthSubmit = async (credentials) => {
   flex-direction: column;
   position: relative;
   z-index: 1;
+  overflow-y: auto; /* Allow vertical scrolling */
 }
 
 .app.no-scroll {
@@ -144,7 +203,14 @@ const handleAuthSubmit = async (credentials) => {
 .main-content {
   flex: 1;
   position: relative;
-  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  padding-top: var(--header-height);
+  margin-bottom: var(--footer-height);
+  overflow-y: visible; /* Allow content to scroll */
 }
 
 /* Overlay layer */

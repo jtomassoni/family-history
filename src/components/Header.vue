@@ -45,8 +45,14 @@
           </svg>
         </button>
 
-        <!-- Desktop Auth Button -->
-        <button class="auth-button" @click="$emit('auth')" aria-label="Login">
+        <!-- Desktop Auth/Profile Button -->
+        <router-link v-if="isAuthenticated" to="/profile" class="auth-button profile-button" aria-label="Profile">
+          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </router-link>
+        <button v-else class="auth-button" @click="$emit('auth')" aria-label="Login">
           <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -70,10 +76,15 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { useNavigation } from '../composables/useNavigation';
+import { useAuthStore } from '../stores/auth';
+import { computed } from 'vue';
 
 const route = useRoute();
 const { navItems, isCurrentRoute } = useNavigation();
 const siteTitle = 'TOMASSONI';
+const authStore = useAuthStore();
+
+const isAuthenticated = computed(() => authStore.isAuthenticated);
 
 defineProps({
   isHelpActive: {
@@ -363,5 +374,13 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
     background-color: rgba(255, 255, 255, 0.15);
     border-radius: var(--border-radius-md);
   }
+}
+
+.profile-button {
+  color: var(--accent-color, #8b4513);
+}
+
+.profile-button:hover {
+  color: #6d2e0b; /* Darker wine color */
 }
 </style>
