@@ -50,13 +50,21 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import HintModal from './components/HintModal.vue';
 import MobileMenu from './components/MobileMenu.vue';
 import AuthFlyout from './components/auth/AuthFlyout.vue';
+import { useAuthStore } from './stores/auth';
 import "./styles/main.css";
 import { useHelpContent } from './composables/useHelpContent';
+
+// Router
+const router = useRouter();
+
+// Auth store
+const authStore = useAuthStore();
 
 // Mobile detection
 const isMobile = ref(false);
@@ -68,6 +76,10 @@ const checkMobile = () => {
 onMounted(() => {
   checkMobile();
   window.addEventListener('resize', checkMobile);
+
+  // Initialize auth store
+  authStore.initializeFromStorage();
+  authStore.setAuthHeaders();
 });
 
 onUnmounted(() => {
@@ -113,9 +125,15 @@ const closeAuth = () => {
 };
 
 const handleAuthSubmit = async (credentials) => {
-  // TODO: Implement authentication
-  console.log('Auth submitted:', credentials);
-  closeAuth();
+  try {
+    const result = await authStore.login(credentials.email, credentials.password);
+    if (result.success) {
+      closeAuth();
+      router.push('/profile');
+    }
+  } catch (error) {
+    console.error('Authentication error:', error);
+  }
 };
 </script>
 

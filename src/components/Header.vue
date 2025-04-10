@@ -45,8 +45,19 @@
           </svg>
         </button>
 
-        <!-- Desktop Auth Button -->
-        <button class="auth-button" @click="$emit('auth')" aria-label="Login">
+        <!-- Profile/Auth Button -->
+        <router-link v-if="isLoggedIn" to="/profile" class="profile-button" aria-label="Profile">
+          <div v-if="user?.avatar" class="avatar-mini">
+            <img :src="user.avatar" alt="Profile" />
+          </div>
+          <div v-else class="avatar-mini" :class="{ 'admin-avatar': isAdmin }">
+            <span class="avatar-initials">{{ isAdmin ? 'A' : userInitials }}</span>
+            <span v-if="isAdmin" class="admin-indicator"></span>
+          </div>
+        </router-link>
+        
+        <!-- Login Button (when not logged in) -->
+        <button v-else class="auth-button" @click="$emit('auth')" aria-label="Login">
           <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -70,10 +81,34 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { useNavigation } from '../composables/useNavigation';
+import { useAuthStore } from '../stores/auth';
+import { computed, onMounted } from 'vue';
 
 const route = useRoute();
 const { navItems, isCurrentRoute } = useNavigation();
+const authStore = useAuthStore();
 const siteTitle = 'TOMASSONI';
+
+// Initialize auth store
+onMounted(() => {
+  authStore.initializeFromStorage();
+  authStore.setAuthHeaders();
+});
+
+// Check if user is logged in
+const isLoggedIn = computed(() => !!authStore.user);
+const user = computed(() => authStore.user || {});
+const isAdmin = computed(() => authStore.isAdmin);
+
+// Get user initials for avatar
+const userInitials = computed(() => {
+  if (!user.value?.full_name) return '?';
+  return user.value.full_name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase();
+});
 
 defineProps({
   isHelpActive: {
@@ -363,5 +398,66 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
     background-color: rgba(255, 255, 255, 0.15);
     border-radius: var(--border-radius-md);
   }
+}
+
+/* Profile button styles */
+.profile-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  transition: all var(--transition-base);
+  border-radius: 50%;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.avatar-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--color-wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.admin-avatar {
+  background: linear-gradient(135deg, var(--color-wine), #ff6b00);
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.5);
+}
+
+.admin-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: #ffcc00;
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-initials {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.profile-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
