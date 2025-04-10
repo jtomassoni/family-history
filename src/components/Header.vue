@@ -47,10 +47,14 @@
 
         <!-- Desktop Auth/Profile Button -->
         <router-link v-if="isAuthenticated" to="/profile" class="auth-button profile-button" aria-label="Profile">
-          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <div v-if="user?.avatar" class="avatar-mini">
+            <img :src="user.avatar" alt="Profile" />
+          </div>
+          <div v-else class="avatar-mini" :class="{ 'admin-avatar': isAdmin }">
+            <span class="avatar-initials">{{ isAdmin ? 'A' : userInitials }}</span>
+            <span v-if="isAdmin" class="admin-indicator"></span>
+          </div>
+          <span v-if="!isAdmin">{{ isAdmin ? 'Admin Dashboard' : 'My Profile' }}</span>
         </router-link>
         <button v-else class="auth-button" @click="$emit('auth')" aria-label="Login">
           <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -58,42 +62,48 @@
             <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M15 12H3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
+          <span>Login</span>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button class="menu-button" @click="$emit('toggle-mobile-menu')" aria-label="Menu">
+          <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </button>
       </div>
-
-      <!-- Mobile Menu Toggle -->
-      <button class="mobile-menu-toggle" @click="$emit('toggle-mobile-menu')" aria-label="Toggle menu">
-        <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/>
-          <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/>
-          <line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/>
-        </svg>
-      </button>
     </div>
   </header>
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { computed } from 'vue';
 import { useNavigation } from '../composables/useNavigation';
 import { useAuthStore } from '../stores/auth';
-import { computed } from 'vue';
 
-const route = useRoute();
-const { navItems, isCurrentRoute } = useNavigation();
-const siteTitle = 'TOMASSONI';
-const authStore = useAuthStore();
-
-const isAuthenticated = computed(() => authStore.isAuthenticated);
-
-defineProps({
-  isHelpActive: {
-    type: Boolean,
-    default: false
-  }
+const props = defineProps({
+  isHelpActive: Boolean
 });
 
-defineEmits(['toggle-mobile-menu', 'auth', 'help']);
+const emit = defineEmits(['help', 'auth', 'toggle-mobile-menu']);
+
+const { navItems, isCurrentRoute } = useNavigation();
+const authStore = useAuthStore();
+
+const siteTitle = 'Tomassoni';
+const isAuthenticated = computed(() => !!authStore.user);
+const user = computed(() => authStore.user || {});
+const isAdmin = computed(() => authStore.isAdmin);
+
+// Get user initials for avatar
+const userInitials = computed(() => {
+  if (!user.value?.full_name) return '?';
+  return user.value.full_name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase();
+});
 </script>
 
 <style scoped>
@@ -103,7 +113,7 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   left: 0;
   right: 0;
   height: var(--header-height);
-  background-color: var(--color-surface);
+  background-color: #2f201d;
   z-index: var(--z-index-header);
   display: flex;
   flex-direction: column;
@@ -128,17 +138,17 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
 }
 
 .title {
-  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin: 0;
 }
 
 .site-name {
   font-family: var(--font-family-display);
   font-size: 32px;
   font-weight: 800;
-  color: var(--color-text-primary);
+  color: #fff;
   letter-spacing: 0.05em;
   line-height: 1;
   position: relative;
@@ -162,7 +172,7 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   font-family: var(--font-family-display);
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   letter-spacing: 0.02em;
   white-space: nowrap;
   line-height: 1;
@@ -199,7 +209,7 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   align-items: center;
   gap: var(--spacing-2xs);
   padding: 0 var(--spacing-2xs);
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   font-size: var(--font-size-sm);
   font-weight: 500;
   text-decoration: none;
@@ -209,17 +219,17 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
 }
 
 .nav-link:hover {
-  color: var(--color-text-primary);
+  color: #fff;
 }
 
 .nav-link.current {
-  color: var(--color-primary-700);
+  color: #dc2626;
 }
 
 .nav-indicator {
   width: 16px;
   height: 2px;
-  background-color: var(--color-primary-600);
+  background-color: #dc2626;
   border-radius: var(--border-radius-full);
   transform: scaleX(0);
   transition: transform var(--transition-base);
@@ -230,7 +240,12 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   transform: scaleX(1);
 }
 
-/* Common button styles */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
 .help-button,
 .auth-button,
 .mobile-menu-toggle {
@@ -244,7 +259,7 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   border: none;
   cursor: pointer;
   margin: 0;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   transition: all var(--transition-base);
 }
 
@@ -259,12 +274,12 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
 .help-button:hover,
 .auth-button:hover,
 .mobile-menu-toggle:hover {
-  color: var(--color-text-primary);
+  color: #fff;
 }
 
 .help-button.active,
 .mobile-help.active {
-  color: var(--color-primary-500) !important;
+  color: #dc2626 !important;
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: var(--border-radius-md);
 }
@@ -272,7 +287,67 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
 .help-button.active .button-icon,
 .mobile-help.active .button-icon {
   fill: none !important;
-  stroke: var(--color-primary-500) !important;
+  stroke: #dc2626 !important;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  transition: all var(--transition-base);
+  border-radius: 50%;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.avatar-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--color-wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.avatar-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-avatar {
+  background: linear-gradient(135deg, var(--color-wine), #ff6b00);
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.5);
+}
+
+.admin-indicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #dc2626;
+  border-radius: 50%;
+  border: 1px solid #2f201d;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-initials {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.profile-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Mobile styles */
@@ -300,13 +375,13 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
 
   .mobile-help {
     grid-column: 1;
-    color: var(--color-text-secondary);
+    color: rgba(255, 255, 255, 0.8);
     margin-left: 4px;
   }
 
   .mobile-menu-toggle {
     grid-column: 3;
-    color: var(--color-text-secondary);
+    color: rgba(255, 255, 255, 0.8);
     position: absolute;
     top: calc((var(--header-height) - 48px) / 2 + 6px);
     right: calc(var(--spacing-md) + 2px);
@@ -314,7 +389,7 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
 
   .mobile-help:hover,
   .mobile-menu-toggle:hover {
-    color: var(--color-text-primary);
+    color: #fff;
   }
 
   .site-name {
@@ -357,30 +432,23 @@ defineEmits(['toggle-mobile-menu', 'auth', 'help']);
   }
 
   .mobile-menu-toggle,
-  .mobile-help {
+  .mobile-help,
+  .menu-button {
     display: none;
   }
 
   .help-button {
-    color: var(--color-text-secondary);
+    color: rgba(255, 255, 255, 0.8);
   }
 
   .help-button:hover {
-    color: var(--color-text-primary);
+    color: #fff;
   }
 
   .help-button.active {
-    color: var(--color-primary-500) !important;
+    color: #dc2626 !important;
     background-color: rgba(255, 255, 255, 0.15);
     border-radius: var(--border-radius-md);
   }
-}
-
-.profile-button {
-  color: var(--accent-color, #8b4513);
-}
-
-.profile-button:hover {
-  color: #6d2e0b; /* Darker wine color */
 }
 </style>

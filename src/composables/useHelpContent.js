@@ -15,13 +15,13 @@ const italianAmericanFacts = {
     "Candy-coated almonds, known as 'confetti,' are a staple at Italian weddings, symbolizing the bittersweet nature of marriage—a custom preserved and cherished in Italian-American ceremonies."
   ],
   food: [
-    "Lombardi’s, the first pizzeria in the U.S., opened in 1905 in Manhattan’s Little Italy, bringing Neapolitan pizza to American soil and laying the foundation for a national obsession.",
+    "Lombardi's, the first pizzeria in the U.S., opened in 1905 in Manhattan's Little Italy, bringing Neapolitan pizza to American soil and laying the foundation for a national obsession.",
     "Chicken parmesan, an Italian-American invention, adapted elements of southern Italian cooking (like eggplant parmigiana) and American tastes for meat-centric dishes and rich sauces.",
     "The muffuletta sandwich was created by Sicilian immigrants in New Orleans who combined Italian meats and olive salad with French bread to suit local tastes and ingredients.",
-    "Caffè Reggio in New York City installed America’s first espresso machine in 1927, introducing Italian coffee culture to an American audience and inspiring generations of cafés.",
+    "Caffè Reggio in New York City installed America's first espresso machine in 1927, introducing Italian coffee culture to an American audience and inspiring generations of cafés.",
     "'Pizza al taglio' (pizza by the slice), popularized by Italian-Americans, reimagined traditional Roman street food into the convenient, fast-food format beloved across the U.S.",
     "Italian immigrants introduced gelato to America in the early 20th century, with their artisan approach influencing modern ice cream shops and dessert trends.",
-    "The Italian beef sandwich originated in Chicago’s Italian-American community in the 1930s, reflecting a resourceful use of inexpensive cuts of meat stewed with spices and served thin-sliced.",
+    "The Italian beef sandwich originated in Chicago's Italian-American community in the 1930s, reflecting a resourceful use of inexpensive cuts of meat stewed with spices and served thin-sliced.",
     "The submarine sandwich (also called hoagie, grinder, or hero) is widely attributed to Italian immigrants in New England, combining cured meats, cheeses, and Italian bread into a portable meal.",
     "The rainbow cookie, with layers dyed in the colors of the Italian flag, was invented in Italian-American bakeries to express pride in Italian heritage while appealing to American sweet tooths."
   ],
@@ -37,11 +37,11 @@ const italianAmericanFacts = {
     "The first Columbus Day celebration in America was held in San Francisco in 1869 by Italian immigrants, honoring an Italian explorer and affirming cultural pride during a time of growing anti-immigrant sentiment."
   ],
   achievements: [
-    "Bank of America was originally founded as the Bank of Italy in 1904 by Amadeo Giannini in San Francisco to serve Italian immigrants and others underserved by traditional banks. It eventually became one of the world’s largest financial institutions.",
+    "Bank of America was originally founded as the Bank of Italy in 1904 by Amadeo Giannini in San Francisco to serve Italian immigrants and others underserved by traditional banks. It eventually became one of the world's largest financial institutions.",
     "Antonio Santi, one of the earliest Italian-American millionaires, amassed wealth during the California Gold Rush and invested it back into community-building efforts for fellow immigrants.",
-    "Enrico Fermi, a Nobel Prize-winning Italian physicist who immigrated to the U.S. to escape fascism, led the team that developed the world’s first nuclear reactor, profoundly shaping modern science.",
+    "Enrico Fermi, a Nobel Prize-winning Italian physicist who immigrated to the U.S. to escape fascism, led the team that developed the world's first nuclear reactor, profoundly shaping modern science.",
     "Frank Sinatra, the son of Sicilian immigrants, broke entertainment barriers as the first Italian-American to win an Academy Award for acting (1953) and became a cultural icon of American music and style.",
-    "Joe DiMaggio, the son of Italian fishermen, achieved one of baseball’s greatest feats—a 56-game hitting streak in 1941—becoming a national hero and symbol of immigrant success.",
+    "Joe DiMaggio, the son of Italian fishermen, achieved one of baseball's greatest feats—a 56-game hitting streak in 1941—becoming a national hero and symbol of immigrant success.",
     "Mother Frances Xavier Cabrini, canonized in 1946, became the first American saint, recognized for her missionary work with poor Italian immigrants in the U.S. and founding schools and hospitals.",
     "Fiorello La Guardia, New York City's first Italian-American mayor, served three transformative terms during the Great Depression and WWII, reshaping city governance and standing against corruption.",
     "Arturo Toscanini, a renowned Italian conductor, became the first leader of the NBC Symphony Orchestra in 1937, bringing classical music into American living rooms via radio.",
@@ -49,17 +49,16 @@ const italianAmericanFacts = {
   ],
   contributions: [
     "Italian immigrants played a vital role in constructing major American infrastructure—especially the New York subway system—bringing with them skilled labor, engineering knowledge, and a legacy of Roman construction techniques.",
-    "The Bank of America building in San Francisco, completed in 1969, was the tallest structure on the West Coast at the time and a symbol of Italian-American founder Amadeo Giannini’s lasting economic vision.",
+    "The Bank of America building in San Francisco, completed in 1969, was the tallest structure on the West Coast at the time and a symbol of Italian-American founder Amadeo Giannini's lasting economic vision.",
     "Italian-American architects contributed to American skylines, including Cass Gilbert, whose designs shaped the U.S. Supreme Court building, blending classical Roman influences with modern ideals.",
-    "Italian stonemasons were central to the creation of Washington D.C.’s monuments and government buildings, drawing on centuries-old techniques rooted in Renaissance and Roman craftsmanship.",
-    "Italian-American labor leaders, like Carlo Tresca and Luigi Antonini, fought for workers’ rights in dangerous industries, helping form unions and better working conditions in the 20th century.",
+    "Italian stonemasons were central to the creation of Washington D.C.'s monuments and government buildings, drawing on centuries-old techniques rooted in Renaissance and Roman craftsmanship.",
+    "Italian-American labor leaders, like Carlo Tresca and Luigi Antonini, fought for workers' rights in dangerous industries, helping form unions and better working conditions in the 20th century.",
     "Sicilian and Tuscan immigrants brought winemaking traditions to California in the 19th century, helping build what is now a global wine powerhouse by introducing Old World viticulture techniques.",
-    "Italian-American engineers and mechanics contributed significantly to the rise of Detroit’s auto industry, working on production lines and pioneering methods of machine design and maintenance.",
+    "Italian-American engineers and mechanics contributed significantly to the rise of Detroit's auto industry, working on production lines and pioneering methods of machine design and maintenance.",
     "Italian-American artists and writers helped shape the early comic book industry, with creators like Joe Orlando and Carmine Infantino defining the look of iconic characters and stories.",
     "Italian farmers introduced advanced techniques for irrigation and crop rotation in California, transforming arid land into fertile agricultural hubs and influencing the modern American food supply."
   ]
 };
-;
 
 export function useHelpContent() {
   const route = useRoute();

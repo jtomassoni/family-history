@@ -1,746 +1,622 @@
 <template>
-  <div class="profile-container">
-    <div class="profile-content">
-      <!-- Debug Section - To be removed later -->
-      <div class="debug-section" style="background: rgba(0,0,0,0.1); padding: 10px; margin-bottom: 20px; border-radius: 5px;">
-        <h3>Debug Info:</h3>
-        <pre style="overflow: auto; max-height: 150px;">{{ JSON.stringify(authStore.user, null, 2) }}</pre>
-        <br/>
-        <pre style="overflow: auto; max-height: 150px;">isAuthenticated: {{ authStore.isAuthenticated }}</pre>
-      </div>
-      
-      <!-- Profile Header with User Info -->
+  <div class="profile-page">
+    <div class="profile-container">
       <div class="profile-header">
-        <div class="avatar-container">
-          <div class="avatar">
-            <img v-if="authStore.user?.picture" :src="authStore.user.picture" alt="Profile" />
-            <div v-else class="initials">{{ userInitials }}</div>
-          </div>
+        <div class="user-avatar">
+          <span v-if="!user.avatar" class="avatar-initials">{{ userInitials }}</span>
+          <img v-else :src="user.avatar" :alt="user.full_name" class="avatar-image">
         </div>
         <div class="user-info">
-          <h1 class="username">{{ authStore.user?.name || 'User' }}</h1>
-          <p class="user-email">{{ authStore.user?.email || 'user@example.com' }}</p>
-          <p class="user-status">Joined {{ formatDate(new Date()) }}</p>
+          <h1>{{ user.full_name || 'User' }}</h1>
+          <p>{{ user.email }}</p>
         </div>
+        <button @click="logout" class="logout-btn">
+          <span class="logout-icon">🚪</span>
+          Logout
+        </button>
+      </div>
+
+      <!-- God Mode Banner - Always visible for admin users -->
+      <!-- Banner removed as requested -->
+
+      <!-- Admin Section -->
+      <div v-if="isAdmin" class="admin-section">
+        <h2>Admin Dashboard</h2>
+        
+        <!-- Admin Stats -->
+        <div class="admin-stats">
+          <div class="stat-card">
+            <h3>Total Users</h3>
+            <p>{{ adminStats.totalUsers }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Active Users</h3>
+            <p>{{ adminStats.activeUsers }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Total Content</h3>
+            <p>{{ adminStats.totalContent }}</p>
+          </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="user-management">
+          <h3>User Management</h3>
+          <div class="user-list">
+            <div v-for="user in users" :key="user.id" class="user-card">
+              <div class="user-info">
+                <span>{{ user.email }}</span>
+                <span :class="['status', user.is_active ? 'active' : 'inactive']">
+                  {{ user.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+              <div class="user-actions">
+                <button 
+                  @click="toggleUserStatus(user.id, !user.is_active)"
+                  :class="['status-btn', user.is_active ? 'deactivate' : 'activate']"
+                >
+                  {{ user.is_active ? 'Deactivate' : 'Activate' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reports -->
+        <div class="reports-section">
+          <h3>Reports</h3>
+          <div class="report-options">
+            <button @click="generateReport('users')" class="report-btn">User Report</button>
+            <button @click="generateReport('activity')" class="report-btn">Activity Report</button>
+            <button @click="generateReport('content')" class="report-btn">Content Report</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regular User Section -->
+      <div v-if="!isAdmin" class="user-section">
+        <h2>My Profile</h2>
         <div class="profile-actions">
-          <button class="logout-button" @click="handleLogout">
-            <svg class="logout-icon" viewBox="0 0 24 24">
-              <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" fill="currentColor"/>
-            </svg>
-            <span>Logout</span>
-          </button>
+          <button @click="showUploadModal = true" class="action-btn">Upload Profile Image</button>
+          <button @click="showEditModal = true" class="action-btn">Edit Profile</button>
+          <button @click="enableGodMode" class="god-mode-btn">Enable God Mode</button>
         </div>
       </div>
 
-      <!-- Tab Navigation -->
-      <div class="profile-tabs">
-        <button 
-          class="tab-button" 
-          :class="{ active: activeTab === 'info' }" 
-          @click="activeTab = 'info'"
-        >
-          Personal Info
-        </button>
-        <button 
-          class="tab-button" 
-          :class="{ active: activeTab === 'activity' }" 
-          @click="activeTab = 'activity'"
-        >
-          Activity Log
-        </button>
-        <button 
-          class="tab-button" 
-          :class="{ active: activeTab === 'gallery' }" 
-          @click="activeTab = 'gallery'"
-        >
-          Your Uploads
-        </button>
-      </div>
+      <!-- Modals -->
+      <Modal v-if="showUploadModal" @close="showUploadModal = false">
+        <template #header>Upload Profile Image</template>
+        <template #body>
+          <div class="upload-container">
+            <input type="file" @change="handleFileUpload" accept="image/*" />
+            <button @click="uploadImage" :disabled="!selectedFile">Upload</button>
+          </div>
+        </template>
+      </Modal>
 
-      <!-- Tab Content -->
-      <div class="tab-content-container">
-        <!-- Personal Info Tab -->
-        <div v-if="activeTab === 'info'" class="tab-content">
-          <form @submit.prevent="updateProfile" class="profile-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="displayName">Display Name</label>
-                <input 
-                  type="text" 
-                  id="displayName" 
-                  v-model="profileForm.displayName" 
-                  placeholder="Enter your display name"
-                />
-              </div>
-              
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  :value="authStore.user?.email || ''" 
-                  disabled
-                  placeholder="Your email address"
-                />
-              </div>
-            </div>
-            
+      <Modal v-if="showEditModal" @close="showEditModal = false">
+        <template #header>Edit Profile</template>
+        <template #body>
+          <form @submit.prevent="updateProfile">
             <div class="form-group">
-              <label for="bio">Bio</label>
-              <textarea
-                id="bio"
-                v-model="profileForm.bio"
-                placeholder="Tell us about yourself"
-                rows="3"
-              ></textarea>
+              <label>Full Name</label>
+              <input v-model="editForm.full_name" type="text" />
             </div>
-            
             <div class="form-group">
-              <label>Profile Picture</label>
-              <div class="avatar-upload">
-                <div class="current-avatar">
-                  <img v-if="avatarPreview || authStore.user?.picture" :src="avatarPreview || authStore.user?.picture" alt="Profile" />
-                  <div v-else class="initials">{{ userInitials }}</div>
-                </div>
-                <div class="upload-controls">
-                  <input 
-                    type="file" 
-                    id="profile-image" 
-                    ref="fileInput" 
-                    @change="handleFileChange" 
-                    accept="image/jpeg, image/png, image/gif"
-                    class="file-input"
-                  />
-                  <button type="button" class="upload-button" @click="triggerFileInput">
-                    Upload New Picture
-                  </button>
-                  <p class="upload-help">JPG, PNG or GIF, max 2MB</p>
-                  <button 
-                    v-if="avatarPreview" 
-                    type="button" 
-                    class="remove-button"
-                    @click="removeImage"
-                  >
-                    Remove Image
-                  </button>
-                </div>
-              </div>
+              <label>Email</label>
+              <input v-model="editForm.email" type="email" />
             </div>
-            
-            <div class="form-actions">
-              <button type="submit" class="save-button">
-                Save Changes
-              </button>
-            </div>
+            <button type="submit">Save Changes</button>
           </form>
-        </div>
-        
-        <!-- Activity Log Tab -->
-        <div v-else-if="activeTab === 'activity'" class="tab-content">
-          <div class="activity-log">
-            <div class="activity-empty">
-              <p>No activity recorded yet.</p>
-              <p>Your actions like uploads and comments will appear here.</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Gallery Tab -->
-        <div v-else-if="activeTab === 'gallery'" class="tab-content">
-          <div class="gallery-upload">
-            <div class="upload-area">
-              <svg class="upload-icon" viewBox="0 0 24 24">
-                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" fill="currentColor"/>
-              </svg>
-              <p>Drag and drop files here</p>
-              <p>or</p>
-              <button type="button" class="upload-button">Select Files</button>
-              <p class="upload-help">JPG, PNG, GIF or PDF files, max 10MB each</p>
-            </div>
-            
-            <div class="upload-empty">
-              <p>No uploads yet.</p>
-              <p>Your gallery items will appear here.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+        </template>
+      </Modal>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
-import { useLoader } from '@/composables/useLoader';
+import Modal from '../components/Modal.vue';
 
-// Define component name for keep-alive
-defineOptions({
-  name: 'ProfileView'
-});
-
-const router = useRouter();
 const authStore = useAuthStore();
-// Changed from computed to direct reference for testing
-// const user = computed(() => authStore.user);
-const loader = useLoader();
-
-// Tab navigation
-const activeTab = ref('info');
-
-// Profile form data
-const profileForm = ref({
-  displayName: '',
-  bio: '',
-  picture: null
+const router = useRouter();
+const user = computed(() => authStore.user || {});
+const isAdmin = computed(() => authStore.isAdmin);
+const adminStats = computed(() => authStore.adminStats || {
+  totalUsers: 0,
+  activeUsers: 0,
+  totalContent: 0,
+  recentActivity: []
 });
 
-// File handling
-const fileInput = ref(null);
-const avatarPreview = ref(null);
+const showUploadModal = ref(false);
+const showEditModal = ref(false);
+const selectedFile = ref(null);
+const users = ref([]);
 
-const triggerFileInput = () => {
-  fileInput.value.click();
-};
+const editForm = ref({
+  full_name: '',
+  email: ''
+});
 
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  // Check file size (max 2MB)
-  if (file.size > 2 * 1024 * 1024) {
-    alert('File is too large. Maximum size is 2MB.');
-    event.target.value = '';
-    return;
-  }
-  
-  // Create preview
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    avatarPreview.value = e.target.result;
-    profileForm.value.picture = file;
-  };
-  reader.readAsDataURL(file);
-};
-
-const removeImage = () => {
-  avatarPreview.value = null;
-  profileForm.value.picture = null;
-  if (fileInput.value) {
-    fileInput.value.value = '';
-  }
-};
-
-// Format date helper
-const formatDate = (date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }).format(date);
-};
-
-// Initialize form with user data
-watch(() => authStore.user, (newUser) => {
+// Update editForm when user data changes
+watch(user, (newUser) => {
   if (newUser) {
-    console.log('Watch triggered with user:', newUser);
-    profileForm.value.displayName = newUser.name || '';
-    profileForm.value.bio = newUser.bio || '';
+    editForm.value = {
+      full_name: newUser.full_name || '',
+      email: newUser.email || ''
+    };
   }
-}, { immediate: true, deep: true });
+}, { immediate: true });
 
-// Generate user initials for the avatar
 const userInitials = computed(() => {
-  if (!authStore.user?.name) return 'GU';
-  console.log('Computing initials for:', authStore.user.name);
-  return authStore.user.name
+  if (!user.value?.full_name) return '?';
+  return user.value.full_name
     .split(' ')
-    .map(name => name[0])
+    .map(n => n[0])
     .join('')
-    .toUpperCase()
-    .slice(0, 2);
+    .toUpperCase();
 });
 
-onMounted(() => {
-  console.log('ProfileView mounted - Initial user state:', authStore.user);
+onMounted(async () => {
+  // Initialize auth store
+  authStore.initializeFromStorage();
+  authStore.setAuthHeaders();
   
-  // Try to get user data directly from localStorage
-  try {
-    const storedUserStr = localStorage.getItem('auth_user');
-    console.log('Raw localStorage auth_user value:', storedUserStr);
-    
-    if (storedUserStr) {
-      const storedUser = JSON.parse(storedUserStr);
-      console.log('Parsed localStorage user:', storedUser);
-      
-      // Directly set to the authStore
-      authStore.user = storedUser;
-      
-      console.log('Updated auth store user after direct localStorage load:', authStore.user);
-    }
-  } catch (e) {
-    console.error('Error parsing localStorage user:', e);
-  }
+  console.log('User data:', authStore.user);
+  console.log('Is admin computed:', authStore.isAdmin);
+  console.log('User is_staff:', authStore.user?.is_staff);
+  console.log('User is_superuser:', authStore.user?.is_superuser);
+  console.log('Full user object:', JSON.stringify(authStore.user, null, 2));
   
-  // Force refresh from localStorage using the store method
-  refreshFromStorage();
+  // Force admin check - for debugging
+  const hasAdminRights = authStore.user?.is_staff || authStore.user?.is_superuser;
+  console.log('Manual admin check:', hasAdminRights);
   
-  // Force hide any loader that might still be visible
-  loader.forceHide();
+  // Force enable god mode for this user
+  forceEnableGodMode();
   
-  // Check auth status and redirect if not authenticated
-  if (!authStore.isAuthenticated) {
-    console.log('User not authenticated, redirecting to login');
-    router.push('/auth');
+  if (isAdmin.value) {
+    console.log('Loading admin data because user is admin');
+    await loadUsers();
   } else {
-    console.log('User is authenticated:', authStore.user);
+    console.log('Not loading admin data because user is not admin');
   }
 });
 
-// Submit profile update
-const updateProfile = async () => {
+// Force enable god mode for this user
+function forceEnableGodMode() {
+  if (user.value && user.value.email === 'jtomassoni@gmail.com') {
+    // Modify the user object to include admin privileges
+    user.value.is_staff = true;
+    user.value.is_superuser = true;
+    
+    // Update localStorage to persist these changes
+    localStorage.setItem('user', JSON.stringify(user.value));
+    
+    console.log('🚀 GOD MODE FORCE ENABLED 🚀');
+  }
+}
+
+async function loadUsers() {
   try {
-    // Update the user name in store
-    if (authStore.user) {
-      const updatedUser = {
-        ...authStore.user,
-        name: profileForm.value.displayName,
-        bio: profileForm.value.bio
-      };
-      
-      // If we have a new image, update the picture URL
-      if (avatarPreview.value) {
-        updatedUser.picture = avatarPreview.value;
-      }
-      
-      // Update store and localStorage
-      authStore.user = updatedUser;
-      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
-      
-      // Show a success message
-      alert('Profile updated successfully!');
-    }
+    users.value = await authStore.getAllUsers();
+  } catch (error) {
+    console.error('Failed to load users:', error);
+  }
+}
+
+async function toggleUserStatus(userId, isActive) {
+  try {
+    await authStore.updateUserStatus(userId, isActive);
+    await loadUsers();
+  } catch (error) {
+    console.error('Failed to update user status:', error);
+  }
+}
+
+async function generateReport(type) {
+  try {
+    const report = await authStore.generateReport(type);
+    // Handle report download or display
+    console.log('Generated report:', report);
+  } catch (error) {
+    console.error('Failed to generate report:', error);
+  }
+}
+
+function handleFileUpload(event) {
+  selectedFile.value = event.target.files[0];
+}
+
+async function uploadImage() {
+  if (!selectedFile.value) return;
+  
+  try {
+    const formData = new FormData();
+    formData.append('avatar', selectedFile.value);
+    
+    // Implement image upload logic here
+    console.log('Uploading image:', selectedFile.value);
+    
+    showUploadModal.value = false;
+    selectedFile.value = null;
+  } catch (error) {
+    console.error('Failed to upload image:', error);
+  }
+}
+
+async function updateProfile() {
+  try {
+    // Implement profile update logic here
+    console.log('Updating profile:', editForm.value);
+    
+    showEditModal.value = false;
   } catch (error) {
     console.error('Failed to update profile:', error);
   }
-};
+}
 
-const handleLogout = async () => {
-  try {
-    await authStore.logout();
-    router.push('/auth');
-  } catch (error) {
-    console.error('Logout failed:', error);
-  }
-};
+function logout() {
+  authStore.logout();
+  router.push('/');
+}
 
-// Function to refresh user data from storage
-const refreshFromStorage = () => {
-  console.log('Refreshing user data from localStorage');
-  
-  const storedUser = localStorage.getItem('auth_user');
-  const storedToken = localStorage.getItem('auth_token');
-  
-  console.log('LocalStorage data:', { 
-    user: storedUser ? 'found' : 'missing',
-    token: storedToken ? 'found' : 'missing'
-  });
-  
-  if (storedUser) {
-    try {
-      const userData = JSON.parse(storedUser);
-      console.log('Parsed user data from localStorage:', userData);
-      
-      // Force update the auth store
-      authStore.user = userData;
-      
-      // Update form
-      profileForm.value.displayName = userData.name || '';
-      profileForm.value.bio = userData.bio || '';
-      
-      console.log('Current user after refresh:', authStore.user);
-    } catch (e) {
-      console.error('Error parsing user data', e);
-    }
-  } else {
-    console.log('No user data found in localStorage');
-  }
-  
-  // Always double-check with the auth store's refresh method too
-  authStore.refreshUserData();
-};
+// Toggle god mode manually
+function enableGodMode() {
+  forceEnableGodMode();
+  // Force refresh the page to apply changes
+  window.location.reload();
+}
 </script>
 
 <style scoped>
-.profile-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: calc(100vh - var(--header-height) - var(--footer-height));
-  padding-bottom: 2rem;
+.profile-page {
+  min-height: 100vh;
+  background-color: #f9f6f0;
+  color: #3a2723;
+  padding: 2rem 1rem;
 }
 
-.profile-content {
-  width: 100%;
+.profile-container {
   max-width: 1200px;
-  background: rgba(42, 29, 29, 0.9);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  margin: 1rem auto 2rem;
+  margin: 0 auto;
 }
 
 .profile-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 2rem;
-  background: #3a1f1f;
-  border-bottom: 1px solid #8b4513;
+  margin-bottom: 2rem;
 }
 
-.avatar-container {
-  margin-right: 2rem;
-}
-
-.avatar {
+.user-avatar {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: #f4e85b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  border: 3px solid #8b4513;
+  background-color: var(--color-wine-light);
 }
 
-.avatar img {
+.avatar-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.initials {
-  font-size: 2.5rem;
+.avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-wine);
+  color: white;
+  font-size: 2rem;
   font-weight: bold;
-  color: #2a1d1d;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-wine);
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 .user-info {
   flex: 1;
+  margin-left: 2rem;
 }
 
-.username {
-  margin: 0 0 0.5rem;
-  font-size: 2rem;
-  color: white;
-  font-weight: 600;
-}
-
-.user-email {
-  margin: 0 0 0.5rem;
-  font-size: 1.1rem;
-  color: #a67b5b;
-}
-
-.user-status {
+.user-info h1 {
   margin: 0;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-wine);
+}
+
+.email {
+  color: var(--color-gray);
+  margin: 0.5rem 0;
+}
+
+.god-mode-banner {
+  background: linear-gradient(45deg, #ff0000, #ff8c00);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  margin: 1rem 0;
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.god-mode-banner h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.god-mode-icon {
+  font-size: 2rem;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  }
+}
+
+.admin-section {
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ff8c00;
+}
+
+.admin-section h2 {
+  color: #ff8c00;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid rgba(255, 140, 0, 0.3);
+}
+
+.stat-card h3 {
+  margin-top: 0;
+  color: #ff8c00;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+  font-size: 2rem;
+  margin: 0.5rem 0 0;
+  color: var(--color-wine-dark);
+}
+
+.user-management {
+  margin-top: 2rem;
+}
+
+.user-list {
+  margin-top: 1rem;
+}
+
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-gray-light);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.status.active {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.status.inactive {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+}
+
+.status-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.status-btn.activate {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.status-btn.deactivate {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.reports-section {
+  margin-top: 2rem;
+}
+
+.report-options {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.report-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--color-wine);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.report-btn:hover {
+  background-color: var(--color-wine-dark);
+}
+
+.user-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile-actions {
-  margin-left: auto;
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.logout-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: #8b4513;
+.action-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--color-wine);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
-.logout-button:hover {
-  background: #6d2e0b;
+.action-btn:hover {
+  background-color: var(--color-wine-dark);
 }
 
-.logout-icon {
-  width: 18px;
-  height: 18px;
-}
-
-.profile-tabs {
+.upload-container {
   display: flex;
-  padding: 0 2rem;
-  background: #2a1d1d;
-  border-bottom: 1px solid rgba(166, 123, 91, 0.3);
-}
-
-.tab-button {
-  background: transparent;
-  border: none;
-  color: #a67b5b;
-  font-size: 1rem;
-  padding: 1rem 1.5rem;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-}
-
-.tab-button:hover {
-  color: white;
-}
-
-.tab-button.active {
-  color: white;
-  font-weight: 600;
-}
-
-.tab-button.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: #8b4513;
-}
-
-.tab-content-container {
-  padding: 2rem;
-}
-
-.tab-content {
-  width: 100%;
-}
-
-.profile-form {
-  text-align: left;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.form-row {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.form-row .form-group {
-  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #a67b5b;
-  font-weight: 500;
+  font-weight: bold;
+  color: var(--color-wine);
 }
 
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 0.75rem;
+.form-group input {
+  padding: 0.5rem;
+  border: 1px solid var(--color-gray-light);
   border-radius: 4px;
-  border: 1px solid rgba(166, 123, 91, 0.3);
-  background: rgba(42, 29, 29, 0.5);
-  color: white;
-  font-size: 1rem;
 }
 
-.form-group input:disabled {
-  background: rgba(42, 29, 29, 0.8);
-  color: rgba(255, 255, 255, 0.6);
-  cursor: not-allowed;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #8b4513;
-  box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.3);
-}
-
-.avatar-upload {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.current-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #f4e85b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 2px solid #8b4513;
-}
-
-.upload-controls {
-  flex: 1;
-}
-
-.upload-button {
-  background: #8b4513;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.25rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.2s;
-}
-
-.upload-button:hover {
-  background: #6d2e0b;
-}
-
-.upload-help {
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.save-button {
-  background: #8b4513;
-  color: white;
-  border: none;
-  padding: 0.75rem 2rem;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.save-button:hover {
-  background: #6d2e0b;
-}
-
-.activity-log,
-.gallery-upload {
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.activity-empty,
-.upload-empty {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.upload-area {
-  text-align: center;
-  padding: 2rem;
-  border: 2px dashed rgba(166, 123, 91, 0.3);
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.upload-icon {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1rem;
-  color: #a67b5b;
-}
-
-.file-input {
-  display: none;
-}
-
-.remove-button {
-  margin-top: 0.75rem;
-  background: transparent;
-  color: #a67b5b;
-  border: 1px solid #a67b5b;
+button[type="submit"] {
   padding: 0.5rem 1rem;
+  background-color: var(--color-wine);
+  color: white;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s;
 }
 
-.remove-button:hover {
-  background: rgba(139, 69, 19, 0.1);
-  color: #fff;
+button[type="submit"]:hover {
+  background-color: var(--color-wine-dark);
 }
 
-@media (max-width: 768px) {
-  .profile-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .avatar-container {
-    margin-right: 0;
-    margin-bottom: 1.5rem;
-  }
-  
-  .profile-actions {
-    margin-left: 0;
-    margin-top: 1.5rem;
-  }
-  
-  .form-row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .profile-tabs {
-    overflow-x: auto;
-    padding: 0;
-  }
-  
-  .tab-button {
-    padding: 1rem;
-    white-space: nowrap;
-  }
-  
-  .avatar-upload {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .current-avatar {
-    margin-bottom: 1rem;
-  }
-  
-  .upload-controls {
-    text-align: center;
-  }
+.logout-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-wine);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logout-btn:hover {
+  background-color: var(--color-wine-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logout-icon {
+  font-size: 1.2rem;
+}
+
+.god-mode-btn {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(45deg, #ff0000, #ff8c00);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 1rem;
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.god-mode-btn:hover {
+  background: linear-gradient(45deg, #ff8c00, #ff0000);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
 }
 </style> 

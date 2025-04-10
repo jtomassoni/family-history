@@ -1,313 +1,257 @@
 import { defineStore } from 'pinia';
-import { ref, computed, inject } from 'vue';
-import { authConfig } from '../config/auth';
-import { useRouter } from 'vue-router';
-
-// Utility function to delay for a specific time
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { ref, computed } from 'vue';
+import axios from 'axios';
+import { getApiUrl } from '../utils/apiConfig';
 
 export const useAuthStore = defineStore('auth', () => {
-  // Optional injection of loader methods - will use if available
-  const showLoader = inject('showLoader', null);
-  const hideLoader = inject('hideLoader', null);
+  // Get the dynamic API URL
+  const apiUrl = getApiUrl();
   
   const user = ref(null);
   const token = ref(null);
+  const isAuthModalVisible = ref(false);
+  const authModalType = ref('sso'); // 'sso' or 'email'
   const isLoading = ref(false);
   const error = ref(null);
 
-  const isAuthenticated = computed(() => !!token.value);
+  // Admin specific state
+  const adminStats = ref({
+    totalUsers: 0,
+    activeUsers: 0,
+    totalContent: 0,
+    recentActivity: []
+  });
 
-  const router = useRouter();
-
-  // Start loading with minimum duration
-  const startLoading = async () => {
-    isLoading.value = true;
-    if (showLoader) showLoader();
-  };
-
-  // End loading with minimum duration
-  const endLoading = async (delayMs = 0) => {
-    if (hideLoader) hideLoader(delayMs);
-    isLoading.value = false;
-  };
+  const isAdmin = computed(() => {
+    const isStaff = !!user.value?.is_staff;
+    const isSuperuser = !!user.value?.is_superuser;
+    // Special case: Make jtomassoni@gmail.com always an admin
+    const isSpecialAdmin = user.value?.email === 'jtomassoni@gmail.com';
+    const result = isStaff || isSuperuser || isSpecialAdmin;
+    console.log('isAdmin check:', { isStaff, isSuperuser, isSpecialAdmin, result });
+    return result;
+  });
 
   // Initialize from localStorage
-  const initFromStorage = () => {
-    console.log('Initializing auth store from localStorage');
-    const storedToken = localStorage.getItem('auth_token');
-    const storedUser = localStorage.getItem('auth_user');
-    
-    console.log('Found in localStorage:', { 
-      token: storedToken ? 'present' : 'missing', 
-      user: storedUser ? 'present' : 'missing' 
-    });
-    
-    if (storedToken && storedUser) {
+  function initializeFromStorage() {
+    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('token');
+    console.log('Initializing auth store from storage:', { storedUser, storedToken });
+    if (storedUser && storedToken) {
+      user.value = JSON.parse(storedUser);
       token.value = storedToken;
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        console.log('Setting user from localStorage:', parsedUser);
-        user.value = parsedUser;
-        console.log('After setting user, current user value:', user.value);
-      } catch (e) {
-        console.error('Failed to parse user data from localStorage:', e);
-      }
+      console.log('Auth store initialized with user:', user.value);
+    } else {
+      console.log('No stored auth data found');
     }
-  };
+  }
 
-  // Call initFromStorage when the store is created
-  initFromStorage();
+  // Set auth headers for API calls
+  function setAuthHeaders() {
+    if (token.value) {
+      axios.defaults.headers.common['Authorization'] = `Token ${token.value}`;
+    }
+  }
 
+  // Login with Google
   async function loginWithGoogle() {
-    try {
-      await startLoading();
-      error.value = null;
-      
-      // Get the current origin for the redirect URI
-      const currentOrigin = window.location.origin;
-      const redirectUri = authConfig.google.redirectUri || `${currentOrigin}/auth/callback`;
-      
-      // Try to get any existing authentication info that might help with the callback
-      const existingInfo = {};
-      if (user.value) {
-        existingInfo.email = user.value.email;
-        existingInfo.name = user.value.name;
-        existingInfo.picture = user.value.picture;
-      }
-      
-      // Store existing info in session storage for the callback to use if needed
-      if (Object.keys(existingInfo).length > 0) {
-        sessionStorage.setItem('google_oauth_info', JSON.stringify(existingInfo));
-      }
-      
-      // Construct Google OAuth URL
-      const params = new URLSearchParams({
-        client_id: authConfig.google.clientId,
-        redirect_uri: redirectUri,
-        response_type: 'code',
-        scope: 'profile email', // Request both profile and email scopes
-        access_type: 'offline',
-        prompt: 'consent select_account', // Force consent screen and account selection
-        // Add login_hint if we have an email to help pre-fill Google login
-        ...(existingInfo.email ? { login_hint: existingInfo.email } : {})
-      });
-
-      console.log('Redirecting to Google with URI:', redirectUri);
-      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-    } catch (err) {
-      error.value = err.message;
-      await endLoading();
-      throw err;
-    }
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
+    const scope = 'email profile';
+    
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
+    window.location.href = authUrl;
   }
 
-  // Handle any OAuth callback - currently just delegates to Google
-  async function handleOAuthCallback(code, params = {}) {
-    return handleGoogleCallback(code, params);
-  }
-
-  const handleGoogleCallback = async (code, params = {}) => {
+  // Handle Google OAuth callback
+  async function handleGoogleCallback(code) {
     try {
       isLoading.value = true;
       error.value = null;
-      
-      console.log("Processing Google OAuth callback with code:", code.substring(0, 10) + "...");
-      
-      // Make a real API call to the backend to exchange the code for tokens and user info
-      const response = await fetch(authConfig.endpoints.googleAuth, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          code,
-          redirectUri: authConfig.google.redirectUri
-        })
+      console.log('Starting Google callback with code:', code);
+
+      const response = await axios.post(`${apiUrl}/auth/google/callback/`, {
+        code,
+        redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URI
       });
+
+      console.log('Google callback response:', response.data);
+      const { user: userData, token: authToken } = response.data;
       
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        console.error('Error from backend:', errorData);
-        throw new Error(errorData.message || `Server responded with status ${response.status}`);
+      user.value = userData;
+      token.value = authToken;
+      
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', authToken);
+      
+      setAuthHeaders();
+      
+      // If user is admin, fetch admin stats
+      if (isAdmin.value) {
+        await fetchAdminStats();
       }
       
-      const data = await response.json();
-      console.log('Successful authentication response from server:', data);
-      
-      if (!data.user || !data.token) {
-        throw new Error('Invalid response from authentication server');
-      }
-      
-      // Save authentication data to localStorage
-      localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('auth_user', JSON.stringify(data.user));
-      
-      // Update state
-      token.value = data.token;
-      user.value = data.user;
-      
-      console.log('Authentication successful, user:', user.value);
-      
-      // Return success
-      return { success: true, userData: data.user };
-    } catch (e) {
-      console.error("Google callback error:", e);
-      error.value = e.message || "Failed to process Google login";
+      return { success: true, user: userData };
+    } catch (err) {
+      console.error('Google callback error:', err);
+      error.value = err.response?.data?.message || 'Failed to authenticate with Google';
       return { success: false, error: error.value };
     } finally {
       isLoading.value = false;
     }
-  };
+  }
 
-  // Function to refresh user data from localStorage
-  const refreshUserData = () => {
-    try {
-      console.log('Auth store: refreshing user data from localStorage');
-      
-      const storedUser = localStorage.getItem('auth_user');
-      const storedToken = localStorage.getItem('auth_token') || localStorage.getItem('auth_tokens');
-      
-      console.log('Auth store found localStorage:', {
-        userFound: !!storedUser,
-        tokenFound: !!storedToken
-      });
-      
-      if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        console.log('Auth store parsed user data:', userData);
-        
-        // Update the user reference
-        user.value = userData;
-        
-        console.log('Auth store user after refresh:', user.value);
-      }
-      
-      if (storedToken) {
-        let tokenValue = storedToken;
-        
-        // If this is the tokens object, extract access_token
-        if (storedToken.includes('{')) {
-          try {
-            const tokens = JSON.parse(storedToken);
-            tokenValue = tokens.access_token;
-          } catch (e) {
-            console.error('Error parsing token JSON:', e);
-          }
-        }
-        
-        // Update the token
-        token.value = tokenValue;
-        
-        console.log('Auth store token after refresh:', token.value ? 'Token set' : 'No token');
-      }
-      
-      return { 
-        userLoaded: !!user.value,
-        tokenLoaded: !!token.value
-      };
-    } catch (e) {
-      console.error("Error refreshing user data:", e);
-      return { userLoaded: false, tokenLoaded: false };
-    }
-  };
-
-  // Call refresh on store initialization
-  refreshUserData();
-
-  // Email login
+  // Login with email and password
   async function login(email, password) {
     try {
-      await startLoading();
+      isLoading.value = true;
       error.value = null;
+      console.log('Attempting login with email:', email);
+      console.log('Using API URL:', apiUrl);
+
+      const response = await axios.post(`${apiUrl}/api/auth/login/`, {
+        email,
+        password
+      });
+
+      console.log('Login response:', response.data);
+      const { token: authToken, user: userData } = response.data;
       
-      console.log('Login attempt with:', { email, password });
-      
-      // Simulate API delay
-      await delay(800);
-      
-      // Use real user data
-      const userData = {
-        email: 'james.tomassoni@gmail.com',
-        name: 'James Tomassoni',
-        picture: 'https://randomuser.me/api/portraits/men/32.jpg'
-      };
-      
-      // Update state
+      // Store the user data and token
       user.value = userData;
-      token.value = `email_token_${Date.now()}`;
+      token.value = authToken;
       
-      // Store in localStorage
-      localStorage.setItem('auth_token', token.value);
-      localStorage.setItem('auth_user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', authToken);
       
-      await endLoading();
-      return { user: userData, token: token.value };
+      setAuthHeaders();
+      
+      // If user is admin, fetch admin stats
+      if (isAdmin.value) {
+        await fetchAdminStats();
+      }
+      
+      return { success: true, user: userData };
     } catch (err) {
-      error.value = err.message;
-      await endLoading();
-      throw err;
+      console.error('Login error:', err);
+      error.value = err.response?.data?.message || 'Failed to login';
+      return { success: false, error: error.value };
+    } finally {
+      isLoading.value = false;
     }
   }
-  
-  // Email signup
-  async function signup(name, email, password) {
+
+  // Register new user
+  async function register(userData) {
     try {
-      await startLoading();
+      isLoading.value = true;
       error.value = null;
-      
-      console.log('Signup attempt with:', { name, email, password });
-      
-      // Simulate API delay
-      await delay(1000);
-      
-      // Use real user data
-      const userData = {
-        email: 'james.tomassoni@gmail.com',
-        name: 'James Tomassoni',
-        picture: 'https://randomuser.me/api/portraits/men/32.jpg'
-      };
-      
-      // Update state
-      user.value = userData;
-      token.value = `signup_token_${Date.now()}`;
-      
-      // Store in localStorage
-      localStorage.setItem('auth_token', token.value);
-      localStorage.setItem('auth_user', JSON.stringify(userData));
-      
-      await endLoading();
-      return { user: userData, token: token.value };
+      console.log('Attempting registration with data:', userData);
+
+      const response = await axios.post(`${apiUrl}/api/auth/register/`, userData);
+
+      console.log('Registration response:', response.data);
+      return { success: true };
     } catch (err) {
-      error.value = err.message;
-      await endLoading();
+      console.error('Registration error:', err);
+      error.value = err.response?.data?.message || 'Failed to register';
+      return { success: false, error: error.value };
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Refresh user data from storage
+  function refreshUserData() {
+    console.log('Refreshing user data from storage');
+    initializeFromStorage();
+    setAuthHeaders();
+  }
+
+  // Fetch admin statistics
+  async function fetchAdminStats() {
+    try {
+      const response = await axios.get(`${apiUrl}/admin/stats/`);
+      adminStats.value = response.data;
+    } catch (err) {
+      console.error('Failed to fetch admin stats:', err);
+    }
+  }
+
+  // Get all users (admin only)
+  async function getAllUsers() {
+    try {
+      const response = await axios.get(`${apiUrl}/admin/users/`);
+      return response.data;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to fetch users';
       throw err;
     }
   }
 
-  async function logout() {
-    await startLoading();
-    token.value = null;
+  // Update user status (admin only)
+  async function updateUserStatus(userId, isActive) {
+    try {
+      const response = await axios.patch(`${apiUrl}/admin/users/${userId}/`, {
+        is_active: isActive
+      });
+      return response.data;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to update user status';
+      throw err;
+    }
+  }
+
+  // Generate admin report
+  async function generateReport(type) {
+    try {
+      const response = await axios.get(`${apiUrl}/admin/reports/${type}/`);
+      return response.data;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to generate report';
+      throw err;
+    }
+  }
+
+  // Logout
+  function logout() {
     user.value = null;
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
-    localStorage.removeItem('auth_tokens');
-    await endLoading(1000);
+    token.value = null;
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    delete axios.defaults.headers.common['Authorization'];
   }
 
   return {
     user,
     token,
-    isAuthenticated,
+    isAuthModalVisible,
+    authModalType,
     isLoading,
     error,
+    adminStats,
+    isAdmin,
+    initializeFromStorage,
+    setAuthHeaders,
+    login,
+    register,
     loginWithGoogle,
     handleGoogleCallback,
-    handleOAuthCallback,
-    login,
-    signup,
+    fetchAdminStats,
+    getAllUsers,
+    updateUserStatus,
+    generateReport,
     logout,
-    initFromStorage,
+    showAuthModal: () => {
+      isAuthModalVisible.value = true;
+      authModalType.value = 'sso';
+    },
+    hideAuthModal: () => {
+      isAuthModalVisible.value = false;
+    },
+    setAuthModalType: (type) => {
+      authModalType.value = type;
+    },
     refreshUserData
   };
 }); 

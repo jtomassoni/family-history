@@ -12,6 +12,12 @@
   --color-primary-800: #8f1f14;
   --color-primary-900: #771b13;
 
+  /* Wine color theme */
+  --color-wine: #8b4513;
+  --color-wine-dark: #723a0f;
+  --color-wine-light: #a0522d;
+  --color-wine-bg: rgba(42, 18, 10, 0.8);
+
   /* Olive green - complementary color */
   --color-accent-50: #f7f8e4;
   --color-accent-100: #eef0c8;

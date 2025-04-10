@@ -11,12 +11,16 @@
             </button>
 
             <div class="auth-content">
-              <h2 class="auth-title">Welcome Back</h2>
-              <p class="auth-subtitle">Choose how you'd like to continue</p>
+              <h2 class="auth-title">{{ isSignup ? 'Create Account' : 'Welcome Back' }}</h2>
+              <p class="auth-subtitle">{{ isSignup ? 'Join our family history community' : 'Choose how you\'d like to continue' }}</p>
+
+              <div v-if="authError" class="auth-error">
+                {{ authError }}
+              </div>
 
               <!-- SSO Options -->
-              <div class="sso-options">
-                <button class="sso-button google-sso" @click="handleGoogleLogin">
+              <div v-if="!showEmailForm" class="sso-options">
+                <button class="sso-button google-sso" @click="handleGoogleLogin" :disabled="isLoading">
                   <svg class="sso-icon" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -32,20 +36,87 @@
                   <span>or</span>
                 </div>
 
-                <button class="sso-button email-sso" @click="showEmailForm">
+                <button @click="showEmailForm = true" class="sso-button email-sso">
                   <svg class="sso-icon" viewBox="0 0 24 24">
                     <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/>
                   </svg>
-                  <div class="sso-button-content">
-                    <span>Continue with Email</span>
-                  </div>
+                  <span>Continue with Email</span>
                 </button>
 
                 <p class="auth-footer">
-                  Don't have an account? 
-                  <button class="text-button" @click="showSignupForm">Sign up</button>
+                  {{ isSignup ? 'Already have an account?' : 'Don\'t have an account?' }}
+                  <button class="text-button" @click="toggleSignup">
+                    {{ isSignup ? 'Sign in' : 'Sign up' }}
+                  </button>
                 </p>
               </div>
+
+              <!-- Email Form -->
+              <form v-else class="email-form" @submit.prevent="handleEmailSubmit">
+                <div v-if="isSignup" class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input
+                    id="firstName"
+                    v-model="firstName"
+                    type="text"
+                    placeholder="First Name"
+                    required
+                  />
+                </div>
+
+                <div v-if="isSignup" class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input
+                    id="lastName"
+                    v-model="lastName"
+                    type="text"
+                    placeholder="Last Name"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input
+                    id="email"
+                    v-model="email"
+                    type="email"
+                    placeholder="Email"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input
+                    id="password"
+                    v-model="password"
+                    type="password"
+                    placeholder="Password"
+                    required
+                  />
+                </div>
+
+                <div v-if="isSignup" class="form-group">
+                  <label for="confirmPassword">Confirm Password</label>
+                  <input
+                    id="confirmPassword"
+                    v-model="confirmPassword"
+                    type="password"
+                    placeholder="Confirm Password"
+                    required
+                  />
+                </div>
+
+                <button type="submit" class="submit-button" :disabled="isLoading">
+                  <span v-if="isLoading" class="loading-spinner"></span>
+                  <span v-else>{{ isSignup ? 'Create Account' : 'Sign In' }}</span>
+                </button>
+
+                <button type="button" class="back-button" @click="showEmailForm = false">
+                  Back to Options
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -55,7 +126,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../stores/auth';
 
 const props = defineProps({
@@ -65,7 +137,21 @@ const props = defineProps({
 const emit = defineEmits(['close', 'submit']);
 
 const authStore = useAuthStore();
+const router = useRouter();
+
+// Form state
+const showEmailForm = ref(false);
+const isSignup = ref(false);
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const firstName = ref('');
+const lastName = ref('');
 const isMobile = ref(false);
+
+// Computed properties
+const isLoading = computed(() => authStore.isLoading);
+const authError = computed(() => authStore.error);
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth < 768;
@@ -82,6 +168,20 @@ onUnmounted(() => {
 
 const close = () => {
   emit('close');
+  resetForm();
+};
+
+const resetForm = () => {
+  showEmailForm.value = false;
+  email.value = '';
+  password.value = '';
+  confirmPassword.value = '';
+  firstName.value = '';
+  lastName.value = '';
+};
+
+const toggleSignup = () => {
+  isSignup.value = !isSignup.value;
 };
 
 const handleGoogleLogin = async () => {
@@ -93,12 +193,41 @@ const handleGoogleLogin = async () => {
   }
 };
 
-const showEmailForm = () => {
-  emit('submit', { type: 'email' });
+const handleGoogleAuth = () => {
+  authStore.loginWithGoogle();
 };
 
-const showSignupForm = () => {
-  emit('submit', { type: 'signup' });
+const handleEmailSubmit = async () => {
+  if (isSignup.value) {
+    // Register flow
+    if (password.value !== confirmPassword.value) {
+      authStore.error = "Passwords do not match!";
+      return;
+    }
+    
+    const userData = {
+      email: email.value,
+      password: password.value,
+      first_name: firstName.value,
+      last_name: lastName.value,
+    };
+    
+    const result = await authStore.register(userData);
+    
+    if (result.success) {
+      isSignup.value = false; // Switch to login after successful registration
+      password.value = '';
+      confirmPassword.value = '';
+    }
+  } else {
+    // Login flow
+    const result = await authStore.login(email.value, password.value);
+    
+    if (result.success) {
+      close();
+      router.push('/profile');
+    }
+  }
 };
 </script>
 
@@ -278,18 +407,12 @@ const showSignupForm = () => {
 }
 
 .text-button {
-  background: none;
+  background: transparent;
   border: none;
-  color: var(--color-primary-600);
-  font-weight: 600;
+  color: var(--color-wine);
+  font-weight: 500;
   cursor: pointer;
   padding: 0;
-  font-size: inherit;
-}
-
-.text-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .text-button:not(:disabled):hover {
@@ -349,5 +472,88 @@ const showSignupForm = () => {
   .submit-button {
     margin-top: var(--spacing-xl);
   }
+}
+
+.auth-error {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.email-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.form-group label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.form-group input {
+  height: 40px;
+  padding: 0 var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+}
+
+.submit-button {
+  height: 48px;
+  background-color: var(--color-wine);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-button:hover {
+  background-color: var(--color-wine-dark);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.back-button {
+  margin-top: var(--spacing-sm);
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style> 
