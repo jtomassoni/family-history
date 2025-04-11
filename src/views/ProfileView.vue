@@ -5,11 +5,14 @@
       <div class="profile-card header-card">
         <div class="profile-header">
           <div class="user-avatar">
-            <span v-if="!user.avatar" class="avatar-initials">{{ userInitials }}</span>
-            <img v-else :src="user.avatar" :alt="user.full_name" class="avatar-image">
+            <img v-if="previewImage" :src="previewImage" alt="Profile Preview" class="avatar-image" />
+            <span v-else class="avatar-initials">{{ userInitials }}</span>
+            <div class="upload-banner" @click="triggerFileInput">Upload</div>
+            <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*" style="display: none;" />
+            <div v-if="showSuccessMessage" class="success-checkmark">✓</div>
           </div>
           <div class="user-info">
-            <h1>{{ user.full_name || 'User' }}</h1>
+            <h1>{{ userFullName }}</h1>
             <p class="email">{{ user.email }}</p>
             <div class="user-stats">
               <div class="stat">
@@ -124,6 +127,11 @@
               <label>Email</label>
               <input v-model="editForm.email" type="email" />
             </div>
+            <div class="form-group">
+              <label>Profile Image</label>
+              <input type="file" @change="handleFileChange" accept="image/*" />
+              <img v-if="previewImage" :src="previewImage" alt="Profile Preview" class="image-preview" />
+            </div>
             <button type="submit">Save Changes</button>
           </form>
         </template>
@@ -159,6 +167,11 @@ const editForm = ref({
   email: ''
 });
 
+const previewImage = ref(null);
+const fileInput = ref(null);
+const showSuccessMessage = ref(false);
+const successMessage = ref('');
+
 // Update editForm when user data changes
 watch(user, (newUser) => {
   if (newUser) {
@@ -176,6 +189,11 @@ const userInitials = computed(() => {
     .map(n => n[0])
     .join('')
     .toUpperCase();
+});
+
+// Get user full name
+const userFullName = computed(() => {
+  return user.value?.full_name || `${user.value?.first_name || ''} ${user.value?.last_name || ''}`.trim() || 'User';
 });
 
 onMounted(async () => {
@@ -266,6 +284,57 @@ async function uploadImage() {
   }
 }
 
+async function handleFileChange(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImage.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // Upload the image
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('http://localhost:8000/api/users/profile-image/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        successMessage.value = data.message;
+        showSuccessMessage.value = true;
+        const avatar = document.querySelector('.user-avatar');
+        if (avatar) {
+          avatar.classList.add('success');
+        }
+        // Hide the success message after 3 seconds
+        setTimeout(() => {
+          showSuccessMessage.value = false;
+          if (avatar) {
+            avatar.classList.remove('success');
+          }
+        }, 3000);
+      } else {
+        throw new Error('Failed to upload image');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      successMessage.value = 'Failed to upload image. Please try again.';
+      showSuccessMessage.value = true;
+      setTimeout(() => {
+        showSuccessMessage.value = false;
+      }, 3000);
+    }
+  }
+}
+
 async function updateProfile() {
   try {
     // Implement profile update logic here
@@ -279,7 +348,7 @@ async function updateProfile() {
 
 function logout() {
   authStore.logout();
-  router.push('/');
+  router.push('/login');
 }
 
 // Toggle god mode manually
@@ -287,6 +356,10 @@ function enableGodMode() {
   forceEnableGodMode();
   // Force refresh the page to apply changes
   window.location.reload();
+}
+
+function triggerFileInput() {
+  fileInput.value.click();
 }
 </script>
 
@@ -327,12 +400,33 @@ function enableGodMode() {
 }
 
 .user-avatar {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
+  position: relative;
   border-radius: 50%;
   overflow: hidden;
   background-color: var(--color-wine-light);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.user-avatar.success {
+  box-shadow: 0 0 0 10px rgba(76, 175, 80, 0.6), 0 0 15px rgba(76, 175, 80, 0.8);
+}
+
+.success-checkmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: #4CAF50;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.user-avatar.success .success-checkmark {
+  opacity: 1;
 }
 
 .avatar-image {
@@ -661,6 +755,81 @@ function enableGodMode() {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
+  }
+}
+
+.image-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 10px;
+}
+
+.upload-banner {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  text-align: center;
+  padding: 5px 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.success-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(76, 175, 80, 0.95);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  animation: fadeIn 0.3s ease-out;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(4px);
+}
+
+.success-message::before {
+  content: '✓';
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: white;
+  color: #4CAF50;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: checkmark 0.3s ease-out;
+}
+
+@keyframes checkmark {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 </style> 
