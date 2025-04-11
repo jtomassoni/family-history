@@ -80,6 +80,7 @@ def login(request):
     print(f"Login attempt for email: {email}")
     
     if not email or not password:
+        print("Missing email or password")
         return Response(
             {'error': 'Please provide both email and password'},
             status=status.HTTP_400_BAD_REQUEST
@@ -90,6 +91,7 @@ def login(request):
     
     if not user:
         print(f"Authentication failed for {email}")
+        print(f"User exists: {User.objects.filter(email=email).exists()}")
         return Response(
             {'error': 'Invalid credentials'},
             status=status.HTTP_401_UNAUTHORIZED
@@ -100,25 +102,17 @@ def login(request):
     # Create or get token
     token, created = Token.objects.get_or_create(user=user)
     
-    # Return user info and token
-    user_data = UserSerializer(user).data
-    user_data['is_staff'] = user.is_staff
-    user_data['is_superuser'] = user.is_superuser
-    
-    response = Response({
+    return Response({
         'token': token.key,
-        'user': user_data,
-        'is_superuser': user.is_superuser,
-        'is_staff': user.is_staff
+        'user': {
+            'id': user.id,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'is_staff': user.is_staff,
+            'picture': user.picture
+        }
     })
-    
-    # Set CORS headers explicitly
-    response["Access-Control-Allow-Origin"] = request.META.get('HTTP_ORIGIN', '*')
-    response["Access-Control-Allow-Credentials"] = "true"
-    response["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response["Access-Control-Allow-Headers"] = "Origin, Content-Type, Accept, Authorization"
-    
-    return response
     
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
