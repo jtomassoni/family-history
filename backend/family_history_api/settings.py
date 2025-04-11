@@ -221,3 +221,10 @@ CORS_ALLOW_HEADERS = [
 # Email settings for development (print to console)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'noreply@familyhistory.example.com'
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'users.auth.EmailBackend',  # Custom email backend
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+    'allauth.account.auth_backends.AuthenticationBackend',  # Allauth backend
+]
