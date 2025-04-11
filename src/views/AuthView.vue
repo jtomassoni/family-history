@@ -129,7 +129,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import './AuthView.css'
@@ -193,7 +193,23 @@ function handleGoogleLogin() {
 async function handleEmailSubmit() {
   localError.value = null;
   localLoading.value = true;
-  
+
+  // Email validation
+  const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  if (!emailPattern.test(email.value)) {
+    localError.value = "Please enter a valid email address.";
+    localLoading.value = false;
+    return;
+  }
+
+  // Password validation
+  const passwordPattern = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/;
+  if (!passwordPattern.test(password.value)) {
+    localError.value = "Password must be at least 8 characters long, include a number and a special character.";
+    localLoading.value = false;
+    return;
+  }
+
   try {
     if (isSignup.value) {
       // Register flow
@@ -239,6 +255,16 @@ async function handleEmailSubmit() {
   }
 }
 
+// Watcher for email validation
+watch(email, (newEmail) => {
+  const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  if (!emailPattern.test(newEmail)) {
+    localError.value = "Please enter a valid email address.";
+  } else {
+    localError.value = null;
+  }
+});
+
 // Initialize from URL params
 onMounted(() => {
   isSignup.value = route.path === '/signup' || route.query.signup === 'true';
@@ -252,12 +278,12 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   background-color: #f9f6f0;
-  padding: 0.1rem;
+  padding: 2rem 0;
   box-sizing: border-box;
 }
 
 .auth-page-container {
-  max-width: 350px;
+  max-width: 300px;
   width: 100%;
   background-color: white;
   border-radius: 6px;
@@ -277,30 +303,99 @@ h1 {
 .auth-options {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 0.5rem;
+  gap: 1rem;
+  margin: 2rem 0;
 }
 
 .auth-option {
-  padding: 0.3rem 0.5rem;
-  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.email-option {
+  background-color: #8c2d19;
+  color: white;
+}
+
+.email-option:hover {
+  background-color: #6b2214;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.google-option {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.google-option:hover {
+  background-color: #f8f8f8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-option .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-option .icon svg {
+  width: 24px;
+  height: 24px;
 }
 
 .submit-button {
-  padding: 0.4rem;
-  font-size: 0.7rem;
+  background-color: #8c2d19;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:hover {
+  background-color: #6b2214;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.submit-button:disabled {
+  background-color: #ccbdaf;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .auth-info {
-  font-size: 0.65rem;
-  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+  color: #666;
 }
 
 .auth-info a {
-  color: #8c2d19; /* Wine theme */
+  color: #8c2d19;
   text-decoration: none;
   font-weight: 500;
-  cursor: pointer;
+  margin-left: 0.25rem;
 }
 
 .auth-info a:hover {
@@ -318,92 +413,80 @@ h1 {
   align-items: center;
   margin-bottom: 1rem;
   position: relative;
-  padding-top: 0.5rem;
+  padding-top: 1rem;
 }
 
 .back-button {
   position: absolute;
-  left: 0;
-  top: 0.5rem;
+  left: -0.5rem;
+  top: -0.5rem;
   background: none;
   border: none;
-  color: #8c2d19; /* Wine theme */
+  color: #8c2d19;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.65rem;
   padding: 0;
+  font-weight: 400;
+  z-index: 1;
+}
+
+.back-button:hover {
+  text-decoration: underline;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.2rem;
   text-align: left;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  margin: 0;
+  gap: 0.05rem;
 }
 
 .form-group label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #333;
+  margin-bottom: 0.15rem;
 }
 
 .form-group input {
-  padding: 0.4rem;
+  padding: 0.75rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  transition: border-color 0.2s;
-  margin: 0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
 }
 
 .form-group input:focus {
-  border-color: #8c2d19; /* Wine theme */
+  border-color: #8c2d19;
   outline: none;
-}
-
-.submit-button {
-  background-color: #8c2d19; /* Wine theme */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 0.5rem;
-}
-
-.submit-button:hover {
-  background-color: #6b2214; /* Darker wine */
-}
-
-.submit-button:disabled {
-  background-color: #ccbdaf;
-  cursor: not-allowed;
+  box-shadow: 0 0 0 2px rgba(140, 45, 25, 0.1);
 }
 
 .error-message {
   color: #d32f2f;
   font-size: 0.9rem;
-  margin-top: 0.5rem;
+  margin-top: 0.1rem;
+  padding: 0.4rem;
+  background-color: #ffebee;
+  border-radius: 8px;
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 
 /* Success message styles */
 .success-message {
   text-align: center;
-  padding: 1rem 0;
+  padding: 2rem 0;
 }
 
 .success-message h2 {
   color: #2e7d32;
   margin-bottom: 1rem;
+  font-size: 1.5rem;
 }
 
 .email-sent {
@@ -411,40 +494,46 @@ h1 {
   padding: 1rem;
   border-radius: 8px;
   margin: 1.5rem 0;
+  color: #2e7d32;
 }
 
 .login-button {
-  background-color: #8c2d19; /* Wine theme */
+  background-color: #8c2d19;
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .login-button:hover {
-  background-color: #6b2214; /* Darker wine */
+  background-color: #6b2214;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 768px) {
   .auth-page-container {
-    padding: 0.5rem;
+    padding: 1.5rem;
   }
 
-  h1 {
-    font-size: 1.2rem;
+  .auth-option {
+    padding: 0.875rem;
+    font-size: 0.9rem;
   }
 
   .submit-button {
-    padding: 0.3rem;
-    font-size: 0.65rem;
+    padding: 0.875rem;
+    font-size: 0.9rem;
   }
 
   .auth-info {
-    font-size: 0.6rem;
+    font-size: 0.85rem;
   }
 }
 </style>
