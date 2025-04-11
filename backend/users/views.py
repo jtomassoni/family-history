@@ -104,6 +104,14 @@ def login(request):
                 status=status.HTTP_401_UNAUTHORIZED
             )
         
+        # Check if user is active
+        if not user.is_active:
+            logger.warning(f"Inactive user attempted login: {email}")
+            return Response(
+                {'error': 'Account is inactive'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
         logger.info(f"User authenticated: {user.email} (ID: {user.id})")
         
         # Create or get token
