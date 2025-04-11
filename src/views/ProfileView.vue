@@ -777,12 +777,19 @@ function triggerFileInput() {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   color: white;
   text-align: center;
   padding: 5px 0;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease;
+}
+
+.upload-banner:hover {
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .success-message {

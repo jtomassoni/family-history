@@ -1,127 +1,69 @@
 <template>
   <div class="auth-page-wrapper">
     <div class="auth-page-container">
-      <!-- Main screen with login options -->
-      <div v-if="!showEmailForm">
-        <h1>{{ isSignup ? "Sign Up" : "Login" }}</h1>
-        
-        <div class="auth-options">
-          <button class="auth-option google-option" @click="handleGoogleLogin">
-            <span class="icon">
-              <svg viewBox="0 0 24 24" width="24" height="24">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
-            </span>
-            <span>{{ isSignup ? "Sign Up with Google" : "Login with Google" }}</span>
-          </button>
-          
-          <button class="auth-option email-option" @click="showEmailForm = true">
-            <span class="icon">✉️</span>
-            <span>{{ isSignup ? "Sign Up with Email" : "Login with Email" }}</span>
-          </button>
-        </div>
-        
-        <p class="auth-info">
-          {{ isSignup ? "Already have an account?" : "Need an account?" }}
-          <a @click.prevent="toggleSignup" href="#">
-            {{ isSignup ? "Log in" : "Sign up" }}
-          </a>
-        </p>
+      <!-- Tabs for navigation -->
+      <div class="auth-tabs">
+        <button :class="{ active: !isSignup }" @click="isSignup = false">Login</button>
+        <button :class="{ active: isSignup }" @click="isSignup = true">Sign Up</button>
       </div>
-      
-      <!-- Email Form -->
-      <div v-else class="email-auth-form" :data-signup="isSignup">
-        <div class="form-header">
-          <button class="back-button" @click="handleBack">← Back</button>
-          <h1>{{ isSignup ? "Sign Up with Email" : "Login with Email" }}</h1>
-        </div>
-        
-        <div v-if="registrationComplete" class="success-message">
-          <h2>Registration Complete!</h2>
-          <p>Please check your email to verify your account.</p>
-          <p class="email-sent">We've sent a verification link to <strong>{{ email }}</strong></p>
-          <button class="login-button" @click="handleBack">Return to Login</button>
-        </div>
-        
-        <form v-else @submit.prevent="handleEmailSubmit" class="auth-form">
-          <!-- Registration fields -->
-          <template v-if="isSignup">
-            <div class="form-group">
-              <label for="firstName">First Name</label>
-              <input 
-                type="text" 
-                id="firstName" 
-                v-model="firstName" 
-                placeholder="Enter your first name" 
-                required
-              />
-            </div>
-            
-            <div class="form-group">
-              <label for="lastName">Last Name</label>
-              <input 
-                type="text" 
-                id="lastName" 
-                v-model="lastName" 
-                placeholder="Enter your last name" 
-                required
-              />
-            </div>
-          </template>
-          
+
+      <!-- Success Message -->
+      <div v-if="showSuccessMessage" class="success-message">
+        <div class="success-icon">✓</div>
+        <h3>Registration Successful!</h3>
+        <p>An email has been sent to <strong>{{ successEmail }}</strong>.</p>
+        <p>Please check your inbox to verify your account.</p>
+        <p class="redirect-message">Redirecting to home page in {{ countdown }} seconds...</p>
+      </div>
+
+      <!-- Login Form -->
+      <div v-else-if="!isSignup">
+        <form @submit.prevent="handleLogin">
+          <div v-if="authError" class="auth-error">
+            {{ authError }}
+          </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input 
-              type="email" 
-              id="email" 
-              v-model="email" 
-              placeholder="Enter your email" 
-              required
-            />
+            <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
           </div>
-
           <div class="form-group">
             <label for="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              v-model="password" 
-              placeholder="Enter password" 
-              required
-            />
+            <input type="password" id="password" v-model="password" placeholder="Enter password" required />
           </div>
-
-          <!-- Show confirm password field only on signup -->
-          <div v-if="isSignup" class="form-group">
-            <label for="confirmPassword">Confirm Password</label>
-            <input 
-              type="password" 
-              id="confirmPassword" 
-              v-model="confirmPassword" 
-              placeholder="Confirm password" 
-              required
-            />
-          </div>
-
-          <p v-if="error" class="error-message">{{ error }}</p>
-
-          <button 
-            type="submit" 
-            class="submit-button"
-            :disabled="loading"
-          >
-            {{ loading ? 'Processing...' : (isSignup ? "Create Account" : "Sign In") }}
+          <button type="submit" class="submit-button" :disabled="isLoading">
+            <span v-if="isLoading" class="loading-spinner"></span>
+            <span v-else>Login</span>
           </button>
-          
-          <p class="auth-info">
-            {{ isSignup ? "Already have an account?" : "Need an account?" }}
-            <a @click.prevent="toggleSignup" href="#">
-              {{ isSignup ? "Log in" : "Sign up" }}
-            </a>
-          </p>
+        </form>
+        <a @click="showForgotPassword = true" class="forgot-password">Forgot Password?</a>
+      </div>
+
+      <!-- Sign Up Form -->
+      <div v-else>
+        <form @submit.prevent="handleSignup">
+          <div v-if="authError" class="auth-error">
+            {{ authError }}
+          </div>
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" v-model="firstName" placeholder="Enter your first name" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" v-model="lastName" placeholder="Enter your last name" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" v-model="password" placeholder="Enter password" required />
+          </div>
+          <button type="submit" class="submit-button" :disabled="isLoading">
+            <span v-if="isLoading" class="loading-spinner"></span>
+            <span v-else>Sign Up</span>
+          </button>
         </form>
       </div>
     </div>
@@ -129,488 +71,241 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, computed, watch, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
-import './AuthView.css'
 
-const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
-// State variables
-const showEmailForm = ref(false);
-const isSignup = ref(route.path === '/signup');
-const registrationComplete = ref(false);
-
-// Form fields
+const isSignup = ref(false);
 const email = ref('');
 const password = ref('');
-const confirmPassword = ref('');
 const firstName = ref('');
 const lastName = ref('');
+const showForgotPassword = ref(false);
+const showSuccessMessage = ref(false);
+const successEmail = ref('');
+const countdown = ref(10);
+let redirectTimer = null;
 
-// Local error and loading state
-const localError = ref(null);
-const localLoading = ref(false);
+// Computed properties
+const isLoading = computed(() => authStore.isLoading);
+const authError = computed(() => authStore.error);
 
-// Computed properties for loading and error states
-const loading = computed(() => localLoading.value || authStore.isLoading);
-const error = computed(() => localError.value || authStore.error);
-
-// Toggle between signup and login
-function toggleSignup() {
-  resetForm();
-  isSignup.value = !isSignup.value;
-  
-  // Update URL without reloading the page
-  const query = isSignup.value ? { signup: 'true' } : {};
-  router.replace({ query });
-}
-
-// Handle Google login
-function handleGoogleLogin() {
-  const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/auth/callback`;
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  
-  if (!clientId) {
-    console.error('Google Client ID not configured');
-    return;
+// Start countdown when success message is shown
+watch(showSuccessMessage, (showing) => {
+  if (showing) {
+    countdown.value = 10;
+    redirectTimer = setInterval(() => {
+      countdown.value--;
+      if (countdown.value <= 0) {
+        clearInterval(redirectTimer);
+        showSuccessMessage.value = false;
+        successEmail.value = '';
+        router.push('/');
+      }
+    }, 1000);
+  } else if (redirectTimer) {
+    clearInterval(redirectTimer);
   }
-  
-  // Build Google OAuth URL
-  const googleAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-  googleAuthUrl.searchParams.append('client_id', clientId);
-  googleAuthUrl.searchParams.append('redirect_uri', redirectUri);
-  googleAuthUrl.searchParams.append('response_type', 'code');
-  googleAuthUrl.searchParams.append('scope', 'email profile');
-  googleAuthUrl.searchParams.append('prompt', 'select_account');
-  
-  // Redirect to Google auth page
-  window.location.href = googleAuthUrl.toString();
-}
+});
 
-// Handle email login/signup
-async function handleEmailSubmit() {
-  localError.value = null;
-  localLoading.value = true;
-
-  // Email validation
-  const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-  if (!emailPattern.test(email.value)) {
-    localError.value = "Please enter a valid email address.";
-    localLoading.value = false;
-    return;
+// Clean up timer when component is unmounted
+onUnmounted(() => {
+  if (redirectTimer) {
+    clearInterval(redirectTimer);
   }
+});
 
-  // Password validation only for signup
-  if (isSignup.value) {
-    const passwordPattern = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-    if (!passwordPattern.test(password.value)) {
-      localError.value = "Password must be at least 8 characters long and include a number and a capital letter.";
-      localLoading.value = false;
-      return;
-    }
-  }
-
+async function handleLogin() {
   try {
-    if (isSignup.value) {
-      // Register flow
-      if (password.value !== confirmPassword.value) {
-        localError.value = "Passwords do not match!";
-        localLoading.value = false;
-        return;
-      }
-      
-      const userData = {
-        email: email.value,
-        password: password.value,
-        first_name: firstName.value,
-        last_name: lastName.value,
-      };
-      
-      const result = await authStore.register(userData);
-      
-      if (result.success) {
-        // Show registration complete message
-        registrationComplete.value = true;
-      } else if (result.error) {
-        if (result.error.includes('already exists')) {
-          localError.value = "An account with this email already exists. Please log in or use a different email.";
-        } else {
-          localError.value = result.error;
-        }
-      } else {
-        localError.value = 'Failed to register. Please try again.';
-      }
-    } else {
-      // Login flow
-      const result = await authStore.login(email.value, password.value);
-      
-      if (result.success) {
-        // Force refresh user data from local storage
-        authStore.refreshUserData();
-        
-        // Make sure we have the user data before redirecting
-        console.log('User data after login:', authStore.user);
-        
-        // Redirect to profile page on successful login
-        router.push('/profile');
-      } else {
-        localError.value = result.error || 'Authentication failed. Please try again.';
-      }
+    const result = await authStore.login(email.value, password.value);
+    if (result.success) {
+      router.push('/profile');
     }
-  } catch (err) {
-    console.error('Authentication error:', err);
-    localError.value = err.message || 'Authentication failed. Please try again.';
-  } finally {
-    localLoading.value = false;
+  } catch (error) {
+    console.error('Login error:', error);
   }
 }
 
-// Watcher for email validation
-watch(email, (newEmail) => {
-  const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-  if (!emailPattern.test(newEmail)) {
-    localError.value = "Please enter a valid email address.";
-  } else {
-    localError.value = null;
+async function handleSignup() {
+  try {
+    const userData = {
+      email: email.value,
+      password: password.value,
+      first_name: firstName.value,
+      last_name: lastName.value,
+    };
+    
+    const result = await authStore.register(userData);
+    if (result.success) {
+      // Store the email for the success message
+      successEmail.value = email.value;
+      showSuccessMessage.value = true;
+      
+      // Clear the form
+      email.value = '';
+      password.value = '';
+      firstName.value = '';
+      lastName.value = '';
+    }
+  } catch (error) {
+    console.error('Signup error:', error);
   }
-});
-
-// Initialize from URL params
-onMounted(() => {
-  isSignup.value = route.path === '/signup' || route.query.signup === 'true';
-});
-
-function resetForm() {
-  email.value = '';
-  password.value = '';
-  confirmPassword.value = '';
-  firstName.value = '';
-  lastName.value = '';
-  registrationComplete.value = false;
-  localError.value = null;
-}
-
-function handleBack() {
-  resetForm();
-  showEmailForm.value = false;
 }
 </script>
 
 <style scoped>
 .auth-page-wrapper {
-  min-height: calc(100vh - var(--header-height) - var(--footer-height));
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
   background-color: #f9f6f0;
-  padding: 2rem 0;
-  box-sizing: border-box;
 }
 
 .auth-page-container {
-  max-width: 60vw;
+  max-width: 400px;
   width: 100%;
   background-color: white;
-  border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 2rem;
   text-align: center;
-  box-sizing: border-box;
 }
 
-h1 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #8c2d19; /* Wine theme */
-  margin-bottom: 0.5rem;
-}
-
-.auth-options {
+.auth-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 2rem 0;
-  width: 100%;
-  padding: 0;
-}
-
-.auth-option {
-  background: var(--color-background-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  font-size: 1rem;
-  color: var(--color-text);
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  width: 100%;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-.auth-option:hover {
-  background: var(--color-background-mute);
-  color: #8c2d19; /* Wine color on hover */
-  border-color: #8c2d19;
-}
-
-.email-option {
-  background-color: #8c2d19;
-  color: white;
-  border: none;
-}
-
-.email-option:hover {
-  background-color: #6b2214;
-  color: white;
-}
-
-.google-option {
-  background-color: white;
-  color: #333;
-  border: 1px solid #ddd;
-}
-
-.google-option:hover {
-  background-color: #f8f8f8;
-  color: #8c2d19; /* Wine color on hover */
-  border-color: #8c2d19;
-}
-
-.auth-option .icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-}
-
-.auth-option .icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.submit-button {
-  width: 150px;
-  padding: 0.75rem 1rem;
-  background: #6b2214;
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-full);
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  transition: all var(--transition-base);
-  margin-top: 1rem;
-}
-
-.submit-button:disabled {
-  background-color: #ccbdaf;
-  cursor: not-allowed;
-}
-
-.auth-info {
-  font-size: 0.9rem;
-  margin-top: 1.5rem;
-  color: #666;
-}
-
-.auth-info a {
-  color: #8c2d19;
-  text-decoration: none;
-  font-weight: 500;
-  margin-left: 0.25rem;
-}
-
-.auth-info a:hover {
-  color: #6b2214;
-  text-decoration: underline;
-}
-
-/* Email form styles */
-.email-auth-form {
-  width: 100%;
-}
-
-.form-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   margin-bottom: 1rem;
-  position: relative;
-  padding-top: 0.5rem;
 }
 
-.back-button {
-  position: absolute;
-  top: 0.25rem;
-  left: 0.25rem;
-  background: var(--color-background-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
+.auth-tabs button {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #8c2d19;
+  transition: color 0.3s ease;
 }
 
-.back-button:hover {
-  background: var(--color-background-mute);
+.auth-tabs .active {
+  font-weight: bold;
   color: #6b2214;
-  border-color: #8c2d19;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  text-align: center;
-  align-items: center;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.05rem;
-  align-items: center;
+  margin-bottom: 1rem;
+  text-align: left;
 }
 
 .form-group label {
-  margin-bottom: 0.1rem;
+  display: block;
+  margin-bottom: 0.5rem;
   color: #8c2d19;
-  text-align: center;
 }
 
 .form-group input {
-  width: 160%;
+  width: 100%;
   padding: 0.5rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 1rem;
-  transition: all 0.2s ease;
-  margin: 0;
-  text-align: center;
 }
 
-.form-group input:focus {
-  border-color: #8c2d19;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(140, 45, 25, 0.1);
-}
-
-.error-message {
-  color: #d32f2f;
-  font-size: 0.9rem;
-  margin-top: 0.1rem;
-  padding: 0.4rem;
-  background-color: #ffebee;
-  border-radius: 8px;
-  min-height: 1.5rem;
-  display: flex;
-  align-items: center;
-}
-
-/* Success message styles */
-.success-message {
-  text-align: center;
-  padding: 2rem 0;
-}
-
-.success-message h2 {
-  color: #2e7d32;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-}
-
-.email-sent {
-  background-color: #e8f5e9;
-  padding: 1rem;
-  border-radius: 8px;
-  margin: 1.5rem 0;
-  color: #2e7d32;
-}
-
-.login-button {
+.submit-button {
+  width: 100%;
+  padding: 0.75rem;
   background-color: #8c2d19;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 1rem 2rem;
+  border-radius: 4px;
   font-size: 1rem;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.login-button:hover {
+.submit-button:hover {
   background-color: #6b2214;
-  color: white;
 }
 
-@media (max-width: 768px) {
-  .auth-page-wrapper {
-    min-height: calc(100vh - var(--header-height) - var(--footer-height));
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 0.5rem;
-    box-sizing: border-box;
-  }
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-  .auth-page-container {
-    width: 100%;
-    max-width: 100%;
-    padding: 1rem;
-    margin: 0;
-    height: auto;
-    max-height: calc(100vh - var(--header-height) - var(--footer-height) - 0.5rem);
-    overflow-y: auto;
-  }
+.forgot-password {
+  display: block;
+  margin-top: 1rem;
+  color: #8c2d19;
+  text-decoration: none;
+  cursor: pointer;
+}
 
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+.forgot-password:hover {
+  text-decoration: underline;
+}
 
-  .auth-options {
-    padding: 0;
-  }
+.auth-error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
 
-  .auth-option {
-    margin: 0;
-    max-width: 100%;
-  }
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
 
-  .submit-button {
-    padding: 0.75rem;
-    font-size: 0.9rem;
-  }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
-  .auth-info {
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
-  }
+.success-message {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #e8f5e9;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
 
-  .back-button {
-    top: 0.1rem;
-    left: 0.05rem;
-  }
+.success-icon {
+  font-size: 2rem;
+  color: #2e7d32;
+  margin-bottom: 1rem;
+}
+
+.success-message h3 {
+  color: #2e7d32;
+  margin-bottom: 0.5rem;
+}
+
+.success-message p {
+  color: #1b5e20;
+  margin-bottom: 0.5rem;
+}
+
+.success-message strong {
+  color: #1b5e20;
+  font-weight: 600;
+}
+
+.redirect-message {
+  font-size: 0.9rem;
+  color: #1b5e20;
+  margin-top: 1rem;
 }
 </style>

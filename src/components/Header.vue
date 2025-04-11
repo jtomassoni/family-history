@@ -51,13 +51,13 @@
             <img :src="user.avatar" alt="Profile" />
           </div>
           <div v-else class="avatar-mini" :class="{ 'admin-avatar': isAdmin }">
-            <span class="avatar-initials">{{ isAdmin ? 'A' : userInitials }}</span>
+            <span class="avatar-initials">{{ userInitials }}</span>
             <span v-if="isAdmin" class="admin-indicator"></span>
           </div>
         </router-link>
         
         <!-- Login Button (when not logged in) -->
-        <button v-else class="auth-button" @click="$emit('auth')" aria-label="Login">
+        <button v-else class="auth-button" @click="redirectToLogin" aria-label="Login">
           <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -83,11 +83,13 @@ import { useRoute } from 'vue-router';
 import { useNavigation } from '../composables/useNavigation';
 import { useAuthStore } from '../stores/auth';
 import { computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const route = useRoute();
 const { navItems, isCurrentRoute } = useNavigation();
 const authStore = useAuthStore();
 const siteTitle = 'TOMASSONI';
+const router = useRouter();
 
 // Initialize auth store
 onMounted(() => {
@@ -102,13 +104,19 @@ const isAdmin = computed(() => authStore.isAdmin);
 
 // Get user initials for avatar
 const userInitials = computed(() => {
-  if (!user.value?.full_name) return '?';
-  return user.value.full_name
+  const fullName = user.value?.full_name || `${user.value?.first_name || ''} ${user.value?.last_name || ''}`.trim();
+  if (!fullName) return '?';
+  return fullName
     .split(' ')
     .map(n => n[0])
     .join('')
-    .toUpperCase();
+    .toUpperCase()
+    .slice(0, 2); // Limit to two characters
 });
+
+const redirectToLogin = () => {
+  router.push('/login');
+};
 
 defineProps({
   isHelpActive: {
