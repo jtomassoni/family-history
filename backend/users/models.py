@@ -3,13 +3,17 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 import uuid
+import os
 
+def user_profile_picture_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/profile_pictures/<filename>
+    return f'user_{instance.id}/profile_pictures/{filename}'
 
 class User(AbstractUser):
     """Custom user model to handle various authentication methods and extended profile."""
     
     email = models.EmailField(_('email address'), unique=True)
-    picture = models.URLField(_('profile picture'), blank=True, null=True)
+    picture = models.FileField(_('profile picture'), upload_to=user_profile_picture_path, blank=True, null=True)
     bio = models.TextField(_('biography'), blank=True)
     
     # OAuth related fields
@@ -24,6 +28,10 @@ class User(AbstractUser):
     # Email verification
     verification_code = models.UUIDField(default=uuid.uuid4, editable=False)
     has_clicked_activation_link = models.BooleanField(default=False)
+    
+    # Password reset fields
+    reset_token = models.UUIDField(null=True, blank=True)
+    reset_token_expires = models.DateTimeField(null=True, blank=True)
     
     # Registration date (already provided by date_joined in AbstractUser)
     
@@ -48,6 +56,13 @@ class User(AbstractUser):
     def is_google_user(self):
         """Check if user was authenticated via Google."""
         return self.provider == 'google'
+    
+    @property
+    def picture_url(self):
+        """Return the URL for the user's profile picture."""
+        if self.picture:
+            return self.picture.url
+        return None
 
 
 class UserActivity(models.Model):

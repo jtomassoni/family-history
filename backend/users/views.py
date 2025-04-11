@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
@@ -14,11 +14,16 @@ import uuid
 import requests
 from allauth.socialaccount.models import SocialAccount
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from django.urls import path
+import logging
 
 from .models import User
 from .serializers import UserSerializer
 
 # Create your views here.
+
+logger = logging.getLogger(__name__)
+User = get_user_model()
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -38,6 +43,9 @@ class UserViewSet(viewsets.ModelViewSet):
             return User.objects.all()
         return User.objects.filter(id=user.id)
     
+    def get_object(self):
+        return self.request.user
+    
     @action(detail=False, methods=['get'])
     def me(self, request):
         """
@@ -46,29 +54,26 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['post'], url_path='profile-image')
+    @action(detail=False, methods=['post'])
     def upload_profile_image(self, request):
-        """
-        Upload a profile image
-        """
-        user = request.user
-        image = request.data.get('image')
-        
-        if not image:
-            return Response(
-                {'error': 'No image provided'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # In a real implementation, you would process the image,
-        # upload it to media storage, and update the user's profile
-        
-        # Mock implementation:
-        user.picture = "http://example.com/media/profile/image.jpg"
-        user.save()
-        
-        serializer = self.get_serializer(user)
-        return Response(serializer.data)
+        try:
+            user = request.user
+            if 'image' not in request.FILES:
+                return Response({'error': 'No image file provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+            image_file = request.FILES['image']
+            user.picture = image_file
+            user.save()
+
+            # Return the URL of the uploaded image
+            return Response({
+                'message': 'Profile image uploaded successfully',
+                'picture_url': user.picture_url
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error(f"Error uploading profile image: {str(e)}")
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -365,3 +370,169 @@ def google_callback(request):
             {'error': f'An error occurred: {str(e)}'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def password_reset(request):
+    """
+    Send password reset email to user
+    """
+    email = request.data.get('email')
+    
+    if not email:
+        return Response(
+            {'error': 'Please provide an email address'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        # Don't reveal whether the email exists or not
+        return Response(
+            {'message': 'If an account exists with this email, a password reset link has been sent.'},
+            status=status.HTTP_200_OK
+        )
+    
+    # Generate reset token
+    reset_token = str(uuid.uuid4())
+    user.reset_token = reset_token
+    user.reset_token_expires = timezone.now() + datetime.timedelta(hours=24)
+    user.save()
+    
+    # Send reset email
+    reset_url = f"{settings.FRONTEND_URL}/reset-password/{reset_token}"
+    send_password_reset_email(user, reset_url)
+    
+    return Response(
+        {'message': 'If an account exists with this email, a password reset link has been sent.'},
+        status=status.HTTP_200_OK
+    )
+
+def send_password_reset_email(user, reset_url):
+    """
+    Send password reset email to user
+    """
+    subject = 'Reset your password'
+    
+    # HTML email content
+    html_message = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }}
+            .container {{
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                padding: 30px;
+            }}
+            .header {{
+                text-align: center;
+                margin-bottom: 30px;
+            }}
+            .button {{
+                display: inline-block;
+                padding: 12px 24px;
+                background-color: #4CAF50;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                margin: 20px 0;
+            }}
+            .footer {{
+                margin-top: 30px;
+                font-size: 12px;
+                color: #666;
+                text-align: center;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2>Password Reset Request</h2>
+            </div>
+            <p>Hello {user.first_name or user.email},</p>
+            <p>We received a request to reset your password. Click the button below to reset it:</p>
+            <div style="text-align: center;">
+                <a href="{reset_url}" class="button" style="color: white;">Reset Password</a>
+            </div>
+            <p>If you did not request this, please ignore this email.</p>
+            <p>This link will expire in 24 hours.</p>
+            <div class="footer">
+                <p>Best regards,<br>The Family History Team</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    # Plain text fallback
+    plain_message = f"""
+    Hello {user.first_name or user.email},
+    
+    We received a request to reset your password. Click the link below to reset it:
+    
+    {reset_url}
+    
+    If you did not request this, please ignore this email.
+    
+    This link will expire in 24 hours.
+    
+    Best regards,
+    The Family History Team
+    """
+    
+    try:
+        send_mail(
+            subject,
+            plain_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            html_message=html_message,
+            fail_silently=False,
+        )
+        print(f"Password reset email sent to {user.email}")
+    except Exception as e:
+        print(f"Failed to send password reset email: {str(e)}")
+
+logger = logging.getLogger(__name__)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_profile(request):
+    try:
+        logger.info(f"User {request.user.id} is accessing their profile.")
+        serializer = UserSerializer(request.user)
+        response = Response(serializer.data)
+        
+        # Set CORS headers explicitly
+        response["Access-Control-Allow-Origin"] = request.META.get('HTTP_ORIGIN', '*')
+        response["Access-Control-Allow-Credentials"] = "true"
+        response["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Origin, Content-Type, Accept, Authorization"
+        
+        return response
+    except Exception as e:
+        logger.error(f"Error getting user profile: {str(e)}")
+        return Response(
+            {'error': 'Failed to get user profile'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+# Update the auth_urls list to include the password reset endpoint
+auth_urls = [
+    path('login/', login, name='login'),
+    path('register/', register, name='register'),
+    path('verify-email/<str:verification_code>/', verify_email, name='verify-email'),
+    path('google/callback/', google_callback, name='google-callback'),
+    path('password-reset/', password_reset, name='password-reset'),
+]
