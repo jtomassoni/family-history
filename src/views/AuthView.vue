@@ -35,7 +35,7 @@
       <!-- Email Form -->
       <div v-else class="email-auth-form" :data-signup="isSignup">
         <div class="form-header">
-          <button class="back-button" @click="showEmailForm = false">← Back</button>
+          <button class="back-button" @click="handleBack">← Back</button>
           <h1>{{ isSignup ? "Sign Up with Email" : "Login with Email" }}</h1>
         </div>
         
@@ -43,7 +43,7 @@
           <h2>Registration Complete!</h2>
           <p>Please check your email to verify your account.</p>
           <p class="email-sent">We've sent a verification link to <strong>{{ email }}</strong></p>
-          <button class="login-button" @click="showEmailForm = false">Return to Login</button>
+          <button class="login-button" @click="handleBack">Return to Login</button>
         </div>
         
         <form v-else @submit.prevent="handleEmailSubmit" class="auth-form">
@@ -160,6 +160,7 @@ const error = computed(() => localError.value || authStore.error);
 
 // Toggle between signup and login
 function toggleSignup() {
+  resetForm();
   isSignup.value = !isSignup.value;
   
   // Update URL without reloading the page
@@ -202,12 +203,14 @@ async function handleEmailSubmit() {
     return;
   }
 
-  // Password validation
-  const passwordPattern = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/;
-  if (!passwordPattern.test(password.value)) {
-    localError.value = "Password must be at least 8 characters long, include a number and a special character.";
-    localLoading.value = false;
-    return;
+  // Password validation only for signup
+  if (isSignup.value) {
+    const passwordPattern = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordPattern.test(password.value)) {
+      localError.value = "Password must be at least 8 characters long and include a number and a capital letter.";
+      localLoading.value = false;
+      return;
+    }
   }
 
   try {
@@ -226,10 +229,20 @@ async function handleEmailSubmit() {
         last_name: lastName.value,
       };
       
-      await authStore.register(userData);
+      const result = await authStore.register(userData);
       
-      // Show registration complete message
-      registrationComplete.value = true;
+      if (result.success) {
+        // Show registration complete message
+        registrationComplete.value = true;
+      } else if (result.error) {
+        if (result.error.includes('already exists')) {
+          localError.value = "An account with this email already exists. Please log in or use a different email.";
+        } else {
+          localError.value = result.error;
+        }
+      } else {
+        localError.value = 'Failed to register. Please try again.';
+      }
     } else {
       // Login flow
       const result = await authStore.login(email.value, password.value);
@@ -269,6 +282,21 @@ watch(email, (newEmail) => {
 onMounted(() => {
   isSignup.value = route.path === '/signup' || route.query.signup === 'true';
 });
+
+function resetForm() {
+  email.value = '';
+  password.value = '';
+  confirmPassword.value = '';
+  firstName.value = '';
+  lastName.value = '';
+  registrationComplete.value = false;
+  localError.value = null;
+}
+
+function handleBack() {
+  resetForm();
+  showEmailForm.value = false;
+}
 </script>
 
 <style scoped>
