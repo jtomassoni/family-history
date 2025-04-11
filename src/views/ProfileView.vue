@@ -5,7 +5,7 @@
       <div class="profile-card header-card">
         <div class="profile-header">
           <div class="user-avatar">
-            <img v-if="previewImage" :src="previewImage" alt="Profile Preview" class="avatar-image" />
+            <img v-if="user.picture" :src="`http://localhost:8000${user.picture}`" alt="Profile Picture" class="avatar-image" />
             <span v-else class="avatar-initials">{{ userInitials }}</span>
             <div class="upload-banner" @click="triggerFileInput">Upload</div>
             <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*" style="display: none;" />
@@ -201,6 +201,11 @@ onMounted(async () => {
   authStore.initializeFromStorage();
   authStore.setAuthHeaders();
   
+  // If we have a token, refresh the user data
+  if (authStore.token) {
+    await authStore.refreshUserData();
+  }
+  
   console.log('User data:', authStore.user);
   console.log('Is admin computed:', authStore.isAdmin);
   console.log('User is_staff:', authStore.user?.is_staff);
@@ -298,11 +303,11 @@ async function handleFileChange(event) {
       const formData = new FormData();
       formData.append('image', file);
 
-      const response = await fetch('http://localhost:8000/api/users/profile-image/', {
+      const response = await fetch('http://localhost:8000/api/users/upload_profile_image/', {
         method: 'POST',
         body: formData,
         headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`
+          ...authStore.getAuthHeaders()
         }
       });
 
@@ -314,6 +319,8 @@ async function handleFileChange(event) {
         if (avatar) {
           avatar.classList.add('success');
         }
+        // Refresh user data to update the profile picture
+        await authStore.refreshUserData();
         // Hide the success message after 3 seconds
         setTimeout(() => {
           showSuccessMessage.value = false;
