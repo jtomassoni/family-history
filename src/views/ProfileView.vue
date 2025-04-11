@@ -1,29 +1,60 @@
 <template>
   <div class="profile-page">
     <div class="profile-container">
-      <div class="profile-header">
-        <div class="user-avatar">
-          <span v-if="!user.avatar" class="avatar-initials">{{ userInitials }}</span>
-          <img v-else :src="user.avatar" :alt="user.full_name" class="avatar-image">
+      <!-- Profile Header Card -->
+      <div class="profile-card header-card">
+        <div class="profile-header">
+          <div class="user-avatar">
+            <span v-if="!user.avatar" class="avatar-initials">{{ userInitials }}</span>
+            <img v-else :src="user.avatar" :alt="user.full_name" class="avatar-image">
+          </div>
+          <div class="user-info">
+            <h1>{{ user.full_name || 'User' }}</h1>
+            <p class="email">{{ user.email }}</p>
+            <div class="user-stats">
+              <div class="stat">
+                <span class="stat-value">0</span>
+                <span class="stat-label">Stories</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">0</span>
+                <span class="stat-label">Photos</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">0</span>
+                <span class="stat-label">Connections</span>
+              </div>
+            </div>
+          </div>
+          <button @click="logout" class="logout-btn">
+            <span class="logout-icon">🚪</span>
+            Logout
+          </button>
         </div>
-        <div class="user-info">
-          <h1>{{ user.full_name || 'User' }}</h1>
-          <p>{{ user.email }}</p>
-        </div>
-        <button @click="logout" class="logout-btn">
-          <span class="logout-icon">🚪</span>
-          Logout
-        </button>
       </div>
 
-      <!-- God Mode Banner - Always visible for admin users -->
-      <!-- Banner removed as requested -->
+      <!-- Profile Actions Card -->
+      <div class="profile-card actions-card">
+        <h2>Profile Settings</h2>
+        <div class="profile-actions">
+          <button @click="showUploadModal = true" class="action-btn">
+            <span class="action-icon">📷</span>
+            Upload Profile Image
+          </button>
+          <button @click="showEditModal = true" class="action-btn">
+            <span class="action-icon">✏️</span>
+            Edit Profile
+          </button>
+        </div>
+      </div>
 
-      <!-- Admin Section -->
-      <div v-if="isAdmin" class="admin-section">
-        <h2>Admin Dashboard</h2>
-        
-        <!-- Admin Stats -->
+      <!-- Admin Section (if admin) -->
+      <div v-if="isAdmin" class="profile-card admin-card">
+        <div class="god-mode-banner">
+          <span class="god-mode-icon">👑</span>
+          <h2>Admin Dashboard</h2>
+        </div>
+
         <div class="admin-stats">
           <div class="stat-card">
             <h3>Total Users</h3>
@@ -39,47 +70,34 @@
           </div>
         </div>
 
-        <!-- User Management -->
         <div class="user-management">
           <h3>User Management</h3>
           <div class="user-list">
             <div v-for="user in users" :key="user.id" class="user-card">
               <div class="user-info">
-                <span>{{ user.email }}</span>
-                <span :class="['status', user.is_active ? 'active' : 'inactive']">
+                <span class="user-name">{{ user.full_name }}</span>
+                <span class="status" :class="{ active: user.is_active, inactive: !user.is_active }">
                   {{ user.is_active ? 'Active' : 'Inactive' }}
                 </span>
               </div>
-              <div class="user-actions">
-                <button 
-                  @click="toggleUserStatus(user.id, !user.is_active)"
-                  :class="['status-btn', user.is_active ? 'deactivate' : 'activate']"
-                >
-                  {{ user.is_active ? 'Deactivate' : 'Activate' }}
-                </button>
-              </div>
+              <button 
+                class="status-btn" 
+                :class="{ activate: !user.is_active, deactivate: user.is_active }"
+                @click="toggleUserStatus(user.id, !user.is_active)"
+              >
+                {{ user.is_active ? 'Deactivate' : 'Activate' }}
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Reports -->
         <div class="reports-section">
           <h3>Reports</h3>
           <div class="report-options">
-            <button @click="generateReport('users')" class="report-btn">User Report</button>
-            <button @click="generateReport('activity')" class="report-btn">Activity Report</button>
-            <button @click="generateReport('content')" class="report-btn">Content Report</button>
+            <button class="report-btn" @click="generateReport('users')">User Report</button>
+            <button class="report-btn" @click="generateReport('activity')">Activity Report</button>
+            <button class="report-btn" @click="generateReport('content')">Content Report</button>
           </div>
-        </div>
-      </div>
-
-      <!-- Regular User Section -->
-      <div v-if="!isAdmin" class="user-section">
-        <h2>My Profile</h2>
-        <div class="profile-actions">
-          <button @click="showUploadModal = true" class="action-btn">Upload Profile Image</button>
-          <button @click="showEditModal = true" class="action-btn">Edit Profile</button>
-          <button @click="enableGodMode" class="god-mode-btn">Enable God Mode</button>
         </div>
       </div>
 
@@ -274,30 +292,47 @@ function enableGodMode() {
 
 <style scoped>
 .profile-page {
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 100px); /* Adjust based on header and footer height */
   background-color: #f9f6f0;
   color: #3a2723;
-  padding: 2rem 1rem;
+  padding: 1rem 0.5rem;
+  margin-top: 55px; /* Adjust based on header height */
 }
 
 .profile-container {
-  max-width: 1200px;
+  flex: 1;
+  max-width: 800px;
+  width: 100%;
   margin: 0 auto;
+  padding: 1rem;
+}
+
+.profile-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
 }
 
 .profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  gap: 2rem;
 }
 
 .user-avatar {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
   background-color: var(--color-wine-light);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .avatar-image {
@@ -314,51 +349,106 @@ function enableGodMode() {
   justify-content: center;
   background-color: var(--color-wine);
   color: white;
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bold;
-}
-
-.avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-wine);
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
+  border-radius: 50%;
 }
 
 .user-info {
   flex: 1;
-  margin-left: 2rem;
 }
 
 .user-info h1 {
   margin: 0;
   color: var(--color-wine);
+  font-size: 2.5rem;
+  font-weight: 600;
 }
 
 .email {
-  color: var(--color-gray);
+  color: #3a2723;
   margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.user-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #3a2723;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #3a2723;
+}
+
+.actions-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f9f6f0 100%);
+}
+
+.actions-card h2 {
+  color: var(--color-wine);
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.action-btn {
+  padding: 1rem 1.5rem;
+  background-color: #3a2723;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.action-btn:hover {
+  background-color: #2a1a1a;
+}
+
+.action-icon {
+  font-size: 1.2rem;
+}
+
+.admin-card {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  color: white;
 }
 
 .god-mode-banner {
   background: linear-gradient(45deg, #ff0000, #ff8c00);
   color: white;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 1.5rem;
+  border-radius: 12px;
   font-weight: bold;
-  margin: 1rem 0;
+  margin-bottom: 2rem;
   animation: pulse 2s infinite;
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  text-align: center;
 }
 
 .god-mode-banner h2 {
@@ -368,48 +458,9 @@ function enableGodMode() {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-.god-mode-icon {
-  font-size: 2rem;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-  }
-}
-
-.admin-section {
-  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-  color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  margin-top: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  border: 2px solid #ff8c00;
-}
-
-.admin-section h2 {
-  color: #ff8c00;
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
-}
-
 .admin-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -417,9 +468,14 @@ function enableGodMode() {
 .stat-card {
   background-color: rgba(255, 255, 255, 0.1);
   padding: 1.5rem;
-  border-radius: 8px;
+  border-radius: 12px;
   text-align: center;
   border: 1px solid rgba(255, 140, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
 }
 
 .stat-card h3 {
@@ -430,13 +486,19 @@ function enableGodMode() {
 }
 
 .stat-card p {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin: 0.5rem 0 0;
-  color: var(--color-wine-dark);
+  color: white;
+  font-weight: bold;
 }
 
 .user-management {
   margin-top: 2rem;
+}
+
+.user-management h3 {
+  color: #ff8c00;
+  margin-bottom: 1rem;
 }
 
 .user-list {
@@ -448,137 +510,95 @@ function enableGodMode() {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-bottom: 1px solid var(--color-gray-light);
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.3s ease;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.user-card:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-name {
+  font-weight: 500;
 }
 
 .status {
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .status.active {
-  background-color: var(--color-success-light);
-  color: var(--color-success);
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
 }
 
 .status.inactive {
-  background-color: var(--color-error-light);
-  color: var(--color-error);
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #F44336;
 }
 
 .status-btn {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .status-btn.activate {
-  background-color: var(--color-success);
+  background-color: #4CAF50;
   color: white;
 }
 
 .status-btn.deactivate {
-  background-color: var(--color-error);
+  background-color: #F44336;
   color: white;
+}
+
+.status-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .reports-section {
   margin-top: 2rem;
 }
 
-.report-options {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.report-btn {
-  padding: 0.5rem 1rem;
-  background-color: var(--color-wine);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.report-btn:hover {
-  background-color: var(--color-wine-dark);
-}
-
-.user-section {
-  background-color: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.profile-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.action-btn {
-  padding: 0.5rem 1rem;
-  background-color: var(--color-wine);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.action-btn:hover {
-  background-color: var(--color-wine-dark);
-}
-
-.upload-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.reports-section h3 {
+  color: #ff8c00;
   margin-bottom: 1rem;
 }
 
-.form-group label {
-  font-weight: bold;
-  color: var(--color-wine);
+.report-options {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.form-group input {
-  padding: 0.5rem;
-  border: 1px solid var(--color-gray-light);
-  border-radius: 4px;
-}
-
-button[type="submit"] {
-  padding: 0.5rem 1rem;
-  background-color: var(--color-wine);
+.report-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #3a2723;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-button[type="submit"]:hover {
-  background-color: var(--color-wine-dark);
+.report-btn:hover {
+  background-color: #2a1a1a;
 }
 
 .logout-btn {
   padding: 0.75rem 1.5rem;
-  background-color: var(--color-wine);
+  background-color: #3a2723;
   color: white;
   border: none;
   border-radius: 8px;
@@ -586,37 +606,61 @@ button[type="submit"]:hover {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .logout-btn:hover {
-  background-color: var(--color-wine-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #2a1a1a;
 }
 
 .logout-icon {
   font-size: 1.2rem;
 }
 
-.god-mode-btn {
-  padding: 0.5rem 1rem;
-  background: linear-gradient(45deg, #ff0000, #ff8c00);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 1rem;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  }
 }
 
-.god-mode-btn:hover {
-  background: linear-gradient(45deg, #ff8c00, #ff0000);
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .user-info {
+    margin: 1rem 0;
+  }
+
+  .user-stats {
+    justify-content: center;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .user-card {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
 }
 </style> 

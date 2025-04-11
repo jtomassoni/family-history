@@ -78,10 +78,14 @@ export const useAuthStore = defineStore('auth', () => {
       console.log('Google callback response:', response.data);
       const { user: userData, token: authToken } = response.data;
       
-      user.value = userData;
+      // Ensure avatar is set
+      user.value = {
+        ...userData,
+        avatar: userData.avatar || userData.picture // Assuming 'picture' is the field for Google image
+      };
       token.value = authToken;
       
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(user.value));
       localStorage.setItem('token', authToken);
       
       setAuthHeaders();
@@ -91,7 +95,7 @@ export const useAuthStore = defineStore('auth', () => {
         await fetchAdminStats();
       }
       
-      return { success: true, user: userData };
+      return { success: true, user: user.value };
     } catch (err) {
       console.error('Google callback error:', err);
       error.value = err.response?.data?.message || 'Failed to authenticate with Google';
