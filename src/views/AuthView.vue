@@ -288,7 +288,7 @@ onMounted(() => {
   background-color: white;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
+  padding: 2rem;
   text-align: center;
   box-sizing: border-box;
 }
@@ -373,20 +373,17 @@ h1 {
 }
 
 .submit-button {
-  background: #8c2d19;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.submit-button:hover {
+  width: 150px;
+  padding: 0.75rem 1rem;
   background: #6b2214;
   color: white;
+  border: none;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  transition: all var(--transition-base);
+  margin-top: 1rem;
 }
 
 .submit-button:disabled {
@@ -453,27 +450,32 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
-  text-align: left;
+  text-align: center;
+  align-items: center;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.05rem;
+  align-items: center;
 }
 
 .form-group label {
   margin-bottom: 0.1rem;
-  color: #8c2d19; /* Wine color for labels */
+  color: #8c2d19;
+  text-align: center;
 }
 
 .form-group input {
+  width: 160%;
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease;
   margin: 0;
+  text-align: center;
 }
 
 .form-group input:focus {
