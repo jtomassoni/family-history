@@ -84,42 +84,51 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
     
-    print(f"Login attempt for email: {email}")
+    logger.info(f"Login attempt for email: {email}")
     
     if not email or not password:
-        print("Missing email or password")
+        logger.warning("Missing email or password")
         return Response(
             {'error': 'Please provide both email and password'},
             status=status.HTTP_400_BAD_REQUEST
         )
         
-    # Authenticate the user
-    user = authenticate(username=email, password=password)
-    
-    if not user:
-        print(f"Authentication failed for {email}")
-        print(f"User exists: {User.objects.filter(email=email).exists()}")
+    try:
+        # Authenticate the user
+        user = authenticate(username=email, password=password)
+        
+        if not user:
+            logger.warning(f"Authentication failed for {email}")
+            return Response(
+                {'error': 'Invalid credentials'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        logger.info(f"User authenticated: {user.email} (ID: {user.id})")
+        
+        # Create or get token
+        token, created = Token.objects.get_or_create(user=user)
+        
+        # Ensure picture is a URL or path
+        picture_url = user.picture.url if user.picture else None
+        
+        return Response({
+            'token': token.key,
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_staff': user.is_staff,
+                'picture': picture_url  # Use URL instead of binary data
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error during login: {str(e)}")
         return Response(
-            {'error': 'Invalid credentials'},
-            status=status.HTTP_401_UNAUTHORIZED
+            {'error': 'An error occurred during login'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-    
-    print(f"User authenticated: {user.email} (ID: {user.id})")
-    
-    # Create or get token
-    token, created = Token.objects.get_or_create(user=user)
-    
-    return Response({
-        'token': token.key,
-        'user': {
-            'id': user.id,
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'is_staff': user.is_staff,
-            'picture': user.picture
-        }
-    })
     
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
