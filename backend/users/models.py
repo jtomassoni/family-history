@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+import uuid
 
 
 class User(AbstractUser):
@@ -21,7 +22,8 @@ class User(AbstractUser):
     birth_date = models.DateField(_('birth date'), null=True, blank=True)
     
     # Email verification
-    verification_code = models.CharField(_('verification code'), max_length=100, blank=True, null=True)
+    verification_code = models.UUIDField(default=uuid.uuid4, editable=False)
+    has_clicked_activation_link = models.BooleanField(default=False)
     
     # Registration date (already provided by date_joined in AbstractUser)
     

@@ -13,6 +13,7 @@ import datetime
 import uuid
 import requests
 from allauth.socialaccount.models import SocialAccount
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 
 from .models import User
 from .serializers import UserSerializer
@@ -25,6 +26,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
@@ -167,29 +169,87 @@ def register(request):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def verify_email(request, verification_code):
-    """
-    Verify a user's email
-    """
-    user = get_object_or_404(User, verification_code=verification_code)
-    
-    # Activate the user
-    user.is_active = True
-    user.verification_code = None  # Clear the verification code
-    user.save()
-    
-    return Response({
-        'message': 'Email verified successfully. You can now log in.'
-    })
+    try:
+        user = User.objects.get(verification_code=verification_code)
+        user.is_active = True
+        user.has_clicked_activation_link = True
+        user.save()
+        return Response({'message': 'Email verified successfully'}, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'error': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
 
 def send_verification_email(user, verification_url):
     """
     Send verification email to user
     """
     subject = 'Verify your email address'
-    message = f"""
+    
+    # HTML email content
+    html_message = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }}
+            .container {{
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                padding: 30px;
+            }}
+            .header {{
+                text-align: center;
+                margin-bottom: 30px;
+            }}
+            .button {{
+                display: inline-block;
+                padding: 12px 24px;
+                background-color: #4CAF50;
+                color: white;  /* Button text color */
+                text-decoration: none;
+                border-radius: 4px;
+                margin: 20px 0;
+            }}
+            .footer {{
+                margin-top: 30px;
+                font-size: 12px;
+                color: #666;
+                text-align: center;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2>Welcome to Family History!</h2>
+            </div>
+            <p>Hello {user.first_name or user.email},</p>
+            <p>Thank you for registering with Family History. To complete your registration, please verify your email address by clicking the button below:</p>
+            <div style="text-align: center;">
+                <a href="{verification_url}" class="button" style="color: white;">Verify Email Address</a>
+            </div>
+            <p>If you did not request this, please ignore this email.</p>
+            <div class="footer">
+                <p>Best regards,<br>The Family History Team</p>
+                <p>If the button above doesn't work, you can copy and paste this link into your browser:<br>
+                <small>{verification_url}</small></p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    # Plain text fallback
+    plain_message = f"""
     Hello {user.first_name or user.email},
     
-    Thank you for registering. Please click the link below to verify your email address:
+    Thank you for registering with Family History. To complete your registration, please verify your email address by clicking the link below:
     
     {verification_url}
     
@@ -199,17 +259,18 @@ def send_verification_email(user, verification_url):
     The Family History Team
     """
     
-    # In development, just print the message to console
-    print(f"Would send email to {user.email} with verification URL: {verification_url}")
-    
-    # In production, uncomment this:
-    # send_mail(
-    #     subject,
-    #     message,
-    #     settings.DEFAULT_FROM_EMAIL,
-    #     [user.email],
-    #     fail_silently=False,
-    # )
+    try:
+        send_mail(
+            subject,
+            plain_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            html_message=html_message,
+            fail_silently=False,
+        )
+        print(f"Verification email sent to {user.email}")
+    except Exception as e:
+        print(f"Failed to send verification email: {str(e)}")
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])

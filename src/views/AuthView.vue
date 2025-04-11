@@ -33,7 +33,7 @@
       </div>
       
       <!-- Email Form -->
-      <div v-else class="email-auth-form">
+      <div v-else class="email-auth-form" :data-signup="isSignup">
         <div class="form-header">
           <button class="back-button" @click="showEmailForm = false">← Back</button>
           <h1>{{ isSignup ? "Sign Up with Email" : "Login with Email" }}</h1>
@@ -56,6 +56,7 @@
                 id="firstName" 
                 v-model="firstName" 
                 placeholder="Enter your first name" 
+                required
               />
             </div>
             
@@ -66,6 +67,7 @@
                 id="lastName" 
                 v-model="lastName" 
                 placeholder="Enter your last name" 
+                required
               />
             </div>
           </template>
@@ -245,83 +247,53 @@ onMounted(() => {
 
 <style scoped>
 .auth-page-wrapper {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f9f6f0;
-  padding: 1rem;
+  padding: 0.1rem;
+  box-sizing: border-box;
 }
 
 .auth-page-container {
-  max-width: 450px;
+  max-width: 350px;
   width: 100%;
   background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
   text-align: center;
+  box-sizing: border-box;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: #8c2d19; /* Wine theme */
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .auth-options {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .auth-option {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  border: none;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.7rem;
 }
 
-.email-option {
-  background-color: #8c2d19; /* Wine theme */
-  color: white;
-}
-
-.email-option:hover {
-  background-color: #6b2214; /* Darker wine */
-}
-
-.google-option {
-  background-color: white;
-  color: #4285F4;
-  border: 1px solid #ddd;
-}
-
-.google-option:hover {
-  background-color: #f1f1f1;
-}
-
-.icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
+.submit-button {
+  padding: 0.4rem;
+  font-size: 0.7rem;
 }
 
 .auth-info {
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: #666;
+  font-size: 0.65rem;
+  margin-top: 0.5rem;
 }
 
 .auth-info a {
@@ -344,47 +316,50 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   position: relative;
+  padding-top: 0.5rem;
 }
 
 .back-button {
   position: absolute;
   left: 0;
-  top: 0;
+  top: 0.5rem;
   background: none;
   border: none;
   color: #8c2d19; /* Wine theme */
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.85rem;
   padding: 0;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.5rem;
   text-align: left;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
+  margin: 0;
 }
 
 .form-group label {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: #333;
 }
 
 .form-group input {
-  padding: 0.75rem;
+  padding: 0.4rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
   transition: border-color 0.2s;
+  margin: 0;
 }
 
 .form-group input:focus {
@@ -396,13 +371,13 @@ h1 {
   background-color: #8c2d19; /* Wine theme */
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 0.9rem;
-  font-size: 1rem;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .submit-button:hover {
@@ -452,5 +427,24 @@ h1 {
 
 .login-button:hover {
   background-color: #6b2214; /* Darker wine */
+}
+
+@media (max-width: 768px) {
+  .auth-page-container {
+    padding: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  .submit-button {
+    padding: 0.3rem;
+    font-size: 0.65rem;
+  }
+
+  .auth-info {
+    font-size: 0.6rem;
+  }
 }
 </style>
