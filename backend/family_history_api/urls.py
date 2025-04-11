@@ -6,7 +6,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
-from users.views import UserViewSet, login, register, verify_email, google_callback
+from users.views import UserViewSet, login, register, verify_email, google_callback, password_reset, get_user_profile
 
 # API Router setup
 router = routers.DefaultRouter()
@@ -18,6 +18,8 @@ auth_urls = [
     path('register/', register, name='register'),
     path('verify-email/<str:verification_code>/', verify_email, name='verify-email'),
     path('google/callback/', google_callback, name='google-callback'),
+    path('password-reset/', password_reset, name='password-reset'),
+    path('user/', get_user_profile, name='get-user-profile'),
 ]
 
 urlpatterns = [

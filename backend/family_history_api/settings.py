@@ -162,8 +162,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',  # Token auth
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -218,13 +217,29 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-# Email settings for development (print to console)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'noreply@familyhistory.example.com'
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'apikey'  # This is always 'apikey' for SendGrid
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@familyhistory.example.com')
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
-    'users.auth.EmailBackend',  # Custom email backend
     'django.contrib.auth.backends.ModelBackend',  # Default backend
+    'users.auth.EmailBackend',  # Custom email backend
     'allauth.account.auth_backends.AuthenticationBackend',  # Allauth backend
 ]
+
+# CSRF settings
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://192.168.1.135:5173"
+]
+
+# Disable CSRF for API endpoints
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False
