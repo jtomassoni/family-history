@@ -6,11 +6,6 @@
         <h1>{{ isSignup ? "Sign Up" : "Login" }}</h1>
         
         <div class="auth-options">
-          <button class="auth-option email-option" @click="showEmailForm = true">
-            <span class="icon">✉️</span>
-            <span>{{ isSignup ? "Sign Up with Email" : "Login with Email" }}</span>
-          </button>
-          
           <button class="auth-option google-option" @click="handleGoogleLogin">
             <span class="icon">
               <svg viewBox="0 0 24 24" width="24" height="24">
@@ -21,6 +16,11 @@
               </svg>
             </span>
             <span>{{ isSignup ? "Sign Up with Google" : "Login with Google" }}</span>
+          </button>
+          
+          <button class="auth-option email-option" @click="showEmailForm = true">
+            <span class="icon">✉️</span>
+            <span>{{ isSignup ? "Sign Up with Email" : "Login with Email" }}</span>
           </button>
         </div>
         
@@ -283,12 +283,12 @@ onMounted(() => {
 }
 
 .auth-page-container {
-  max-width: 300px;
+  max-width: 60vw;
   width: 100%;
   background-color: white;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  padding: 0.5rem;
+  padding: 1rem;
   text-align: center;
   box-sizing: border-box;
 }
@@ -305,33 +305,47 @@ h1 {
   flex-direction: column;
   gap: 1rem;
   margin: 2rem 0;
+  width: 100%;
+  padding: 0;
 }
 
 .auth-option {
+  background: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--color-text);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
   width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.auth-option:hover {
+  background: var(--color-background-mute);
+  color: #8c2d19; /* Wine color on hover */
+  border-color: #8c2d19;
 }
 
 .email-option {
   background-color: #8c2d19;
   color: white;
+  border: none;
 }
 
 .email-option:hover {
   background-color: #6b2214;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  color: white;
 }
 
 .google-option {
@@ -342,14 +356,15 @@ h1 {
 
 .google-option:hover {
   background-color: #f8f8f8;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #8c2d19; /* Wine color on hover */
+  border-color: #8c2d19;
 }
 
 .auth-option .icon {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 24px;
 }
 
 .auth-option .icon svg {
@@ -358,31 +373,25 @@ h1 {
 }
 
 .submit-button {
-  background-color: #8c2d19;
+  background: #8c2d19;
   color: white;
   border: none;
   border-radius: 8px;
   padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-  margin-top: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .submit-button:hover {
-  background-color: #6b2214;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: #6b2214;
+  color: white;
 }
 
 .submit-button:disabled {
   background-color: #ccbdaf;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
 .auth-info {
@@ -399,6 +408,7 @@ h1 {
 }
 
 .auth-info a:hover {
+  color: #6b2214;
   text-decoration: underline;
 }
 
@@ -413,31 +423,36 @@ h1 {
   align-items: center;
   margin-bottom: 1rem;
   position: relative;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
 }
 
 .back-button {
   position: absolute;
-  left: -0.5rem;
-  top: -0.5rem;
-  background: none;
-  border: none;
-  color: #8c2d19;
+  top: 0.25rem;
+  left: 0.25rem;
+  background: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
   cursor: pointer;
-  font-size: 0.65rem;
-  padding: 0;
-  font-weight: 400;
-  z-index: 1;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #8c2d19;
 }
 
 .back-button:hover {
-  text-decoration: underline;
+  background: var(--color-background-mute);
+  color: #6b2214;
+  border-color: #8c2d19;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.1rem;
   text-align: left;
 }
 
@@ -448,15 +463,17 @@ h1 {
 }
 
 .form-group label {
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.1rem;
+  color: #8c2d19; /* Wine color for labels */
 }
 
 .form-group input {
-  padding: 0.75rem;
+  padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease;
+  margin: 0;
 }
 
 .form-group input:focus {
@@ -506,34 +523,64 @@ h1 {
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   margin-top: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .login-button:hover {
   background-color: #6b2214;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  color: white;
 }
 
 @media (max-width: 768px) {
+  .auth-page-wrapper {
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+
   .auth-page-container {
-    padding: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    margin: 0;
+    height: auto;
+    max-height: calc(100vh - var(--header-height) - var(--footer-height) - 0.5rem);
+    overflow-y: auto;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .auth-options {
+    padding: 0;
   }
 
   .auth-option {
-    padding: 0.875rem;
-    font-size: 0.9rem;
+    margin: 0;
+    max-width: 100%;
   }
 
   .submit-button {
-    padding: 0.875rem;
+    padding: 0.75rem;
     font-size: 0.9rem;
   }
 
   .auth-info {
     font-size: 0.85rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .back-button {
+    top: 0.1rem;
+    left: 0.05rem;
   }
 }
 </style>
