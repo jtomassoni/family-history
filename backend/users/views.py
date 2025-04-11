@@ -11,6 +11,8 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 import datetime
 import uuid
+import requests
+from allauth.socialaccount.models import SocialAccount
 
 from .models import User
 from .serializers import UserSerializer
@@ -214,3 +216,97 @@ def send_verification_email(user, verification_url):
     #     [user.email],
     #     fail_silently=False,
     # )
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def google_callback(request):
+    """
+    Handle Google OAuth callback
+    """
+    code = request.data.get('code')
+    redirect_uri = request.data.get('redirect_uri')
+    
+    if not code or not redirect_uri:
+        return Response(
+            {'error': 'Missing required parameters'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        # Exchange code for tokens
+        token_url = 'https://oauth2.googleapis.com/token'
+        token_data = {
+            'code': code,
+            'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'],
+            'client_secret': settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['secret'],
+            'redirect_uri': redirect_uri,
+            'grant_type': 'authorization_code'
+        }
+        
+        token_response = requests.post(token_url, data=token_data)
+        token_response.raise_for_status()
+        tokens = token_response.json()
+        
+        # Get user info from Google
+        userinfo_url = 'https://www.googleapis.com/oauth2/v3/userinfo'
+        userinfo_response = requests.get(
+            userinfo_url,
+            headers={'Authorization': f'Bearer {tokens["access_token"]}'}
+        )
+        userinfo_response.raise_for_status()
+        userinfo = userinfo_response.json()
+        
+        # Get or create user
+        try:
+            social_account = SocialAccount.objects.get(provider='google', uid=userinfo['sub'])
+            user = social_account.user
+        except SocialAccount.DoesNotExist:
+            # Create new user
+            user = User.objects.create_user(
+                username=userinfo['email'],
+                email=userinfo['email'],
+                first_name=userinfo.get('given_name', ''),
+                last_name=userinfo.get('family_name', ''),
+                is_active=True
+            )
+            # Create social account
+            SocialAccount.objects.create(
+                user=user,
+                provider='google',
+                uid=userinfo['sub'],
+                extra_data=userinfo
+            )
+        
+        # Create or get token
+        token, created = Token.objects.get_or_create(user=user)
+        
+        # Return user info and token
+        user_data = UserSerializer(user).data
+        user_data['is_staff'] = user.is_staff
+        user_data['is_superuser'] = user.is_superuser
+        
+        response = Response({
+            'token': token.key,
+            'user': user_data,
+            'is_superuser': user.is_superuser,
+            'is_staff': user.is_staff
+        })
+        
+        # Set CORS headers explicitly
+        response["Access-Control-Allow-Origin"] = request.META.get('HTTP_ORIGIN', '*')
+        response["Access-Control-Allow-Credentials"] = "true"
+        response["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Origin, Content-Type, Accept, Authorization"
+        
+        return response
+        
+    except requests.exceptions.RequestException as e:
+        return Response(
+            {'error': f'Failed to authenticate with Google: {str(e)}'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    except Exception as e:
+        return Response(
+            {'error': f'An error occurred: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

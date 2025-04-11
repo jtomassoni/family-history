@@ -27,7 +27,14 @@ export function getApiUrl() {
   }
 }
 
+// Function to get the Google OAuth callback URL
+export function getGoogleCallbackUrl() {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/auth/callback`;
+}
+
 // Default export for convenience
 export default {
-  getApiUrl
+  getApiUrl,
+  getGoogleCallbackUrl
 }; 

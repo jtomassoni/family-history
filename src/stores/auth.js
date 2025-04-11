@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import axios from 'axios';
-import { getApiUrl } from '../utils/apiConfig';
+import { getApiUrl, getGoogleCallbackUrl } from '../utils/apiConfig';
 
 export const useAuthStore = defineStore('auth', () => {
   // Get the dynamic API URL
@@ -55,8 +55,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Login with Google
   async function loginWithGoogle() {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || import.meta.env.GOOGLE_CLIENT_ID;
+    const redirectUri = getGoogleCallbackUrl();
     const scope = 'email profile';
     
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
@@ -70,9 +70,9 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = null;
       console.log('Starting Google callback with code:', code);
 
-      const response = await axios.post(`${apiUrl}/auth/google/callback/`, {
+      const response = await axios.post(`${apiUrl}/api/auth/google/callback/`, {
         code,
-        redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URI
+        redirect_uri: getGoogleCallbackUrl()
       });
 
       console.log('Google callback response:', response.data);
