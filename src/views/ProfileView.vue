@@ -317,16 +317,6 @@ function enableGodMode() {
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.profile-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.header-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f9f6f0 100%);
 }
 
 .profile-header {
@@ -343,11 +333,6 @@ function enableGodMode() {
   overflow: hidden;
   background-color: var(--color-wine-light);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.user-avatar:hover {
-  transform: scale(1.05);
 }
 
 .avatar-image {
@@ -434,14 +419,12 @@ function enableGodMode() {
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .action-btn:hover {
   background-color: #2a1a1a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .action-icon {
@@ -605,14 +588,12 @@ function enableGodMode() {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .report-btn:hover {
   background-color: #2a1a1a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .logout-btn {
@@ -626,14 +607,12 @@ function enableGodMode() {
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .logout-btn:hover {
   background-color: #2a1a1a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .logout-icon {
