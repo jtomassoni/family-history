@@ -229,6 +229,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'familytomassoni@gmail.com')
 CONTACT_FORM_RECIPIENT = os.environ.get('CONTACT_FORM_RECIPIENT', 'familytomassoni@gmail.com')
 
+
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Default backend

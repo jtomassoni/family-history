@@ -40,9 +40,14 @@ export const useAuthStore = defineStore('auth', () => {
     if (storedUser && storedToken) {
       user.value = JSON.parse(storedUser);
       token.value = storedToken;
+      setAuthHeaders();
       console.log('Auth store initialized with user:', user.value);
     } else {
       console.log('No stored auth data found');
+      // Clear any existing auth data
+      user.value = null;
+      token.value = null;
+      delete axios.defaults.headers.common['Authorization'];
     }
   }
 
@@ -50,7 +55,21 @@ export const useAuthStore = defineStore('auth', () => {
   function setAuthHeaders() {
     if (token.value) {
       axios.defaults.headers.common['Authorization'] = `Token ${token.value}`;
+      console.log('Auth headers set with token:', token.value);
+    } else {
+      console.log('No token available to set auth headers');
+      delete axios.defaults.headers.common['Authorization'];
     }
+  }
+
+  // Get auth headers for API calls
+  function getAuthHeaders() {
+    if (token.value) {
+      return {
+        'Authorization': `Token ${token.value}`
+      };
+    }
+    return {};
   }
 
   // Login with Google
@@ -78,10 +97,20 @@ export const useAuthStore = defineStore('auth', () => {
       console.log('Google callback response:', response.data);
       const { user: userData, token: authToken } = response.data;
       
-      user.value = userData;
+      // Ensure avatar is set
+      user.value = {
+        ...userData,
+        avatar: userData.avatar || userData.picture // Assuming 'picture' is the field for Google image
+      };
+
+      // Construct full_name if not available
+      if (!userData.full_name && userData.first_name && userData.last_name) {
+        userData.full_name = `${userData.first_name} ${userData.last_name}`;
+      }
+
       token.value = authToken;
       
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(user.value));
       localStorage.setItem('token', authToken);
       
       setAuthHeaders();
@@ -91,7 +120,7 @@ export const useAuthStore = defineStore('auth', () => {
         await fetchAdminStats();
       }
       
-      return { success: true, user: userData };
+      return { success: true, user: user.value };
     } catch (err) {
       console.error('Google callback error:', err);
       error.value = err.response?.data?.message || 'Failed to authenticate with Google';
@@ -121,15 +150,12 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = userData;
       token.value = authToken;
       
+      // Save to localStorage
       localStorage.setItem('user', JSON.stringify(userData));
       localStorage.setItem('token', authToken);
       
+      // Set auth headers
       setAuthHeaders();
-      
-      // If user is admin, fetch admin stats
-      if (isAdmin.value) {
-        await fetchAdminStats();
-      }
       
       return { success: true, user: userData };
     } catch (err) {
@@ -161,11 +187,38 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  // Refresh user data from storage
-  function refreshUserData() {
-    console.log('Refreshing user data from storage');
-    initializeFromStorage();
-    setAuthHeaders();
+  // Refresh user data from backend
+  async function refreshUserData() {
+    try {
+      if (!token.value) {
+        console.error('No token available for refresh');
+        return;
+      }
+      
+      console.log('Refreshing user data with token:', token.value);
+      const response = await axios.get(`${apiUrl}/api/auth/user/`, {
+        headers: getAuthHeaders()
+      });
+      
+      if (response.data) {
+        user.value = response.data;
+        localStorage.setItem('user', JSON.stringify(user.value));
+        console.log('Successfully refreshed user data:', user.value);
+      } else {
+        console.error('No user data received from server');
+      }
+    } catch (err) {
+      console.error('Failed to refresh user data:', err);
+      if (err.response?.status === 403) {
+        console.error('Token may be invalid or expired');
+        // Clear invalid token
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        token.value = null;
+        user.value = null;
+        delete axios.defaults.headers.common['Authorization'];
+      }
+    }
   }
 
   // Fetch admin statistics
@@ -222,6 +275,65 @@ export const useAuthStore = defineStore('auth', () => {
     delete axios.defaults.headers.common['Authorization'];
   }
 
+  // Check if user exists
+  async function checkUserExists(email) {
+    try {
+      const response = await axios.get(`${apiUrl}/api/auth/check-user/`, {
+        params: { email }
+      });
+      return response.data.exists;
+    } catch (err) {
+      console.error('Error checking user existence:', err);
+      return false;
+    }
+  }
+
+  // Send password reset email
+  async function sendPasswordReset(email) {
+    try {
+      isLoading.value = true;
+      error.value = null;
+      console.log('Attempting to send password reset email to:', email);
+
+      const response = await axios.post(`${apiUrl}/api/auth/password-reset/`, {
+        email
+      });
+
+      console.log('Password reset response:', response.data);
+      return { success: true, message: 'Password reset email sent successfully' };
+    } catch (err) {
+      console.error('Error sending password reset:', err);
+      error.value = err.response?.data?.message || 'Failed to send password reset email';
+      return { success: false, error: error.value };
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function uploadProfileImage(file) {
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await axios.post(`${apiUrl}/api/users/upload_profile_image/`, formData, {
+        headers: {
+          ...getAuthHeaders(),
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.picture_url) {
+        // Update the user data with the new picture URL
+        await refreshUserData();
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Error uploading profile image:', error);
+      throw error;
+    }
+  }
+
   return {
     user,
     token,
@@ -233,6 +345,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     initializeFromStorage,
     setAuthHeaders,
+    getAuthHeaders,
     login,
     register,
     loginWithGoogle,
@@ -252,6 +365,9 @@ export const useAuthStore = defineStore('auth', () => {
     setAuthModalType: (type) => {
       authModalType.value = type;
     },
-    refreshUserData
+    refreshUserData,
+    checkUserExists,
+    sendPasswordReset,
+    uploadProfileImage
   };
 }); 
