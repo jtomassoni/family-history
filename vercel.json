@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/contact",
-      "destination": "https://thetomassonis.com/api/contact/"
+      "destination": "https://www.thetomassonis.com/api/contact/"
     },
     {
       "source": "/api/:path*",
-      "destination": "https://thetomassonis.com/api/:path*"
+      "destination": "https://www.thetomassonis.com/api/:path*"
     }
   ],
   "headers": [
@@ -16,7 +16,8 @@
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "https://www.thetomassonis.com" },
         { "key": "Access-Control-Allow-Methods", "value": "POST,OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" },
+        { "key": "Access-Control-Max-Age", "value": "86400" }
       ]
     },
     {
@@ -25,8 +26,16 @@
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "https://www.thetomassonis.com" },
         { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,DELETE,OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" },
+        { "key": "Access-Control-Max-Age", "value": "86400" }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "https://thetomassonis.com/:path*",
+      "destination": "https://www.thetomassonis.com/:path*",
+      "permanent": true
     }
   ]
 } 

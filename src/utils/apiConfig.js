@@ -10,9 +10,9 @@ const configuredApiUrl = import.meta.env.VITE_API_URL;
 
 // Function to get the API URL
 export function getApiUrl() {
-  // In production, use the main domain
+  // In production, always use www subdomain
   if (window.location.hostname === 'www.thetomassonis.com' || window.location.hostname === 'thetomassonis.com') {
-    return 'https://thetomassonis.com';
+    return 'https://www.thetomassonis.com';
   }
 
   // If we have a configured API URL, use it
@@ -38,7 +38,7 @@ export function getApiUrl() {
 
   // Default fallback for other cases
   console.warn('No API URL configured, using default based on environment');
-  return 'https://thetomassonis.com';
+  return 'https://www.thetomassonis.com';
 }
 
 // Function to get the Google OAuth callback URL
