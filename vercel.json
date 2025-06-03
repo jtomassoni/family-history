@@ -33,7 +33,7 @@
   ],
   "redirects": [
     {
-      "source": "https://thetomassonis.com/:path*",
+      "source": "/:path*",
       "destination": "https://www.thetomassonis.com/:path*",
       "permanent": true
     }
