@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/contact",
-      "destination": "https://api.thetomassonis.com/api/contact/"
+      "destination": "https://thetomassonis.com/api/contact/"
     },
     {
       "source": "/api/:path*",
-      "destination": "https://api.thetomassonis.com/api/:path*"
+      "destination": "https://thetomassonis.com/api/:path*"
     }
   ],
   "headers": [
