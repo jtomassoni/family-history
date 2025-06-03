@@ -17,7 +17,7 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from django.urls import path
 import logging
 from .models import User
-from .serializers import UserSerializer, ContactFormSerializer
+from .serializers import UserSerializer
 
 # Create your views here.
 
