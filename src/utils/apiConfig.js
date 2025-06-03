@@ -5,26 +5,40 @@
  * on the same network.
  */
 
-// Get the base API URL from environment variables
+// Get the base API URL from environment variables with fallback
 const configuredApiUrl = import.meta.env.VITE_API_URL;
 
 // Function to get the API URL
 export function getApiUrl() {
-  // If we're accessing from the same machine (localhost), use the configured API URL
+  // In production, use the same hostname as the frontend but with /api path
+  if (window.location.hostname === 'www.thetomassonis.com' || window.location.hostname === 'thetomassonis.com') {
+    return `${window.location.protocol}//${window.location.hostname}`;
+  }
+
+  // If we have a configured API URL, use it
+  if (configuredApiUrl) {
+    // If we're accessing from the same machine (localhost), use the configured API URL
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return configuredApiUrl;
+    }
+    
+    // If we're accessing from another device on the network
+    try {
+      const apiUrlObj = new URL(configuredApiUrl);
+      return `${apiUrlObj.protocol}//${apiUrlObj.host}`;
+    } catch (error) {
+      console.error('Error parsing API URL:', error);
+    }
+  }
+
+  // Fallback to localhost for development
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return configuredApiUrl;
+    return 'http://localhost:8000';
   }
-  
-  // If we're accessing from another device on the network (like a phone),
-  // extract the host part from the configured URL and use that
-  try {
-    const apiUrlObj = new URL(configuredApiUrl);
-    // Replace the host part with the current hostname and keep the port
-    return `${apiUrlObj.protocol}//${apiUrlObj.host}`;
-  } catch (error) {
-    console.error('Error parsing API URL:', error);
-    return configuredApiUrl; // Fallback to configured URL
-  }
+
+  // Default fallback for other cases
+  console.warn('No API URL configured, using default based on environment');
+  return `${window.location.protocol}//${window.location.hostname}`;
 }
 
 // Function to get the Google OAuth callback URL
