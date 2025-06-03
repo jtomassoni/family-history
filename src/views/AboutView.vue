@@ -152,31 +152,34 @@ const toggleContact = () => {
 const handleSubmit = async () => {
   isSubmitting.value = true;
   try {
-    // First, try a GET request to check if the endpoint is accessible
-    try {
-      const testResponse = await axios.get(`${apiUrl}/api/contact/`);
-      console.log('Test GET request response:', testResponse);
-    } catch (testError) {
-      console.log('Test GET request error:', testError);
-    }
-
-    // Then proceed with the POST request
+    // Log the API URL we're using
+    console.log('Using API URL:', apiUrl);
+    
+    // Attempt the contact form submission
+    console.log('Attempting contact form submission...');
     const response = await axios.post(`${apiUrl}/api/contact/`, formData.value, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }
     });
+    
+    console.log('Contact form submission successful:', response.data);
     formData.value = { name: '', email: '', message: '' };
     alert('Message sent successfully!');
   } catch (error) {
     console.error('Contact form error:', error);
     if (error.response) {
-      console.error('Error response:', {
+      console.error('Error details:', {
         status: error.response.status,
         statusText: error.response.statusText,
         data: error.response.data,
-        headers: error.response.headers
+        headers: error.response.headers,
+        config: {
+          url: error.config.url,
+          method: error.config.method,
+          headers: error.config.headers
+        }
       });
     }
     alert('Failed to send message. Please try again.');
