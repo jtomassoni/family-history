@@ -387,30 +387,63 @@ def google_callback(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-@api_view(['POST', 'OPTIONS', 'GET'])
+@api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def contact_form(request):
-    print("contact_form view called. Request method:", request.method, "Request data:", request.data)
-    if request.method == 'GET':
-        # (Temporary branch for debugging: log a GET request and return a dummy response.)
-        return Response({"message": "contact_form view (GET) hit (debugging branch)."})
+    """
+    Handle contact form submissions
+    """
     serializer = ContactFormSerializer(data=request.data)
-    if serializer.is_valid():
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Get the validated data
         name = serializer.validated_data['name']
         email = serializer.validated_data['email']
         message = serializer.validated_data['message']
-        subject = f"New Contact Form Submission from {name}"
-        body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+        
+        # Prepare email content
+        subject = f'New Contact Form Submission from {name}'
+        html_message = f"""
+        <html>
+        <body>
+            <h2>New Contact Form Submission</h2>
+            <p><strong>Name:</strong> {name}</p>
+            <p><strong>Email:</strong> {email}</p>
+            <p><strong>Message:</strong></p>
+            <p>{message}</p>
+        </body>
+        </html>
+        """
+        plain_message = f"""
+        New Contact Form Submission
+        
+        Name: {name}
+        Email: {email}
+        Message:
+        {message}
+        """
+        
+        # Send email
         send_mail(
             subject,
-            body,
+            plain_message,
             settings.DEFAULT_FROM_EMAIL,
             [settings.CONTACT_FORM_RECIPIENT],
+            html_message=html_message,
             fail_silently=False,
         )
-        return Response({'success': True, 'message': 'Message sent successfully.'})
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            'message': 'Thank you for your message. We will get back to you soon.'
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Error sending contact form: {str(e)}")
+        return Response({
+            'error': 'Failed to send message. Please try again later.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -571,12 +604,12 @@ def get_user_profile(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-# Update the auth_urls list to include the password reset endpoint
+# Define auth_urls at the end of the file, after all view functions are defined
 auth_urls = [
     path('login/', login, name='login'),
     path('register/', register, name='register'),
     path('verify-email/<str:verification_code>/', verify_email, name='verify-email'),
     path('google/callback/', google_callback, name='google-callback'),
     path('password-reset/', password_reset, name='password-reset'),
-    path('contact/', contact_form, name='contact-form'),
+    path('user/', get_user_profile, name='get-user-profile'),
 ]

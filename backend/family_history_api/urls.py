@@ -6,22 +6,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
-from users.views import UserViewSet, login, register, verify_email, google_callback, contact_form
-
+from users.views import UserViewSet, auth_urls, contact_form
 
 # API Router setup
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
-
-# Authentication URLs
-auth_urls = [
-    path('login/', login, name='login'),
-    path('register/', register, name='register'),
-    path('verify-email/<str:verification_code>/', verify_email, name='verify-email'),
-    path('google/callback/', google_callback, name='google-callback'),
-    path('password-reset/', password_reset, name='password-reset'),
-    path('user/', get_user_profile, name='get-user-profile'),
-]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,10 +19,9 @@ urlpatterns = [
     # API endpoints
     path('api/', include(router.urls)),
     path('api/auth/', include(auth_urls)),
-    path('api/contact/', contact_form, name='contact-form'),
+    path('api/contact/', contact_form, name='contact-form'),  # Contact form endpoint
     # Social auth URLs
     path('auth/', include('allauth.urls')),
-    # We'll add more app-specific URL patterns here later
 ]
 
 # Serve media files in development
