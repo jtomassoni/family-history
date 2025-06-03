@@ -37,13 +37,6 @@
         @close="handleCloseMobileMenu"
         @auth="handleAuth"
       />
-
-      <!-- Auth Flyout -->
-      <AuthFlyout 
-        :is-open="isAuthOpen" 
-        @close="closeAuth"
-        @submit="handleAuthSubmit"
-      />
     </div>
   </div>
 </template>
@@ -55,7 +48,6 @@ import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import HintModal from './components/HintModal.vue';
 import MobileMenu from './components/MobileMenu.vue';
-import AuthFlyout from './components/auth/AuthFlyout.vue';
 import { useAuthStore } from './stores/auth';
 import "./styles/main.css";
 import { useHelpContent } from './composables/useHelpContent';

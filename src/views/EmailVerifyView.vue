@@ -11,6 +11,7 @@
         <h2>Email Verified!</h2>
         <p>Your email has been successfully verified.</p>
         <p class="success-message">Your account is now active. You can now log in to access your account.</p>
+        <p class="redirect-message">Redirecting to login in {{ countdown }} seconds...</p>
         <router-link to="/login" class="login-button">Go to Login</router-link>
       </div>
       
@@ -27,16 +28,40 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 
 const route = useRoute();
+const router = useRouter();
 const { verifyEmail } = useAuth();
 
 const loading = ref(true);
 const verified = ref(false);
 const error = ref(null);
+const countdown = ref(5);
+let redirectTimer = null;
+
+// Start countdown when verification is successful
+watch(verified, (isVerified) => {
+  if (isVerified) {
+    countdown.value = 5;
+    redirectTimer = setInterval(() => {
+      countdown.value--;
+      if (countdown.value <= 0) {
+        clearInterval(redirectTimer);
+        router.push('/login');
+      }
+    }, 1000);
+  }
+});
+
+// Clean up timer when component is unmounted
+onUnmounted(() => {
+  if (redirectTimer) {
+    clearInterval(redirectTimer);
+  }
+});
 
 onMounted(async () => {
   const verificationCode = route.params.code;
@@ -171,5 +196,11 @@ p {
 
 .login-button:hover {
   background-color: #6b2214; /* Darker wine */
+}
+
+.redirect-message {
+  font-size: 0.9rem;
+  color: #1b5e20;
+  margin: 1rem 0;
 }
 </style> 

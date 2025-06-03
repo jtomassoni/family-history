@@ -51,3 +51,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# Database
+*.sqlite3
+*.db
+backend/db.sqlite3
