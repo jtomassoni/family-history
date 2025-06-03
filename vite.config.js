@@ -9,6 +9,9 @@ export default defineConfig({
     watch: {
       usePolling: true, // Enable polling for file system events
     },
+    proxy: {
+      '/api': 'http://127.0.0.1:8000'
+    }
   },
   optimizeDeps: {
     include: ['vue'],

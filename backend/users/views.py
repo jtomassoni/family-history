@@ -15,7 +15,7 @@ import requests
 from allauth.socialaccount.models import SocialAccount
 
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ContactFormSerializer
 
 # Create your views here.
 
@@ -304,3 +304,24 @@ def google_callback(request):
             {'error': f'An error occurred: {str(e)}'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def contact_form(request):
+    serializer = ContactFormSerializer(data=request.data)
+    if serializer.is_valid():
+        name = serializer.validated_data['name']
+        email = serializer.validated_data['email']
+        message = serializer.validated_data['message']
+        subject = f"New Contact Form Submission from {name}"
+        body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [settings.CONTACT_FORM_RECIPIENT],
+            fail_silently=False,
+        )
+        return Response({'success': True, 'message': 'Message sent successfully.'})
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
