@@ -198,11 +198,10 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://192.168.1.135:5173",
-    "https://www.thetomassonis.com",
-    "https://thetomassonis.com"
+    "https://www.thetomassonis.com",  # Production
+    "http://localhost:5173",          # Local development
+    "http://127.0.0.1:5173",         # Local development
+    "http://192.168.1.135:5173"      # Local network development
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -218,6 +217,10 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# Additional CORS settings
+CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
+CORS_URLS_REGEX = r'^/api/.*$'  # Only apply CORS to API endpoints
 
 # Email settings for development (print to console)
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
@@ -239,11 +242,10 @@ AUTHENTICATION_BACKENDS = [
 
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://192.168.1.135:5173",
-    "https://www.thetomassonis.com",
-    "https://thetomassonis.com"
+    "https://www.thetomassonis.com",  # Production
+    "http://localhost:5173",          # Local development
+    "http://127.0.0.1:5173",         # Local development
+    "http://192.168.1.135:5173"      # Local network development
 ]
 
 # Disable CSRF for API endpoints
