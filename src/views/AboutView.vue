@@ -112,6 +112,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import axios from 'axios';
 
 const isProjectOpen = ref(true);
 const isContactOpen = ref(false);
@@ -149,8 +150,7 @@ const toggleContact = () => {
 const handleSubmit = async () => {
   isSubmitting.value = true;
   try {
-    // TODO: Implement form submission
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated delay
+    await axios.post('/api/contact/', formData.value);
     formData.value = { name: '', email: '', message: '' };
     alert('Message sent successfully!');
   } catch (error) {

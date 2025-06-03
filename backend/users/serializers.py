@@ -18,4 +18,9 @@ class UserSerializer(serializers.ModelSerializer):
         """
         Get the user's full name.
         """
-        return obj.get_full_name() 
+        return obj.get_full_name()
+
+class ContactFormSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
+    message = serializers.CharField(max_length=2000) 

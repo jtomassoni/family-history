@@ -6,7 +6,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
-from users.views import UserViewSet, login, register, verify_email, google_callback, password_reset, get_user_profile
+from users.views import UserViewSet, login, register, verify_email, google_callback, contact_form
+
 
 # API Router setup
 router = routers.DefaultRouter()
@@ -29,6 +30,7 @@ urlpatterns = [
     # API endpoints
     path('api/', include(router.urls)),
     path('api/auth/', include(auth_urls)),
+    path('api/contact/', contact_form, name='contact-form'),
     # Social auth URLs
     path('auth/', include('allauth.urls')),
     # We'll add more app-specific URL patterns here later

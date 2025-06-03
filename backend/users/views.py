@@ -18,7 +18,7 @@ from django.urls import path
 import logging
 
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ContactFormSerializer
 
 # Create your views here.
 
@@ -390,6 +390,25 @@ def google_callback(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+def contact_form(request):
+    serializer = ContactFormSerializer(data=request.data)
+    if serializer.is_valid():
+        name = serializer.validated_data['name']
+        email = serializer.validated_data['email']
+        message = serializer.validated_data['message']
+        subject = f"New Contact Form Submission from {name}"
+        body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [settings.CONTACT_FORM_RECIPIENT],
+            fail_silently=False,
+        )
+        return Response({'success': True, 'message': 'Message sent successfully.'})
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+=======
 def password_reset(request):
     """
     Send password reset email to user
@@ -553,3 +572,4 @@ auth_urls = [
     path('google/callback/', google_callback, name='google-callback'),
     path('password-reset/', password_reset, name='password-reset'),
 ]
+
