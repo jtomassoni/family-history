@@ -387,14 +387,28 @@ def google_callback(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-@api_view(['POST'])
+@api_view(['POST', 'OPTIONS'])  # Add OPTIONS to handle preflight requests
 @permission_classes([permissions.AllowAny])
 def contact_form(request):
     """
     Handle contact form submissions
     """
+    logger.info(f"Contact form request received. Method: {request.method}")
+    logger.info(f"Request headers: {request.headers}")
+    logger.info(f"Request data: {request.data}")
+    
+    # Handle preflight OPTIONS request
+    if request.method == 'OPTIONS':
+        response = Response()
+        response["Access-Control-Allow-Origin"] = request.META.get('HTTP_ORIGIN', '*')
+        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response["Access-Control-Allow-Credentials"] = "true"
+        return response
+    
     serializer = ContactFormSerializer(data=request.data)
     if not serializer.is_valid():
+        logger.error(f"Contact form validation failed: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     try:
@@ -402,6 +416,8 @@ def contact_form(request):
         name = serializer.validated_data['name']
         email = serializer.validated_data['email']
         message = serializer.validated_data['message']
+        
+        logger.info(f"Processing contact form submission from {name} ({email})")
         
         # Prepare email content
         subject = f'New Contact Form Submission from {name}'
@@ -435,15 +451,33 @@ def contact_form(request):
             fail_silently=False,
         )
         
-        return Response({
+        logger.info(f"Contact form email sent successfully for {email}")
+        
+        response = Response({
             'message': 'Thank you for your message. We will get back to you soon.'
         }, status=status.HTTP_200_OK)
         
+        # Add CORS headers to response
+        response["Access-Control-Allow-Origin"] = request.META.get('HTTP_ORIGIN', '*')
+        response["Access-Control-Allow-Credentials"] = "true"
+        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        
+        return response
+        
     except Exception as e:
         logger.error(f"Error sending contact form: {str(e)}")
-        return Response({
+        response = Response({
             'error': 'Failed to send message. Please try again later.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # Add CORS headers to error response
+        response["Access-Control-Allow-Origin"] = request.META.get('HTTP_ORIGIN', '*')
+        response["Access-Control-Allow-Credentials"] = "true"
+        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        
+        return response
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
