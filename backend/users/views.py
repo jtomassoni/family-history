@@ -311,25 +311,25 @@ def google_callback(request):
 def contact_form(request):
     print("contact_form view called. Request method:", request.method, "Request data:", request.data)
     if request.method == 'GET':
-         # (Temporary branch for debugging: log a GET request and return a dummy response.)
-         return Response({"message": "contact_form view (GET) hit (debugging branch)."})
+        # (Temporary branch for debugging: log a GET request and return a dummy response.)
+        return Response({"message": "contact_form view (GET) hit (debugging branch)."})
     serializer = ContactFormSerializer(data=request.data)
     if serializer.is_valid():
-         name = serializer.validated_data['name']
-         email = serializer.validated_data['email']
-         message = serializer.validated_data['message']
-         subject = f"New Contact Form Submission from {name}"
-         body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
-         send_mail(
-             subject,
-             body,
-             settings.DEFAULT_FROM_EMAIL,
-             [settings.CONTACT_FORM_RECIPIENT],
-             fail_silently=False,
-         )
-         return Response({'success': True, 'message': 'Message sent successfully.'})
-     else:
-         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        name = serializer.validated_data['name']
+        email = serializer.validated_data['email']
+        message = serializer.validated_data['message']
+        subject = f"New Contact Form Submission from {name}"
+        body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [settings.CONTACT_FORM_RECIPIENT],
+            fail_silently=False,
+        )
+        return Response({'success': True, 'message': 'Message sent successfully.'})
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
