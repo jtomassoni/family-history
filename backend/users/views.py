@@ -13,6 +13,7 @@ import datetime
 import uuid
 import requests
 from allauth.socialaccount.models import SocialAccount
+from django.urls import path
 
 from .models import User
 from .serializers import UserSerializer, ContactFormSerializer
@@ -305,23 +306,75 @@ def google_callback(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-@api_view(['POST'])
+@api_view(['POST', 'OPTIONS', 'GET'])
 @permission_classes([permissions.AllowAny])
 def contact_form(request):
+    print("contact_form view called. Request method:", request.method, "Request data:", request.data)
+    if request.method == 'GET':
+         # (Temporary branch for debugging: log a GET request and return a dummy response.)
+         return Response({"message": "contact_form view (GET) hit (debugging branch)."})
     serializer = ContactFormSerializer(data=request.data)
     if serializer.is_valid():
-        name = serializer.validated_data['name']
-        email = serializer.validated_data['email']
-        message = serializer.validated_data['message']
-        subject = f"New Contact Form Submission from {name}"
-        body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
-        send_mail(
-            subject,
-            body,
-            settings.DEFAULT_FROM_EMAIL,
-            [settings.CONTACT_FORM_RECIPIENT],
-            fail_silently=False,
+         name = serializer.validated_data['name']
+         email = serializer.validated_data['email']
+         message = serializer.validated_data['message']
+         subject = f"New Contact Form Submission from {name}"
+         body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+         send_mail(
+             subject,
+             body,
+             settings.DEFAULT_FROM_EMAIL,
+             [settings.CONTACT_FORM_RECIPIENT],
+             fail_silently=False,
+         )
+         return Response({'success': True, 'message': 'Message sent successfully.'})
+     else:
+         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def password_reset(request):
+    """
+    Send password reset email to user
+    """
+    email = request.data.get('email')
+    
+    if not email:
+        return Response(
+            {'error': 'Please provide an email address'},
+            status=status.HTTP_400_BAD_REQUEST
         )
-        return Response({'success': True, 'message': 'Message sent successfully.'})
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        # Don't reveal whether the email exists or not
+        return Response(
+            {'message': 'If an account exists with this email, a password reset link has been sent.'},
+            status=status.HTTP_200_OK
+        )
+    
+    # Generate reset token
+    reset_token = str(uuid.uuid4())
+    user.reset_token = reset_token
+    user.reset_token_expires = timezone.now() + datetime.timedelta(hours=24)
+    user.save()
+    
+    # Send reset email
+    reset_url = f"{settings.FRONTEND_URL}/reset-password/{reset_token}"
+    send_password_reset_email(user, reset_url)
+    
+    return Response(
+        {'message': 'If an account exists with this email, a password reset link has been sent.'},
+        status=status.HTTP_200_OK
+    )
+
+# Update the auth_urls list to include both endpoints
+auth_urls = [
+    path('login/', login, name='login'),
+    path('register/', register, name='register'),
+    path('verify-email/<str:verification_code>/', verify_email, name='verify-email'),
+    path('google/callback/', google_callback, name='google-callback'),
+    path('password-reset/', password_reset, name='password-reset'),
+    path('contact/', contact_form, name='contact-form'),
+]
