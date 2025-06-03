@@ -113,11 +113,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
+import { getApiUrl } from '../utils/apiConfig';
 
 const isProjectOpen = ref(true);
 const isContactOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
 const isSubmitting = ref(false);
+const apiUrl = getApiUrl();
 
 const formData = ref({
   name: '',
@@ -150,10 +152,11 @@ const toggleContact = () => {
 const handleSubmit = async () => {
   isSubmitting.value = true;
   try {
-    await axios.post('/api/contact/', formData.value);
+    await axios.post(`${apiUrl}/api/contact/`, formData.value);
     formData.value = { name: '', email: '', message: '' };
     alert('Message sent successfully!');
   } catch (error) {
+    console.error('Contact form error:', error);
     alert('Failed to send message. Please try again.');
   } finally {
     isSubmitting.value = false;

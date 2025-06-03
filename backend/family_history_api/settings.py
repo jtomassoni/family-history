@@ -200,7 +200,9 @@ SOCIALACCOUNT_PROVIDERS = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://192.168.1.135:5173"
+    "http://192.168.1.135:5173",
+    "https://www.thetomassonis.com",
+    "https://thetomassonis.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -239,7 +241,9 @@ AUTHENTICATION_BACKENDS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://192.168.1.135:5173"
+    "http://192.168.1.135:5173",
+    "https://www.thetomassonis.com",
+    "https://thetomassonis.com"
 ]
 
 # Disable CSRF for API endpoints
