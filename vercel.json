@@ -30,12 +30,5 @@
         { "key": "Access-Control-Max-Age", "value": "86400" }
       ]
     }
-  ],
-  "redirects": [
-    {
-      "source": "/:path*",
-      "destination": "https://www.thetomassonis.com/:path*",
-      "permanent": true
-    }
   ]
 } 
