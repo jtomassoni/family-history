@@ -16,7 +16,6 @@ from allauth.socialaccount.models import SocialAccount
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from django.urls import path
 import logging
-
 from .models import User
 from .serializers import UserSerializer, ContactFormSerializer
 
@@ -388,9 +387,13 @@ def google_callback(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-@api_view(['POST'])
+@api_view(['POST', 'OPTIONS', 'GET'])
 @permission_classes([permissions.AllowAny])
 def contact_form(request):
+    print("contact_form view called. Request method:", request.method, "Request data:", request.data)
+    if request.method == 'GET':
+        # (Temporary branch for debugging: log a GET request and return a dummy response.)
+        return Response({"message": "contact_form view (GET) hit (debugging branch)."})
     serializer = ContactFormSerializer(data=request.data)
     if serializer.is_valid():
         name = serializer.validated_data['name']
@@ -408,7 +411,10 @@ def contact_form(request):
         return Response({'success': True, 'message': 'Message sent successfully.'})
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-=======
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+
 def password_reset(request):
     """
     Send password reset email to user
@@ -445,6 +451,7 @@ def password_reset(request):
         status=status.HTTP_200_OK
     )
 
+# Update the auth_urls list to include both endpoints
 def send_password_reset_email(user, reset_url):
     """
     Send password reset email to user
@@ -571,5 +578,5 @@ auth_urls = [
     path('verify-email/<str:verification_code>/', verify_email, name='verify-email'),
     path('google/callback/', google_callback, name='google-callback'),
     path('password-reset/', password_reset, name='password-reset'),
+    path('contact/', contact_form, name='contact-form'),
 ]
-
