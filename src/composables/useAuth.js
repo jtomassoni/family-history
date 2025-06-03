@@ -1,9 +1,10 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { getApiUrl } from '../utils/apiConfig';
 
-// Get the API URL from environment variables, with fallback
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-console.log('API URL:', API_URL); // Debug the API URL
+// Get the API URL using the apiConfig utility
+const API_URL = getApiUrl();
+console.log('API URL:', API_URL);
 
 // State that will be preserved between component instances
 const user = ref(null);
