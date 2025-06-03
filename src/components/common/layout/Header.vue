@@ -98,7 +98,6 @@ const navItems = [
   { path: '/gallery', label: 'Gallery' },
   { path: '/stories', label: 'Stories' },
   { path: '/about', label: 'About' },
-  { path: '/contact', label: 'Contact' }
 ];
 
 // Check if current route matches nav item

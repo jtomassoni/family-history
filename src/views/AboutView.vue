@@ -55,77 +55,15 @@
           </div>
         </Transition>
       </section>
-
-      <!-- Contact Form Section -->
-      <section class="contact-section card">
-        <div class="section-header" :class="{ open: isContactOpen }" @click="toggleContact">
-          <h2>Contact Us</h2>
-          <div class="mobile-controls">
-            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-        <Transition name="section-transition">
-          <div v-if="!isMobile || isContactOpen" class="section-content" :class="{ open: isContactOpen }">
-            <form class="contact-form" @submit.prevent="handleSubmit">
-              <div class="form-group">
-                <label for="name">Name</label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  v-model="formData.name" 
-                  required 
-                  placeholder="Your name"
-                />
-              </div>
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  v-model="formData.email" 
-                  required 
-                  placeholder="Your email"
-                />
-              </div>
-              <div class="form-group">
-                <label for="message">Message</label>
-                <textarea 
-                  id="message" 
-                  v-model="formData.message" 
-                  required 
-                  placeholder="Your message"
-                  rows="4"
-                ></textarea>
-              </div>
-              <button type="submit" class="submit-button" :disabled="isSubmitting">
-                {{ isSubmitting ? 'Sending...' : 'Send Message' }}
-              </button>
-            </form>
-          </div>
-        </Transition>
-      </section>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import axios from 'axios';
-import { getApiUrl } from '../utils/apiConfig';
 
 const isProjectOpen = ref(true);
-const isContactOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
-const isSubmitting = ref(false);
-const apiUrl = getApiUrl();
-
-const formData = ref({
-  name: '',
-  email: '',
-  message: ''
-});
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768;
@@ -134,57 +72,8 @@ const checkMobile = () => {
 const toggleProject = () => {
   if (isMobile.value) {
     if (!isProjectOpen.value) {
-      isContactOpen.value = false;
+      isProjectOpen.value = !isProjectOpen.value;
     }
-    isProjectOpen.value = !isProjectOpen.value;
-  }
-};
-
-const toggleContact = () => {
-  if (isMobile.value) {
-    if (!isContactOpen.value) {
-      isProjectOpen.value = false;
-    }
-    isContactOpen.value = !isContactOpen.value;
-  }
-};
-
-const handleSubmit = async () => {
-  isSubmitting.value = true;
-  try {
-    // Log the API URL we're using
-    console.log('Using API URL:', apiUrl);
-    
-    // Attempt the contact form submission
-    console.log('Attempting contact form submission...');
-    const response = await axios.post(`${apiUrl}/api/contact/`, formData.value, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    });
-    
-    console.log('Contact form submission successful:', response.data);
-    formData.value = { name: '', email: '', message: '' };
-    alert('Message sent successfully!');
-  } catch (error) {
-    console.error('Contact form error:', error);
-    if (error.response) {
-      console.error('Error details:', {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data,
-        headers: error.response.headers,
-        config: {
-          url: error.config.url,
-          method: error.config.method,
-          headers: error.config.headers
-        }
-      });
-    }
-    alert('Failed to send message. Please try again.');
-  } finally {
-    isSubmitting.value = false;
   }
 };
 
@@ -324,68 +213,6 @@ onUnmounted(() => {
   color: var(--color-primary-300);
 }
 
-/* Contact Form Styles */
-.contact-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.form-group label {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: var(--spacing-sm);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  background: var(--color-surface);
-  color: var(--color-text-primary);
-  font-size: var(--font-size-base);
-  transition: border-color var(--transition-base);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--color-primary-400);
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.submit-button {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: var(--color-primary-500);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color var(--transition-base);
-}
-
-.submit-button:hover:not(:disabled) {
-  background: var(--color-primary-600);
-}
-
-.submit-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
 /* Mobile Styles */
 @media (max-width: 768px) {
   .about-page {
@@ -424,11 +251,6 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     opacity: 1;
-  }
-
-  .form-group input,
-  .form-group textarea {
-    font-size: var(--font-size-sm);
   }
 
   .mobile-controls {

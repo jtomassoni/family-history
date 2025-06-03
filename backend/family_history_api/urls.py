@@ -19,7 +19,6 @@ urlpatterns = [
     # API endpoints
     path('api/', include(router.urls)),
     path('api/auth/', include(auth_urls)),
-    path('api/contact/', contact_form, name='contact-form'),  # Contact form endpoint
     # Social auth URLs
     path('auth/', include('allauth.urls')),
 ]
