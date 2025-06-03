@@ -6,7 +6,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
-from users.views import UserViewSet, auth_urls, contact_form
+from users.views import UserViewSet, auth_urls
 
 # API Router setup
 router = routers.DefaultRouter()
